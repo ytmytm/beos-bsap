@@ -1,3 +1,9 @@
+//
+// TODO:
+//	- dekodowanie gramatyki '#'
+//	- stos atrybutow (np. { , , } - przecinki w srodku psuja)
+//	- prawidlowo/ladnie rozlozone atrybuty (kolory, styl)
+//	- def_legnths do wywalenia prawdopodobnie
 
 #include "bydpdictionary.h"
 
@@ -86,9 +92,6 @@ int ydpDictionary::OpenDictionary(const char *index, const char *data) {
 int ydpDictionary::OpenDictionary(void) {
 	BString idx, dat;
 
-//	idx = cnf->topPath;
-//	idx.Append("/");
-//	idx += cnf->indexFName;
 	dat = cnf->topPath;
 	dat.Append("/");
 	dat += cnf->dataFName;
@@ -96,7 +99,6 @@ int ydpDictionary::OpenDictionary(void) {
 }
 
 void ydpDictionary::CloseDictionary(void) {
-//	fIndex.Unset();
 	fData.Unset();
 	ClearWordList();
 }
@@ -182,15 +184,78 @@ int ydpDictionary::ReadDefinition(int index) {
 // parsuje rtf i od razu (via UpdateAttr) wstawia na wyjscie
 //
 void ydpDictionary::ParseRTF(void) {
+	char *c; int cdoll = 0;
+	int len; int v;
+	c = curDefinition;
+
 	printf("in parsertf\n");
+
 	outputView->SetText("");
 	textlen = 0;
+	len = 0;
 
 	line.SetTo(curWord);
+	UpdateAttr(A_BOLD);
 	line += " - ";
 	UpdateAttr(0);
 	// walk through the definition, resolve tokens and colours
 	// use curDefinition up to curDefLength
+	while ((*c)&&(*c!='\n')) {
+		printf("got:%c\n",*c);
+		switch (*c) {
+			case ',':
+			case '.':
+			case ')':
+				line += *c++;
+				if (!strchr(".,",*c)) line += ' ';
+				UpdateAttr(0);
+				continue;
+			case '$':	// youngster
+				if (cdoll) line += "; ";
+				UpdateAttr(0);
+				line += '\n';
+				line += 'a'+cdoll;
+				line += ")\n\t";
+				UpdateAttr(A_ITALIC);
+				cdoll++; c++;
+				continue;
+			case '-':
+				line += " - ";
+				c++;
+				UpdateAttr(0);
+				continue;
+			case '{':
+				c++;
+				continue;
+			case '}':
+				cdoll = 0;
+				UpdateAttr(A_BOLD);
+				line += " - ";
+				UpdateAttr(0);
+				c++;
+				continue;
+			case '*':
+				line += curWord;
+				UpdateAttr(0);
+				c++;
+				continue;
+			case '=':
+				line += "patrz: ";
+				UpdateAttr(A_COLOR2);
+				c++;
+				continue;
+			case '#':
+				// gramatyka, markpol
+				c++;
+				v = ((*c++)<<8) & 0xff00;
+				v |= (*c++)&255;
+				printf("got %i as grammar\n",v);
+				continue;
+		}
+		line += *c++;
+		len++;
+	}
+	UpdateAttr(0);
 	return;
 }
 
