@@ -99,10 +99,10 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu = new BMenu("Ustawienia");
 	menu->AddItem(new BMenuItem("Ścieżka do słownika", new BMessage(MENU_PATH), 'S'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Kolor zwykłego tekstu", new BMessage(MENU_COLOR0)));
-	menu->AddItem(new BMenuItem("Kolor przykładów", new BMessage(MENU_COLOR1)));
-	menu->AddItem(new BMenuItem("Kolor tłumaczenia", new BMessage(MENU_COLOR2)));
-	menu->AddItem(new BMenuItem("Kolor kwalifikatorów", new BMessage(MENU_COLOR3)));
+	menu->AddItem(new BMenuItem("Kolor tłumaczenia", new BMessage(MENU_COLOR0)));
+	menu->AddItem(new BMenuItem("Kolor słów kluczowych", new BMessage(MENU_COLOR1)));
+	menu->AddItem(new BMenuItem("Kolor kwalifikatorów", new BMessage(MENU_COLOR2)));
+	menu->AddItem(new BMenuItem("Kolor dodatkowyego tekstu", new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
 	menu->AddItem(menuClip = new BMenuItem("Śledzenie schowka", new BMessage(MENU_CLIP), 'L'));
 	menu->AddItem(menuFocus = new BMenuItem("Wyskakujące okno", new BMessage(MENU_FOCUS), 'F'));
@@ -243,6 +243,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			break;
 		case MSG_CLEAR_INPUT:
 			wordInput->SetText("");
+			wordInput->MakeFocus();
 			break;
 //		case MENU_SETTINGS:
 //			printf("menu settings\n");

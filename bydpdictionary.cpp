@@ -1,14 +1,49 @@
 //
 // TODO:
-//	- dekodowanie gramatyki '#'
-//	- stos atrybutow (np. { , , } - przecinki w srodku psuja)
-//	- prawidlowo/ladnie rozlozone atrybuty (kolory, styl)
 //	- def_legnths do wywalenia prawdopodobnie
 
 #include "bydpdictionary.h"
 
 #include <stdio.h>
 #include <string.h>
+
+struct markpol
+    {char *pm;int flag;int mask;} markpol[]={
+{"przymiotnik",1,15},
+{"przys³ówek",2,15},
+{"spójnik",3,15},
+{"liczebnik",4,15},
+{"partyku³a",5,15},
+{"przedrostek",6,15},
+{"przyimek",7,15},
+{"zaimek",8,15},
+{"rzeczownik",9,15},
+{"czasownik posi³kowy",10,15},
+{"czasownik nieprzechodni",11,15},
+{"czasownik nieosobowy",12,15},
+{"czasownik zwrotny",13,15},
+{"czasownik przechodni",14,15},	/* 16 - 4 bajty */
+{"czasownik",15,15},
+
+{"rodzaj ¿eñski",16,0x30},		/* 4 bajty */
+{"rodzaj mêski",32,0x30},
+{"rodzaj nijaki",16+32,0x30},
+
+{"liczba pojedyncza",64,0xc0},
+{"liczba mnoga",128,0xc0},
+{"tylko liczba mnoga",128+64,0xc0},
+
+{"czas przesz³y",2048,2048|4096|8192|16384},
+{"czas tera¼niejszy",4096,2048|4096|8192|16384},
+{"czas przysz³y",2048+4096,2048|4096|8192|16384},
+{"bezokolicznik",8192,2048|4096|8192|16384},
+
+{"stopieñ najwy¿szy",16384,2048|4096|8192|16384},
+{"regularny",256,256},	/* 3 bajty */
+{"wyraz potoczny",1024,1024},
+{"skrót",512,512},
+{"stopieñ wy¿szy",16384|8192,2048|4096|8192|16384},
+{0,0}};
 
 ydpDictionary::ydpDictionary(BTextView *output, BListView *dict, bydpConfig *config) {
 	int i;
@@ -85,7 +120,6 @@ int ydpDictionary::OpenDictionary(const char *index, const char *data) {
 	}
 	lastIndex = -1;
 	dictionaryReady = true;
-	printf("dictionary ready, exiting opendictionary\n");
 	return 0;
 }
 
@@ -127,14 +161,12 @@ void ydpDictionary::FillWordList(void) {
 	wordCount = fix32(wordCount);
 	npages = fix32(npages);
 	magic = fix32(magic);
-	printf("magic %x, wcount %i, pages %i\n",magic,wordCount,npages);
 	wordPairs = new int [wordCount];
 	words = new char* [wordCount];
 	definitions = new char* [wordCount];
 	def_lengths = new int [wordCount];
 	pages_offsets = new int [4*npages];
 	fData.Read(pages_offsets,4*npages);
-	printf("offset to 1: %x, offset to 2: %x\n",pages_offsets[0],pages_offsets[1]);
 
 	curword = 0;
 	body = new char [16384];
@@ -145,9 +177,7 @@ void ydpDictionary::FillWordList(void) {
 		fData.Read(&wordspps,2); wordspp = fix16(wordspps);
 		fData.Read(&dsizes,2); dsize = fix16(dsizes);
 		fData.Read(&dvoffsets,2); dvoffset = fix16(dvoffsets);
-		printf("about to read %x body\n",dsize);
 		fData.Read(body,dsize);
-		printf("page in memory\n");
 		char *current = &body[2*wordspp];
 		for (i=0;i<wordspp;i++) {	
 			wordlen = strlen(current);
@@ -157,7 +187,6 @@ void ydpDictionary::FillWordList(void) {
 			current += wordlen +1;
 		}
 		for (i=0;i<wordspp;i++) {
-//		printf("definition for word %s: %s\n", words[curword], current);
 			wordlen = *(short*)&body[i*2];
 			definitions[curword] = new char [wordlen+1];
 			memcpy(definitions[curword],current,wordlen);
@@ -168,12 +197,9 @@ void ydpDictionary::FillWordList(void) {
 		}
 	}
 	delete body;
-	printf("should be %i, is %i\n",wordCount,curword);
-	printf("%s - %s,%i",words[1],&definitions[1001][2],def_lengths[1001]);
 }
 
 int ydpDictionary::ReadDefinition(int index) {
-	printf("reading definition %i\n", index);
 	curWord = words[index];
 	curDefinition = definitions[index];
 	curDefLength = def_lengths[index];
@@ -181,62 +207,62 @@ int ydpDictionary::ReadDefinition(int index) {
 }
 
 //
-// parsuje rtf i od razu (via UpdateAttr) wstawia na wyjscie
-//
+// parsuje rtf i od razu (via UpdateAttr i konwersje) wstawia na wyjscie
 void ydpDictionary::ParseRTF(void) {
 	char *c; int cdoll = 0;
 	int len; int v;
+	int i, mc;
+	int level=0, attr[16];
+
 	c = curDefinition;
-
-	printf("in parsertf\n");
-
 	outputView->SetText("");
 	textlen = 0;
 	len = 0;
+	attr[level] = 0;
 
 	line.SetTo(curWord);
-	UpdateAttr(A_BOLD);
+	UpdateAttr(A_BOLD|A_COLOR0);
 	line += " - ";
 	UpdateAttr(0);
-	// walk through the definition, resolve tokens and colours
-	// use curDefinition up to curDefLength
 	while ((*c)&&(*c!='\n')) {
-		printf("got:%c\n",*c);
+//		printf("got:%c\n",*c);
 		switch (*c) {
 			case ',':
 			case '.':
 			case ')':
 				line += *c++;
 				if (!strchr(".,",*c)) line += ' ';
-				UpdateAttr(0);
 				continue;
-			case '$':	// youngster
-				if (cdoll) line += "; ";
-				UpdateAttr(0);
+			case '$':
+				if (cdoll) line += "; "; else line += '\n';
+				UpdateAttr(attr[level]);
 				line += '\n';
 				line += 'a'+cdoll;
 				line += ")\n\t";
-				UpdateAttr(A_ITALIC);
+				UpdateAttr(A_ITALIC|A_BOLD|A_COLOR2);
 				cdoll++; c++;
 				continue;
 			case '-':
 				line += " - ";
 				c++;
-				UpdateAttr(0);
+				UpdateAttr(A_COLOR2);
 				continue;
 			case '{':
+				level++;
+				attr[level]=attr[level-1];
 				c++;
 				continue;
 			case '}':
 				cdoll = 0;
-				UpdateAttr(A_BOLD);
+				UpdateAttr(A_COLOR0);
 				line += " - ";
-				UpdateAttr(0);
+				level--;
+				UpdateAttr(attr[level]);
 				c++;
 				continue;
 			case '*':
 				line += curWord;
-				UpdateAttr(0);
+				UpdateAttr(attr[level]);
 				c++;
 				continue;
 			case '=':
@@ -245,11 +271,17 @@ void ydpDictionary::ParseRTF(void) {
 				c++;
 				continue;
 			case '#':
-				// gramatyka, markpol
 				c++;
 				v = ((*c++)<<8) & 0xff00;
 				v |= (*c++)&255;
-				printf("got %i as grammar\n",v);
+				for (i=mc=0;markpol[i].pm;i++)
+					if ((v& markpol[i].mask)==markpol[i].flag) {
+						if (mc) line+= ',';
+						line += markpol[i].pm;
+						line += ' ';
+						mc = 1;
+					}
+				UpdateAttr(A_COLOR1);
 				continue;
 		}
 		line += *c++;
@@ -382,12 +414,10 @@ int ydpDictionary::FindWord(const char *wordin)
 
 	switch (cnf->searchmode) {
 		case SEARCH_FUZZY:
-			printf("fuzzy\n");
 			return FuzzyFindWord(wordin);
 			break;
 		case SEARCH_BEGINS:
 		default:
-			printf("default\n");
 			result = BeginsFindWord(wordin);
 			ClearWordList();
 			j = 0;
