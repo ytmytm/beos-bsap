@@ -196,6 +196,8 @@ void BYdpMainWindow::NewClipData(void) {
 	BString result;
 	static BString lastResult;
 	BMessage *clip = (BMessage *)NULL; 
+	int i;
+	char c;
 
 	if (!config->clipboardTracking)
 		return;
@@ -204,15 +206,20 @@ void BYdpMainWindow::NewClipData(void) {
 		if ((clip = be_clipboard->Data()))
 			clip->FindData("text/plain", B_MIME_TYPE,(const void **)&text, &textLen);
 		be_clipboard->Unlock();
-		result.SetTo(text,textLen);
-		result.RemoveSet(" ");
+		result = "";
+		for (i=0;i<textLen;i++) {
+			c = text[i];
+			if ((c!=' ')&&(c!='.')&&(c!=',')&&(c!='\t')&&(c!='\'')&&(c!='"'))
+				result += c;
+		}
 		if (lastResult.Compare(result) != 0) {
 			lastResult = result;
 			wordInput->SetText(result.String());
 			if (config->setFocusOnSelf)
 				this->Activate();
 		}
-//		printf("got:%s:clip\n",result.String());
+//		const char *tmp = result.String();
+//		printf("got:%s:clip:%i,%i,%i\n",tmp,tmp[0],tmp[1],tmp[2]);
 	}
 }
 
