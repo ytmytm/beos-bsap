@@ -33,8 +33,14 @@ Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integrac
 Różni się właściwie tylko kilkoma szczegółami w GUI/konfiguracji oraz poszczególnymi
 metodami w bydpdictionary.cpp
 
-DO WYKORZYSTANIA
+GOTOWY KOD ŹRÓDŁOWY
 Chciałbym zwrócić uwagę na klasę bydpListView. Pozwala ona w wygodny sposób
 przedstawiać listę elementów z suwakiem. Od zwykłego BListView zakotwiczonego w
 BScrollView odróżnia ją to, że nie ma problemu z obsługą wielu tysięcy elementów listy.
 (BScrollView poważnie spowalnia już przy kilkuset elementach).
+
+Użyteczna może być również klasa bydpConfig do obslugi tekstowych plików konfiguracyjnych.
+
+Program jest na GNU/GPL - zachęcam do wykorzystania, poprawienia i rozszerzenia tego kodu
+we własnych projektach. Będę też wdzięczny za przysłanie poprawek, aby mogły być
+włączone do przyszłych wersji BSAP.
