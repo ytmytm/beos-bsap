@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "bydplistview.h"
 
-bydpListView::bydpListView(const char *name, BHandler *handler, bydpConverter *converter) : BListView(
+bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 		BRect(10,60,200,400),
 		name,
 		B_SINGLE_SELECTION_LIST,B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM) {
@@ -13,7 +13,7 @@ bydpListView::bydpListView(const char *name, BHandler *handler, bydpConverter *c
 	topIndex = -1;
 //	printf("konstruktor %s\n",name);
 	myHandler = handler;
-	cvt = converter;
+	cvt = NULL;
 	myBar = NULL;
 	NewSize();
 }
@@ -25,6 +25,10 @@ bydpListView::~bydpListView() {
 void bydpListView::SetScrollBar(bydpScrollBar *newBar) {
 // in theory this is unneeded - you just need to take child by hand...
 	myBar = newBar;
+}
+
+void bydpListView::SetConverter(bydpConverter *converter) {
+	cvt = converter;
 }
 
 void bydpListView::KeyDown(const char *bytes, int32 numBytes) {

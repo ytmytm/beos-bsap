@@ -1,8 +1,8 @@
 //
 // BUGS
-//
+//	- colour menu names not updated upon engine change
 // TODO (order of importance):
-//	- figure out how to switch between dictionarymodes
+//	- direct utf8 convert for ydp phonetic signs
 //	- if resize would be enabled (find XXX) => menubar is invisible (reposition it there?)
 //	- write brief docs about my classes and derivatives
 // LATER:
@@ -16,6 +16,7 @@
 #include <MenuBar.h>
 #include <Path.h>
 #include <Clipboard.h>
+#include <Alert.h>
 #include <stdio.h>
 #include "engine_sap.h"
 #include "engine_ydp.h"
@@ -30,6 +31,8 @@ const uint32 MENU_ENG2POL =			'ME2P';
 const uint32 MENU_POL2ENG =			'MP2E';
 const uint32 MENU_FUZZY =			'MFuz';
 const uint32 MENU_PLAIN =			'MPla';
+const uint32 MENU_ENGINESAP =		'MESA';
+const uint32 MENU_ENGINEYDP =		'MEYD';
 const uint32 MENU_PATH =			'MPat';
 const uint32 MENU_COLOR0 =			'MCo0';
 const uint32 MENU_COLOR1 =			'MCo1';
@@ -72,16 +75,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	outputView->SetStylable(true);
 	MainView->AddChild(new BScrollView("scrolloutput",outputView,B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, 0, true, true));
 
-	switch(config->dictionarymode) {
-		case DICTIONARY_YDP:
-			myConverter = new ConvertYDP();
-		case DICTIONARY_SAP:
-		default:
-			myConverter = new ConvertSAP();
-			break;
-	}
-
-	dictList = new bydpListView("listView", this, myConverter);
+	dictList = new bydpListView("listView", this);
 	MainView->AddChild(new BScrollView("scrollview", dictList, B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM, 0, false, false, B_FANCY_BORDER));
 	dictList->SetInvocationMessage(new BMessage(MSG_LIST_INVOKED));
 	dictList->SetSelectionMessage(new BMessage(MSG_LIST_SELECTED));
@@ -91,15 +85,22 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	dictList->AddChild(scrollBar);
 	dictList->SetScrollBar(scrollBar);
 
+	ydpConv = new ConvertYDP();
+	sapConv = new ConvertSAP();
+	ydpDict = new EngineYDP(outputView, dictList, config, ydpConv);
+	sapDict = new EngineSAP(outputView, dictList, config, sapConv);
 	switch(config->dictionarymode) {
 		case DICTIONARY_YDP:
-			myDict = new EngineYDP(outputView, dictList, config, myConverter);
+			myDict = ydpDict;
+			myConverter = ydpConv;
 			break;
 		case DICTIONARY_SAP:
 		default:
-			myDict = new EngineSAP(outputView, dictList, config, myConverter);
-			break;			
+			myDict = sapDict;
+			myConverter = sapConv;
+			break;
 	}
+	dictList->SetConverter(myConverter);
 
 	BRect r;
 	r = MainView->Bounds();
@@ -114,10 +115,15 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(new BMenuItem(tr("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
 	menubar->AddItem(menu);
 
+	BMenu *engineMenu;
 	menu = new BMenu(tr("Dictionary"));
 	menu->AddItem(new BMenuItem(tr("Switch"), new BMessage(MENU_SWITCH), 'J'));
 	menu->AddItem(menuEng = new BMenuItem(tr("Eng -> Pol"), new BMessage(MENU_ENG2POL), 'E'));
 	menu->AddItem(menuPol = new BMenuItem(tr("Pol -> Eng"), new BMessage(MENU_POL2ENG), 'P'));
+	menu->AddSeparatorItem();
+	menu->AddItem(engineMenu = new BMenu(tr("Dictionary engine")));
+	engineMenu->AddItem(menuSAP = new BMenuItem("SAP", new BMessage(MENU_ENGINESAP)));
+	engineMenu->AddItem(menuYDP = new BMenuItem("YDP", new BMessage(MENU_ENGINEYDP)));
 	menubar->AddItem(menu);
 
 	menu = new BMenu(tr("Search type"));
@@ -268,6 +274,8 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuClip->SetMarked(config->clipboardTracking);
 	menuFocus->SetMarked(config->setFocusOnSelf);
 	menuFocus->SetEnabled(config->clipboardTracking);
+	menuSAP->SetMarked(config->dictionarymode == DICTIONARY_SAP);
+	menuYDP->SetMarked(config->dictionarymode == DICTIONARY_YDP);
 	if (config->toPolish)
 		this->SetTitle(APP_NAME ": Eng->Pol");
 	else
@@ -298,15 +306,36 @@ void BYdpMainWindow::ConfigDistance(void) {
 	myDialog->Show();
 }
 
+void BYdpMainWindow::SwitchEngine(int newengine) {
+	myDict->CloseDictionary();
+	config->dictionarymode = newengine;
+	config->save();
+	TryToOpenDict();
+}
+
 void BYdpMainWindow::TryToOpenDict(void) {
-//	printf("about to reopen dict\n");
+//		printf("about to reopen dict\n");
+	switch (config->dictionarymode) {
+		case DICTIONARY_YDP:
+			myDict = ydpDict;
+			myConverter = ydpConv;
+			break;
+		case DICTIONARY_SAP:
+		default:
+			myDict = sapDict;
+			myConverter = sapConv;
+			break;
+	}
 	if (myDict->OpenDictionary() < 0) {
 //		printf("failed\n");
 		ConfigPath();
 	} else {
 //		printf("success\n");
 		firstStart = false;
+		dictList->SetConverter(myConverter);
 		wordInput->SetText("A");
+		HandleModifiedInput(true);
+		UpdateMenus();
 		this->MoveTo(BPoint(config->position.left, config->position.top));
 //		XXX if this is enabled - menubar is lost
 //		this->ResizeTo(config->position.Width(),config->position.Height());
@@ -395,6 +424,12 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			HandleModifiedInput(true);
 			UpdateMenus();
 			break;
+		case MENU_ENGINESAP:
+			SwitchEngine(DICTIONARY_SAP);
+			break;
+		case MENU_ENGINEYDP:
+			SwitchEngine(DICTIONARY_YDP);
+			break;
 		case MENU_PATH:
 			ConfigPath();
 			break;
@@ -429,8 +464,9 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			about += tr("English-Polish, Polish-English dictionary\n");
 			about += tr("\n\nBeOS version:\n");
 			about += "Maciej Witkowiak <ytm@elysium.pl>";
-			about += tr("\n\nbased on sap v0.2b\n");
+			about += tr("\n\nSAP engine based on sap v0.2b\n");
 			about += "(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita";
+			about += tr("\nYDP engine by Maciej Witkowiak\n");
 			about += tr("\n\nLocale support with SpLocale");
 			about += tr("\n\nSoftware released under GNU/GPL license");
 			about += tr("\n\nvisit:\n");
@@ -497,8 +533,12 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			break;
 		case B_CANCEL:
 //			printf("canceled\n");
-			if (firstStart)
+			if (firstStart) {
+				config->dictionarymode = DICTIONARY_SAP;	// will be saved in QuitRequested below
+				BAlert *alert = new BAlert(APP_NAME, tr("Couldn't open dictionary. Dictionary engine has been reset to SAP."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+				alert->Go();
 				QuitRequested();
+			}
 			else
 				delete myPanel;
 //			break;

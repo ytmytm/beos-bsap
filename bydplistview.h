@@ -20,12 +20,13 @@
 
 	class bydpListView : public BListView {
 		public:
-			bydpListView(const char *name, BHandler *handler, bydpConverter *converter);
+			bydpListView(const char *name, BHandler *handler);
 			~bydpListView();
 //			virtual void MessageReceived(BMessage *Message);
 			virtual void KeyDown(const char *bytes, int32 numBytes);
 //			virtual void MakeFocus(bool focused);
 			void SetScrollBar(bydpScrollBar *newBar);
+			void SetConverter(bydpConverter *convert);
 			void NewSize(void);
 			void NewData(int howmany, char **data, int current);
 			void ListRefresh(int start=-1, bool update=true);

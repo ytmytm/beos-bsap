@@ -33,19 +33,20 @@
 			void ConfigColour(int number);
 			void ConfigDistance(void);
 			void TryToOpenDict(void);
+			void SwitchEngine(int newengine);
 			BTextView *outputView;
 			BTextControl *wordInput;
 			bydpScrollBar *scrollBar;
 			bydpListView *dictList;
 			BMenuItem *menuFuzzy, *menuPlain, *menuEng, *menuPol, *menuClip;
-			BMenuItem *menuFocus;
+			BMenuItem *menuFocus, *menuSAP, *menuYDP;
 			BMenu *fontMenu;
 			BMenuItem *currentFontItem;
 			void SetFontSize(float fontSize);
 			void SetFontStyle(const char *fontFamily, const char *fontStyle);
 
-			ydpDictionary *myDict;
-			bydpConverter *myConverter;
+			ydpDictionary *myDict, *sapDict, *ydpDict;
+			bydpConverter *myConverter, *sapConv, *ydpConv;
 			bydpConfig *config;
 			bydpConfigure *myDialog;
 
