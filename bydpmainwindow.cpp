@@ -39,6 +39,7 @@ const uint32 MENU_COLOR2 =			'MCo2';
 const uint32 MENU_COLOR3 =			'MCo3';
 const uint32 MENU_CLIP =			'MCli';
 const uint32 MENU_FOCUS =			'MFoc';
+const uint32 MENU_ABOUT =			'MAbo';
 
 BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	BRect(64, 64, 585, 480), windowTitle, B_TITLED_WINDOW, B_OUTLINE_RESIZE ) {
@@ -82,6 +83,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	MainView->AddChild(menubar);
 
 	BMenu *menu = new BMenu("Plik");
+	menu->AddItem(new BMenuItem("O programie...", new BMessage(MENU_ABOUT), 'O'));
 	menu->AddItem(new BMenuItem("Zakończ", new BMessage(B_QUIT_REQUESTED), 'Q'));
 	menubar->AddItem(menu);
 
@@ -297,6 +299,13 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			config->setFocusOnSelf = !config->setFocusOnSelf;
 			config->save();
 			UpdateMenus();
+			break;
+		case MENU_ABOUT:
+			outputView->SetText("\n\nBSAP 0.5 (XII 2004)\nsłownik angielsko-polski, polsko-angielski\n"
+				"\n\nwersja dla BeOSa:\nMaciej Witkowiak <ytm@elysium.pl>"
+				"\n\nna podstawie sap v0.2b\n(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita"
+				"\n\nProgram na licencji GNU/GPL"
+				"\n\nodwiedź:\nhttp://home.elysium.pl/ytm/html/beos.html");
 			break;
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
