@@ -19,7 +19,7 @@ EngineSAP::EngineSAP(BTextView *output, bydpListView *dict, bydpConfig *config, 
 EngineSAP::~EngineSAP() {
 	int i,j;
 
-	for (i=0;i<1;i++) {
+	for (i=0;i<2;i++) {
 		if (this->dictCache[i].wordCount>0) {
 			if (this->dictCache[i].words) {
 				for (j=0;j<this->dictCache[i].wordCount;j++) {
@@ -181,14 +181,14 @@ struct okreslenia { char *nazwa; int flagi; int maska; } okreslenia[]={
 //
 // parses format and (via UpdateAttr and convert) outputs data
 void EngineSAP::ParseRTF(void) {
-	char *c; int cdoll = 0;
+	char *c = this->curDefinition;
+	int cdoll = 0;
 	int len; int v;
 	int i, mc;
 	int level=0, attr[16];
 
 	this->ClearView();
-	c = this->curDefinition;
-	textlen = 0;
+	this->textlen = 0;
 	len = 0;
 	attr[level] = 0;
 
@@ -252,7 +252,7 @@ void EngineSAP::ParseRTF(void) {
 				v |= (*c++)&255;
 				for (i=mc=0; okreslenia[i].nazwa; i++)
 					if ((v & okreslenia[i].maska)==okreslenia[i].flagi) {
-						if (mc) line+= ',';
+						if (mc) this->line+= ',';
 						this->line += okreslenia[i].nazwa;
 						this->line += ' ';
 						mc = 1;

@@ -66,7 +66,6 @@
 			int wordCount;
 			char **words;
 			char *curDefinition;
-			char *curWord;
 
 			// caching stuff
 			struct dictionaryCache {

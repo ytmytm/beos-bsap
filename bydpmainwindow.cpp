@@ -2,7 +2,8 @@
 // BUGS
 //
 // TODO (order of importance):
-//	- if resize would be enabled (find XXX) => menubar is invisible
+//	- figure out how to switch between dictionarymodes
+//	- if resize would be enabled (find XXX) => menubar is invisible (reposition it there?)
 //	- write brief docs about my classes and derivatives
 // LATER:
 //	- change config dialog into sth like BeIDE project properties
@@ -17,6 +18,7 @@
 #include <Clipboard.h>
 #include <stdio.h>
 #include "engine_sap.h"
+#include "engine_ydp.h"
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -71,9 +73,12 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	MainView->AddChild(new BScrollView("scrolloutput",outputView,B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, 0, true, true));
 
 	switch(config->dictionarymode) {
+		case DICTIONARY_YDP:
+			myConverter = new ConvertYDP();
 		case DICTIONARY_SAP:
 		default:
 			myConverter = new ConvertSAP();
+			break;
 	}
 
 	dictList = new bydpListView("listView", this, myConverter);
@@ -87,9 +92,13 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	dictList->SetScrollBar(scrollBar);
 
 	switch(config->dictionarymode) {
+		case DICTIONARY_YDP:
+			myDict = new EngineYDP(outputView, dictList, config, myConverter);
+			break;
 		case DICTIONARY_SAP:
 		default:
 			myDict = new EngineSAP(outputView, dictList, config, myConverter);
+			break;			
 	}
 
 	BRect r;

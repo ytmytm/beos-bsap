@@ -1,16 +1,16 @@
 
-#ifndef _ENGINESAP_H
-#define _ENGINESAP_H
+#ifndef _ENGINEYDP_H
+#define _ENGINEYDP_H
 
 #include <File.h>
 
 #include "bydpdictionary.h"
 #include "bydpconverter.h"
 
-	class EngineSAP : public ydpDictionary {
+	class EngineYDP : public ydpDictionary {
 		public:
-			EngineSAP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter);
-			~EngineSAP();
+			EngineYDP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter);
+			~EngineYDP();
 			int OpenDictionary(void);
 			void CloseDictionary(void);
 			const char *ColourFunctionName(int);
@@ -19,21 +19,23 @@
 			int ReadDefinition(int index);
 			void ParseRTF(void);
 			void FillWordList(void);
+			char* ParseToken(char *def);
 
 			// dictionary data
-			BFile fData;
-			char **definitions;
-			char *curWord;
+			BFile fIndex, fData;
+			unsigned long *indexes;
 			// caching stuff
 			struct LL_dictionaryCache {
-				char **definitions;
+				unsigned long *indexes;
 			} dictCache_LL[2];
+			// parser variables
+			int newline_, newattr, newphon;
 	};
 
-	class ConvertSAP : public bydpConverter {
+	class ConvertYDP : public bydpConverter {
 		public:
-			ConvertSAP(void);
-			~ConvertSAP();
+			ConvertYDP(void);
+			~ConvertYDP();
 			char tolower(const char c);
 			char *ConvertToUtf(const char *line);
 			char *ConvertFromUtf(const char *input);
