@@ -2,6 +2,7 @@
 #include "bydpconfig.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <Path.h>
 
 bydpConfig::bydpConfig() {
 	load();
@@ -57,6 +58,25 @@ void bydpConfig::readValue(const char *buf, const char *token, bool *result) {
 		*result = (!strcmp(res,"true"));
 }
 
+void bydpConfig::readValue(const char *buf, const char *token, BFont *result) {
+	BString tmp;
+	char *res;
+	int size;
+
+	tmp = token;
+	tmp += ".family=";
+	res = readValue(buf,tmp.String());
+	result->SetFamilyAndStyle(res,NULL);
+	tmp = token;
+	tmp += ".style=";
+	res = readValue(buf,tmp.String());
+	result->SetFamilyAndStyle(NULL,res);
+	tmp = token;
+	tmp += ".size=";
+	readValue(buf,tmp.String(),&size);
+	result->SetSize(size);
+}
+
 void bydpConfig::load(void) {
 	static char buf[1024];
 	char *result;
@@ -81,6 +101,7 @@ void bydpConfig::load(void) {
 	readValue(buf,"colour0",&colour0);
 	readValue(buf,"colour1",&colour1);
 	readValue(buf,"colour2",&colour2);
+	readValue(buf,"currentFont",&currentFont);
 	updateFName();
 }
 
@@ -123,6 +144,30 @@ void bydpConfig::writeValue(BString variable, bool value) {
 	conf.Write(line.String(),line.Length());
 }
 
+void bydpConfig::writeValue(BString variable, BFont font) {
+	BString line;
+	BString val;
+	font_family family;
+	font_style style;
+	float fsize;
+	int size;
+
+	font.GetFamilyAndStyle(&family,&style);
+	line = variable;
+	line += ".family";
+	val = family;
+	writeValue(line,val);
+	line = variable;
+	line += ".style";
+	val = style;
+	writeValue(line,val);
+	line = variable;
+	line += ".size";
+	fsize = font.Size();
+	size = int(fsize);
+	writeValue(line,size);
+}
+
 void bydpConfig::save(void) {
 	if (conf.SetTo(CONFIG_NAME,B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
 		printf("error opening config file for save\n");
@@ -139,19 +184,21 @@ void bydpConfig::save(void) {
 	writeValue("colour0",colour0);
 	writeValue("colour1",colour1);
 	writeValue("colour2",colour2);
+	writeValue("currentFont",currentFont);
 	conf.Unset();
 	updateFName();	// don't remove this - needs to be up-to-date for langswitch
 }
 
 void bydpConfig::setDefaultConfiguration(void) {
-//	topPath = "/boot/home/Desktop/beos/sap/lib";
-	topPath = "./";
+	BPath path("./");
+	topPath = path.Path();
 	toPolish = true;
 	clipboardTracking = true;
 	setFocusOnSelf = true;
 	searchmode = SEARCH_BEGINS;
 	distance = 3;
 	todisplay = 23;
+	currentFont = be_plain_font;
 
 	colour.red = colour.green = colour.blue = 0;
 	colour0.red = colour0.green = 0;

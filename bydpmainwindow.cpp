@@ -13,6 +13,7 @@
 #include <MenuBar.h>
 #include <Path.h>
 #include <Clipboard.h>
+#include <stdio.h>
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -33,6 +34,9 @@ const uint32 MENU_CLIP =			'MCli';
 const uint32 MENU_FOCUS =			'MFoc';
 const uint32 MENU_ABOUT =			'MAbo';
 const uint32 MENU_DISTANCE =		'MDis';
+const uint32 FONT_SIZE =			'MFsi';
+const uint32 FONT_FAMILY =			'MFam';
+const uint32 FONT_STYLE =			'MFst';
 
 BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	BRect(64, 64, 585, 480), windowTitle, B_TITLED_WINDOW, B_OUTLINE_RESIZE ) {
@@ -48,6 +52,8 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 
 	this->Hide();
 	this->AddShortcut(B_ESCAPE,B_SHIFT_KEY,new BMessage(MSG_CLEAR_INPUT));
+
+	config = new bydpConfig();
 
 	MainView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	BWindow::AddChild(MainView);
@@ -105,7 +111,68 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(new BMenuItem("Stopień rozmycia", new BMessage(MENU_DISTANCE)));
 	menubar->AddItem(menu);
 
-	config = new bydpConfig();
+	BMessage *fontMessage;
+	fontMenu = new BMenu("Czcionka");
+	menu->AddItem(fontMenu);
+
+	BMenu* fontSizeMenu = new BMenu("Rozmiar");
+	fontSizeMenu->SetRadioMode(true);
+	fontMenu->AddItem(fontSizeMenu);
+
+	fontSizeMenu->AddItem(new BMenuItem("9", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size", 9.0);
+	fontSizeMenu->AddItem(new BMenuItem("10", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",10.0);
+	fontSizeMenu->AddItem(new BMenuItem("11", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",11.0);
+	fontSizeMenu->AddItem(new BMenuItem("12", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",12.0);
+	fontSizeMenu->AddItem(new BMenuItem("14", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",14.0);
+	fontSizeMenu->AddItem(new BMenuItem("18", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",18.0);	
+	fontSizeMenu->AddItem(new BMenuItem("24", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",24.0);
+	fontSizeMenu->AddItem(new BMenuItem("36", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",36.0);
+	fontSizeMenu->AddItem(new BMenuItem("48", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",48.0);
+	fontSizeMenu->AddItem(new BMenuItem("72", fontMessage = new BMessage(FONT_SIZE)));
+	fontMessage->AddFloat("size",72.0);
+
+	font_family plain_family;
+	font_style plain_style;
+	config->currentFont.GetFamilyAndStyle(&plain_family,&plain_style);
+
+	BMenu *subMenu;
+	BMenuItem *menuItem;
+	currentFontItem = 0;
+
+	int32 numFamilies = count_font_families();
+	for ( int32 i = 0; i < numFamilies; i++ ) {
+		font_family localfamily;
+		if ( get_font_family ( i, &localfamily ) == B_OK ) {
+			subMenu = new BMenu(localfamily);
+			subMenu->SetRadioMode(true);
+			fontMenu->AddItem(menuItem = new BMenuItem(subMenu, new BMessage(FONT_FAMILY)));
+			if (!strcmp(plain_family,localfamily)) {
+				menuItem->SetMarked(true);
+				currentFontItem = menuItem;
+			}
+			int32 numStyles=count_font_styles(localfamily);
+			for(int32 j = 0;j<numStyles;j++){
+				font_style style;
+				uint32 flags;
+				if( get_font_style(localfamily,j,&style,&flags)==B_OK){
+					subMenu->AddItem(menuItem = new BMenuItem(style, new BMessage(FONT_STYLE)));
+					if (!strcmp(plain_style,style)) {
+						menuItem->SetMarked(true);
+					}
+				}
+			}
+		}
+	}
+
 	myDict = new ydpDictionary(outputView, dictList, config);
 	this->FrameResized(0.0, 0.0);
 	UpdateMenus();
@@ -306,6 +373,40 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 				"\n\nProgram na licencji GNU/GPL"
 				"\n\nodwiedź:\nhttp://home.elysium.pl/ytm/html/beos.html");
 			break;
+		case FONT_SIZE:
+		{
+			float fontSize;
+			Message->FindFloat("size",&fontSize);
+			SetFontSize(fontSize);
+		}
+		break;
+		case FONT_FAMILY:
+		{
+			const char * fontFamily = 0, * fontStyle = 0;
+			void * ptr;
+			if (Message->FindPointer("source",&ptr) == B_OK) {
+				currentFontItem = static_cast<BMenuItem*>(ptr);
+				fontFamily = currentFontItem->Label();
+			}
+			SetFontStyle(fontFamily, fontStyle);
+		}
+		case FONT_STYLE:
+		{
+			const char * fontFamily = 0, * fontStyle = 0;
+			void * ptr;
+			if (Message->FindPointer("source",&ptr) == B_OK) {
+				BMenuItem * item = static_cast<BMenuItem*>(ptr);
+				fontStyle = item->Label();
+				BMenu * menu = item->Menu();
+				if (menu != 0) {
+					currentFontItem = menu->Superitem();
+					if (currentFontItem != 0) {
+						fontFamily = currentFontItem->Label();
+					}
+				}
+			}
+			SetFontStyle(fontFamily, fontStyle);
+		}
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
 			break;
@@ -327,6 +428,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 }
 
 bool BYdpMainWindow::QuitRequested() {
+	config->save();
 	be_app->PostMessage(B_QUIT_REQUESTED);
 	return BWindow::QuitRequested();
 }
@@ -345,4 +447,29 @@ void BYdpMainWindow::FrameResized(float width, float height) {
 //	printf("spacefor: %i\n",spacefor);
 	if (config->searchmode == SEARCH_BEGINS)
 		HandleModifiedInput(true);
+}
+
+void BYdpMainWindow::SetFontSize(float fontSize) {
+	config->currentFont.SetSize(fontSize);
+	config->save();
+}
+
+void BYdpMainWindow::SetFontStyle(const char *fontFamily, const char *fontStyle) {
+	font_family oldFamily;
+	font_style oldStyle;
+
+	config->currentFont.GetFamilyAndStyle(&oldFamily,&oldStyle);
+	// clear that family's bit on the menu, if necessary
+	if (strcmp(oldFamily,fontFamily)) {
+		BMenuItem * oldItem = fontMenu->FindItem(oldFamily);
+		if (oldItem != 0)
+			oldItem->SetMarked(false);
+	}
+	config->currentFont.SetFamilyAndStyle(fontFamily,fontStyle);
+
+	BMenuItem * superItem;
+	superItem = fontMenu->FindItem(fontFamily);
+	if (superItem != 0)
+		superItem->SetMarked(true);
+	config->save();
 }

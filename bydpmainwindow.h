@@ -37,6 +37,10 @@
 			BListView *dictList;
 			BMenuItem *menuFuzzy, *menuPlain, *menuEng, *menuPol, *menuClip;
 			BMenuItem *menuFocus;
+			BMenu *fontMenu;
+			BMenuItem *currentFontItem;
+			void SetFontSize(float fontSize);
+			void SetFontStyle(const char *fontFamily, const char *fontStyle);
 
 			ydpDictionary *myDict;
 			bydpConfig *config;

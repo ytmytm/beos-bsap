@@ -30,6 +30,7 @@
 			void CloseDictionary(void);
 
 			int *wordPairs;		// # indeksow na liscie dictList
+			BFont usedFont;
 
 		private:
 			int ReadDefinition(int index);

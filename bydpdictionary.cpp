@@ -291,7 +291,7 @@ void ydpDictionary::UpdateAttr(int newattr) {
 	if (line.Length() == 0)
 		return;
 	rgb_color *colour;
-	BFont myfont(be_plain_font);
+	BFont myfont = cnf->currentFont;
 	colour = &cnf->colour;
 	if (newattr & A_SUPER) {
 		myfont.SetSize(10.0);
