@@ -1,5 +1,5 @@
 
-BSAP 0.6
+BSAP 0.7
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
@@ -11,6 +11,7 @@ do katalogu ze skompilowanym BSAP i wydając polecenie:
 	strip -R .comment -R .note BSAP
 
 Pliki słownika znajdują się w podkatalogu lib/
+Zawartość katalogu locale/ należy skopiować do /boot/home/config/locale/
 
 NOTATKI
 Lista błędów (pusta! :), rzeczy do poprawienia i zrobienia (kiedyś tam) znajduje się
@@ -31,3 +32,9 @@ PRZYSZŁOŚĆ
 Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji z BYDPDict.
 Różni się właściwie tylko kilkoma szczegółami w GUI/konfiguracji oraz poszczególnymi
 metodami w bydpdictionary.cpp
+
+DO WYKORZYSTANIA
+Chciałbym zwrócić uwagę na klasę bydpListView. Pozwala ona w wygodny sposób
+przedstawiać listę elementów z suwakiem. Od zwykłego BListView zakotwiczonego w
+BScrollView odróżnia ją to, że nie ma problemu z obsługą wielu tysięcy elementów listy.
+(BScrollView poważnie spowalnia już przy kilkuset elementach).

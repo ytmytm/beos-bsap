@@ -1,5 +1,5 @@
 
-BSAP 0.6
+BSAP 0.7
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
@@ -11,6 +11,9 @@ dlatego został wydany na licencji GNU/GPL.
 Wymagania
 Program wymaga skonfigurowania BeOSa do obsługi polskiego układu klawiatury
 oraz instalacji czcionek z polskimi znakami.
+Pomoc: 
+Program wymaga zainstalowanej biblioteki SpLocale.
+Pomoc: http://bebits.com/app/1869
 
 Konfiguracja
 Przy pierwszym uruchomieniu program poprosi o wskazanie katalogu, w którym
