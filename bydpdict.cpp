@@ -4,7 +4,7 @@
 #include <SpLocaleApp.h>
 
 BYdpApp::BYdpApp() : SpLocaleApp(APP_SIGNATURE) {
-	myMainWindow = new BYdpMainWindow("BSAP");
+	myMainWindow = new BYdpMainWindow(APP_NAME);
 	if (myMainWindow != NULL) {
 		myMainWindow->Show();
 	} else {
