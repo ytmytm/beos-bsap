@@ -10,17 +10,16 @@ baz słówek słownika Collinsa wydanego przez YDP http://www.ydp.com.pl
 BSAP powstał z wykorzystaniem idei zawartych w programach sap i kydpdict, dlatego
 został wydany na licencji GNU/GPL.
 
-Wymagania
+WYMAGANIA
 Program wymaga skonfigurowania BeOSa do obsługi polskiego układu klawiatury
 oraz instalacji czcionek z polskimi znakami.
-Program wymaga zainstalowanej biblioteki SpLocale.
-Pomoc: http://bebits.com/app/1869
-Dla korzystania ze słownika YDP niezbędne jest posiadanie plików danych z już
+Program wymaga zainstalowanej biblioteki SpLocale. http://bebits.com/app/1869
+Dla korzystania z modułu słownika YDP Collins niezbędne jest posiadanie plików danych z już
 zainstalowanego pod Windows programu słownika. Najwygodniej jest skopiować je do
 tego samego katalogu, co pliki danych słownika SAP. Chodzi o pliki:
 dict100.dat, dict101.dat, dict100.idx oraz dict101.idx. (wszystkie małymi literami)
 
-Konfiguracja
+KONFIGURACJA
 Przy pierwszym uruchomieniu program poprosi o wskazanie katalogu, w którym
 znajdują się pliki słownika - dvp_1.dic oraz dvp_2.dic. Są to pliki danych dla modułu SAP.
 Pliki danych modułu YDP mogą oczywiście znajdować się w innym miejscu.
@@ -28,7 +27,7 @@ Zwracam uwagę - chodzi o wskazanie katalogu, a nie któregoś z plików wewnąt
 Program zapisuje swój plik konfiguracyjny w /home/config/settings/bsap. Jest to
 plik tekstowy, który można edytować lub, w razie problemów, po prostu usunąć.
 
-Obsługa
+OBSŁUGA
 Banalna :). Jest jednak kilka spraw, o których należy wspomnieć:
 Program ma dwa tryby wyszukiwania - zwykły oraz rozmyty.
 W trybie zwykłym za wynik wyszukiwania podawany jest wyraz, który ma najwięcej
@@ -38,21 +37,21 @@ Używa w tym celu algorytmu znajdowania odległości redakcyjnej. Z powodów
 wydajnościowych przy wyszukiwaniu rozmytym wielkość liter ma znaczenie.
 Stopień rozmycia można regulować za pomocą menu.
 
-Schowek
+SCHOWEK
 Jeśli jest włączona opcja "Śledzenie schowka", to każde przekopiowanie tekstu do
 schowka spowoduje wyszukanie go w słowniku. Jeżeli dodatkowo będzie włączona
 opcja "Wyskakujące okno", to okno słownika przesunie się wówczas nad wszystkie
 pozostałe.
 
-Skróty
+SKRÓTY
 Jest tylko jeden niewidoczny skrót klawiaturowy, który należy opisać: ESC
 wyczyści linię edycji i przeniesie tam focus. Program można w miarę wygodnie (mam
 nadzieję) obsługiwać wyłącznie korzystając z klawiatury.
 
-Znane błędy
+ZNANE BŁĘDY
 Prawdopodobnie mój domyślny układ kolorów nadaje się tylko do zmiany, nazwy opcji
 również pozostawiają trochę do życzenia :).
 
-Na koniec
+NA KONIEC
 Jeśli interesujesz się pisaniem programów pod BeOSa, zajrzyj na koniec pliku INSTALACJA.txt.
 Znajdziesz tam kilka informacji o kodzie, który może być przydatny w twoich programach.

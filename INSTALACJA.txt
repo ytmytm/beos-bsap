@@ -4,15 +4,17 @@ BSAP 0.7
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
 
+INSTALACJA
+Pliki słownika SAP znajdujące się w podkatalogu lib/, należy skopiować je w jakieś wygodne
+miejsce (np. /boot/home/config/share/sap lub coś podobnego). Można tam również umieścić
+pliki słownika YDP z już zainstalowanego słownika pod Windows.
+Zawartość katalogu locale/ należy skopiować do /boot/home/config/locale/
+
 KOMPILACJA
 Po prostu otwórz bsap.proj w BeIDE i skompiluj binarny program.
 Można jeszcze zmniejszyć jego rozmiar przechodząc w terminalu
 do katalogu ze skompilowanym BSAP i wydając polecenie:
 	strip -R .comment -R .note BSAP
-
-Pliki słownika znajdują się w podkatalogu lib/, należy skopiować je w jakieś wygodne
-miejsce (np. /boot/home/config/share/sap lub coś podobnego).
-Zawartość katalogu locale/ należy skopiować do /boot/home/config/locale/
 
 NOTATKI
 Lista błędów (pusta! :), rzeczy do poprawienia i zrobienia (kiedyś tam) znajduje się
@@ -31,17 +33,17 @@ wówczas podać również pochodzenie użytego kodu.
 
 PRZYSZŁOŚĆ
 Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji nowych
-modułów słownika - jest to kwestia napisania dodatkowych dziedziczonych klas Engine
-oraz Convert. Np. dodanie słownika opartego o bazę danych SQLite z jakimś osobnym
+modułów słownika. Np. dodanie słownika opartego o bazę danych SQLite z jakimś osobnym
 programem do jej edycji (BeAccesible czy QueryLite).
 
-GOTOWY KOD ŹRÓDŁOWY
-Chciałbym zwrócić uwagę na klasę bydpListView. Pozwala ona w wygodny sposób
-przedstawiać listę elementów z suwakiem. Od zwykłego BListView zakotwiczonego w
-BScrollView odróżnia ją to, że nie ma problemu z obsługą wielu tysięcy elementów listy.
-(BScrollView poważnie spowalnia po dodaniu już kilkuset elementach).
-
+KOD ŹRÓDŁOWY
+Klasa bydpListView pozwala w wygodny sposób przedstawiać listę elementów z suwakiem.
+Od zwykłego BListView zakotwiczonego w BScrollView odróżnia ją to, że nie ma problemu z
+obsługą listy wielu tysięcy elementów. (BScrollView poważnie spowalnia po dodaniu już kilkuset
+elementów).
 Użyteczna może być również klasa bydpConfig do obsługi tekstowych plików konfiguracyjnych.
+Nowe moduły słownika można dodawać pisząc klasy dziedziczące z ydpDictionary i
+bydpConverter.
 
 Program jest na GNU/GPL - zachęcam do wykorzystania, poprawienia i rozszerzenia tego kodu
 we własnych projektach. Będę też wdzięczny za przysłanie poprawek, aby mogły być

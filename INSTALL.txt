@@ -4,14 +4,16 @@ BSAP 0.7
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
 
+INSTALL
+SAP dictionary data files that are in lib/, should  be copied to a location of your choice(e.g.
+/boot/home/config/share/sap or something similar). You might want to keep YDP Collins
+dictionary files there too.
+Contents of locale/ should be copied to /boot/home/config/locale/
+
 BUILD
 Just open bsap.proj in BeIDE and build.
 After that you can reduce its size by using Terminal, and from command line doing:
 	strip -R .comment -R .note BSAP
-
-Dictionary data files are in lib/, you should copy them to another location (e.g.
-/boot/home/config/share/sap or something similar).
-Contents of locale/ should be copied to /boot/home/config/locale/
 
 NOTES
 Bug list (empty! :), things to fix and do (in the future) is at the top of bydpmainwindow.cpp
@@ -26,16 +28,17 @@ use this code in your programs as long as they are under GNU/GPL too. I don't ha
 that you should mention the origin of the code then.
 
 FUTURE
-After finishing TODO list it would be nice to write more dictionary engines - all you have to do
-is to write inherited Engine and Convert classes. One idea might be to use SQLite database
-to store data and edit it with a separate application (BeAccessible or QueryLite).
+After finishing TODO list it would be nice to write more dictionary engines. One idea might be to
+use SQLite database to store data and edit it with a separate application (BeAccessible or
+QueryLite).
 
-READY-FOR-USE CODE
-Take a look at bydpListView. It allows to comfortably handle element list with a slider.
-It differs from BListView inside BScrollView because my class doesn't have problems with
-handling thousands of elements on the list. (BScrollView is terrible with even just few hundred).
-
+SOURCE CODE
+bydpListView class allows to comfortably handle element list with a slider. Contrary to
+BListView inside BScrollView it has no problems with handling large lists (multi-thousand
+elements). BScrollView is terrible with even just few hundred.
 You might find bydpConfig class useful for managing text configuration files.
+New dictionary modules can be added by deriving new classes from ydpDictionary and
+bydpConverter.
 
 The code is under GNU/GPL terms. I encourage to use, correct and extend it in your own
 projects. And if you do, I would be very happy to receive patches so they could be integrated
