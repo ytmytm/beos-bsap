@@ -4,44 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-struct markpol
-    {char *pm;int flag;int mask;} markpol[]={
-{"przymiotnik",1,15},
-{"przys³ówek",2,15},
-{"spójnik",3,15},
-{"liczebnik",4,15},
-{"partyku³a",5,15},
-{"przedrostek",6,15},
-{"przyimek",7,15},
-{"zaimek",8,15},
-{"rzeczownik",9,15},
-{"czasownik posi³kowy",10,15},
-{"czasownik nieprzechodni",11,15},
-{"czasownik nieosobowy",12,15},
-{"czasownik zwrotny",13,15},
-{"czasownik przechodni",14,15},	/* 16 - 4 bajty */
-{"czasownik",15,15},
-
-{"rodzaj ¿eñski",16,0x30},		/* 4 bajty */
-{"rodzaj mêski",32,0x30},
-{"rodzaj nijaki",16+32,0x30},
-
-{"liczba pojedyncza",64,0xc0},
-{"liczba mnoga",128,0xc0},
-{"tylko liczba mnoga",128+64,0xc0},
-
-{"czas przesz³y",2048,2048|4096|8192|16384},
-{"czas tera¼niejszy",4096,2048|4096|8192|16384},
-{"czas przysz³y",2048+4096,2048|4096|8192|16384},
-{"bezokolicznik",8192,2048|4096|8192|16384},
-
-{"stopieñ najwy¿szy",16384,2048|4096|8192|16384},
-{"regularny",256,256},	/* 3 bajty */
-{"wyraz potoczny",1024,1024},
-{"skrót",512,512},
-{"stopieñ wy¿szy",16384|8192,2048|4096|8192|16384},
-{0,0}};
-
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config) {
 	int i;
 
@@ -140,7 +102,6 @@ int ydpDictionary::OpenDictionary(void) {
 
 void ydpDictionary::CloseDictionary(void) {
 	fData.Unset();
-///	ClearWordList(); XXX
 	ClearFuzzyWordList();
 }
 
@@ -210,6 +171,45 @@ int ydpDictionary::ReadDefinition(int index) {
 	curDefinition = definitions[index];
 	return 0;
 }
+
+/// XXX
+/// to jest ohydne - do zmiany (polskie litery w ISO, bo tlumaczone w UpdateAttr)
+struct okreslenia { char *nazwa; int flagi; int maska; } okreslenia[]={
+{"przymiotnik",1,15},
+{"przys³ówek",2,15},
+{"spójnik",3,15},
+{"liczebnik",4,15},
+{"partyku³a",5,15},
+{"przedrostek",6,15},
+{"przyimek",7,15},
+{"zaimek",8,15},
+{"rzeczownik",9,15},
+{"czasownik posi³kowy",10,15},
+{"czasownik nieprzechodni",11,15},
+{"czasownik nieosobowy",12,15},
+{"czasownik zwrotny",13,15},
+{"czasownik przechodni",14,15},	/* 16 - 4 bajty */
+{"czasownik",15,15},
+
+{"rodzaj ¿eñski",16,0x30},		/* 4 bajty */
+{"rodzaj mêski",32,0x30},
+{"rodzaj nijaki",16+32,0x30},
+
+{"liczba pojedyncza",64,0xc0},
+{"liczba mnoga",128,0xc0},
+{"tylko liczba mnoga",128+64,0xc0},
+
+{"czas przesz³y",2048,2048|4096|8192|16384},
+{"czas tera¼niejszy",4096,2048|4096|8192|16384},
+{"czas przysz³y",2048+4096,2048|4096|8192|16384},
+{"bezokolicznik",8192,2048|4096|8192|16384},
+
+{"stopieñ najwy¿szy",16384,2048|4096|8192|16384},
+{"regularny",256,256},	/* 3 bajty */
+{"wyraz potoczny",1024,1024},
+{"skrót",512,512},
+{"stopieñ wy¿szy",16384|8192,2048|4096|8192|16384},
+{0,0}};
 
 //
 // parsuje rtf i od razu (via UpdateAttr i konwersje) wstawia na wyjscie
@@ -283,10 +283,10 @@ void ydpDictionary::ParseRTF(void) {
 				c++;
 				v = ((*c++)<<8) & 0xff00;
 				v |= (*c++)&255;
-				for (i=mc=0;markpol[i].pm;i++)
-					if ((v& markpol[i].mask)==markpol[i].flag) {
+				for (i=mc=0; okreslenia[i].nazwa; i++)
+					if ((v & okreslenia[i].maska)==okreslenia[i].flagi) {
 						if (mc) line+= ',';
-						line += markpol[i].pm;
+						line += okreslenia[i].nazwa;
 						line += ' ';
 						mc = 1;
 					}
@@ -447,6 +447,7 @@ int ydpDictionary::editDistance(const char*slowo1, const char*slowo2) {
 		row1[0] = j;
 		for (i=1;i<=n;i++) {
 			cost = (slowo1[i-1]==slowo2[j-1]) ? 0 : 1;
+//			cost = (tolower(slowo1[i-1])==tolower(slowo2[j-1])) ? 0 : 1; /// za wolno!!!
 			row1[i] = min3(row0[i]+1,row1[i-1]+1,row0[i-1]+cost);
 		}
 		row = row0;

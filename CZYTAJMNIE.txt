@@ -1,0 +1,45 @@
+
+BSAP 0.6
+(c) 2005 Maciej Witkowiak <ytm@elysium.pl>
+http://members.elysium.pl/ytm/html/beos.html
+http://ytm.bossstation.dnsalias.org/html/beos.html
+
+BSAP to program słownika angielsko-polskiego i polsko-angielskiego korzystający z baz
+danych słówek z programu sap. BSAP powstał z wykorzystaniem idei zawartych w sap
+dlatego został wydany na licencji GNU/GPL.
+
+Wymagania
+Program wymaga skonfigurowania BeOSa do obsługi polskiego układu klawiatury
+oraz instalacji czcionek z polskimi znakami.
+
+Konfiguracja
+Przy pierwszym uruchomieniu program poprosi o wskazanie katalogu, w którym
+znajdują się pliki słownika - dvp_1.dic oraz dvp_2.dic.
+Zwracam uwagę - chodzi o wskazanie katalogu, a nie któregoś z plików wewnątrz niego.
+Program zapisuje swój plik konfiguracyjny w /home/config/settings/bsap. Jest to
+plik tekstowy, który można edytować lub, w razie problemów, po prostu usunąć.
+
+Obsługa
+Banalna :). Jest jednak kilka spraw, o których należy wspomnieć:
+Program ma dwa tryby wyszukiwania - zwykły oraz rozmyty.
+W trybie zwykłym za wynik wyszukiwania podawany jest wyraz, który ma najwięcej
+jednakowych znaków (licząc od lewej) z podanym hasłem.
+Wyszukiwanie rozmyte polega na znajdowaniu wyrazów podobnych do wpisanego.
+Używa w tym celu algorytmu znajdowania odległości redakcyjnej. Z powodów
+wydajnościowych przy wyszukiwaniu rozmytym wielkość liter ma znaczenie.
+Stopień rozmycia można regulować za pomocą menu.
+
+Schowek
+Jeśli jest włączona opcja "Śledzenie schowka", to każde przekopiowanie tekstu do
+schowka spowoduje wyszukanie go w słowniku. Jeżeli dodatkowo będzie włączona
+opcja "Wyskakujące okno", to okno słownika przesunie się wówczas nad wszystkie
+pozostałe.
+
+Skróty
+Jest tylko jeden niewidoczny skrót klawiaturowy, który należy opisać: ESC
+wyczyści linię edycji i przeniesie tam focus. Program można w miarę wygodnie (mam
+nadzieję) obsługiwać wyłącznie korzystając z klawiatury.
+
+Znane błędy
+Prawdopodobnie mój domyślny układ kolorów nadaje się tylko do zmiany, nazwy opcji
+również pozostawiają trochę do życzenia :).

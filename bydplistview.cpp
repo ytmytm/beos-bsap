@@ -45,21 +45,6 @@ void bydpListView::SetScrollBar(bydpScrollBar *newBar) {
 	myBar = newBar;
 }
 
-//void bydpListView::MessageReceived(BMessage *Message) {
-//
-//	switch(Message->what) {
-//	/// XXX te komunikaty nigdy tu nie docieraja
-//		case MSG_SCROLL:
-//			printf("lv scroll value changed\n");
-//			if (myBar->Value() != topIndex)
-//				ListRefresh(myBar->Value());
-//			break;
-//		default:
-//			BListView::MessageReceived(Message);
-//			break;
-//		}
-//}
-
 void bydpListView::KeyDown(const char *bytes, int32 numBytes) {
 	if (numBytes == 1) {
 		switch (bytes[0]) {
@@ -111,15 +96,6 @@ void bydpListView::KeyDown(const char *bytes, int32 numBytes) {
 	myBar->SetValue(topIndex+this->CurrentSelection(0));
 	myBar->BlockSignals(false);
 }
-
-//void bydpListView::MakeFocus(bool focused) {
-//	printf("in makefocus ");
-//	if (focused)
-//		printf(" focused\n");
-//	else
-//		printf(" unfocused\n");
-//	BListView::MakeFocus(focused);
-//}
 
 void bydpListView::NewData(int howmany, char **data, int current) {
 //	printf("in newdata w/ %i,%i,%s\n",current,howmany,data[1]);

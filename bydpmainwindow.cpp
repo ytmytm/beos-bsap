@@ -1,11 +1,12 @@
 //
 // BUGS
-//	- tajemnicze segfaulty po zmianie jezykow
-//		- nie wiadomo jak powtórzyc
-//		- nie wiadomo czy jeszcze sa
+//
 // TODO (w porzadku waznosci):
 //	- jesli wlaczyc resize (szukaj XXX), to menubar ginie z ekranu
+//	- zamiast printf w kilku miejscach alerty
 // LATER:
+//	- zmienic layout konfiguracji z menu+dialog na dialog+taby
+//	- przepisac konfig, zeby readValue zwracal wartosc inaczej i bral defaulty
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
@@ -399,11 +400,12 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			ConfigDistance();
 			break;
 		case MENU_ABOUT:
-			outputView->SetText("\n\nBSAP 0.6 (XII 2004)\nsłownik angielsko-polski, polsko-angielski\n"
+			outputView->SetText("\n\nBSAP 0.6 (20050109)\nsłownik angielsko-polski, polsko-angielski\n"
 				"\n\nwersja dla BeOSa:\nMaciej Witkowiak <ytm@elysium.pl>"
 				"\n\nna podstawie sap v0.2b\n(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita"
 				"\n\nProgram na licencji GNU/GPL"
-				"\n\nodwiedź:\nhttp://home.elysium.pl/ytm/html/beos.html");
+				"\n\nodwiedź:\nhttp://home.elysium.pl/ytm/html/beos.html\n"
+				"\nprogram powstał dzięki motywacji ze strony:\nhttp://www.haiku-os.pl\n");
 			break;
 		case FONT_SIZE:
 		{

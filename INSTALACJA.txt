@@ -1,0 +1,33 @@
+
+BSAP 0.6
+(c) 2005 Maciej Witkowiak <ytm@elysium.pl>
+http://members.elysium.pl/ytm/html/beos.html
+http://ytm.bossstation.dnsalias.org/html/beos.html
+
+KOMPILACJA
+Po prostu otwórz bsap.proj w BeIDE i skompiluj binarny program.
+Można jeszcze zmniejszyć jego rozmiar przechodząc w terminalu
+do katalogu ze skompilowanym BSAP i wydając polecenie:
+	strip -R .comment -R .note BSAP
+
+Pliki słownika znajdują się w podkatalogu lib/
+
+NOTATKI
+Lista błędów (pusta! :), rzeczy do poprawienia i zrobienia (kiedyś tam) znajduje się
+na samej górze pliku bydpmainwindow.cpp
+Pliki źródłowe i klasy mają w nazwie 'ydp', bo gdy zaczynałem miał to być interface
+dla słowników Collinsa wydanych przez YDP Poland. Ostatecznie zmieniłem zdanie.
+BYDPDict jest do znalezienia na w/w URLach.
+
+LEGALNE
+Chociaż poszczególne pliki nie mają tej informacji w nagłówku (uznałem to za stratę
+miejsca, poza tym nie chce mi się), to wszystko co znajduje się w tym archiwum jest
+objęte licencją GNU/GPL (również dołączoną). W szczególności oznacza to pełną
+wolność w tworzeniu programów z wykorzystaniem zawartego tutaj kodu, pod warunkiem
+że one również będą na GPL. Nie muszę też chyba przypomnieć, że grzecznie jest
+wówczas podać również pochodzenie użytego kodu.
+
+PRZYSZŁOŚĆ
+Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji z BYDPDict.
+Różni się właściwie tylko kilkoma szczegółami w GUI/konfiguracji oraz poszczególnymi
+metodami w bydpdictionary.cpp
