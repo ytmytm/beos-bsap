@@ -9,13 +9,13 @@ const uint32 BUTTON_CANCEL =	'BuCA';
 const uint32 CCOLOR_MSG =		'ColM';
 const uint32 SLIDER =			'Slid';
 
-bydpConfigure::bydpConfigure(const char *title, void *par) : BWindow(
+bydpConfigure::bydpConfigure(const char *title, BHandler *handler) : BWindow(
 		BRect(62, 100, 62+370, 260),
 		title,
 		B_TITLED_WINDOW,
 		B_NOT_RESIZABLE ) {
 
-	parent = par;
+	myHandler = handler;
 	myColour = -1;
 
 	mainView = new BView(BWindow::Bounds(), NULL, B_FOLLOW_ALL, 0);
@@ -120,6 +120,10 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 		case BUTTON_OK:
 //			printf("ok\n");
 			ConfigUpdate();
+			if (myColour > -1)
+				myHandler->Looper()->PostMessage(new BMessage(MSG_COLOURUPDATE));
+			else
+				myHandler->Looper()->PostMessage(new BMessage(MSG_FUZZYUPDATE));
 			QuitRequested();
 			break;
 		case BUTTON_CANCEL:

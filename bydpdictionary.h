@@ -24,6 +24,7 @@
 			ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config);
 			~ydpDictionary();
 
+			void ReGetDefinition(void);
 			void GetDefinition(int index);
 			int OpenDictionary(const char *index, const char *data);
 			int OpenDictionary(void);

@@ -75,6 +75,14 @@ ydpDictionary::~ydpDictionary() {
 	}
 }
 
+void ydpDictionary::ReGetDefinition(void) {
+	if (ReadDefinition(lastIndex) == 0) {
+		ParseRTF();
+	} else {
+		outputView->SetText("Błąd przy odczycie pliku danych!");
+	}
+}
+
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
 		outputView->SetText("Proszę skonfigurować ścieżkę dostępu do plików słownika.\n");

@@ -10,7 +10,7 @@
 
 	class bydpConfigure : public BWindow {
 		public:
-			bydpConfigure(const char *title, void *parent);
+			bydpConfigure(const char *title, BHandler *handler);
 			~bydpConfigure();
 			virtual void MessageReceived(BMessage *msg);
 			virtual bool QuitRequested();
@@ -21,7 +21,7 @@
 			void ConfigUpdate(void);
 			void CopyNewColours(rgb_color *to);
 			void UpdateExampleColour();
-			void *parent;
+			BHandler *myHandler;
 			bydpConfig *myConfig;
 			int myColour;
 
@@ -30,5 +30,8 @@
 			BSlider *mySlider;
 			BView *mainView;
 	};
+
+	const uint32 MSG_COLOURUPDATE =		'CNUp';
+	const uint32 MSG_FUZZYUPDATE =		'CNFu';
 
 #endif

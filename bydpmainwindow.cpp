@@ -5,7 +5,6 @@
 //		- nie wiadomo czy jeszcze sa
 // TODO (w porzadku waznosci):
 // LATER:
-//	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
@@ -121,6 +120,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	BMenu* fontSizeMenu = new BMenu("Rozmiar");
 	fontSizeMenu->SetRadioMode(true);
 	fontMenu->AddItem(fontSizeMenu);
+	fontMenu->AddSeparatorItem();
 
 	fontSizeMenu->AddItem(new BMenuItem("9", fontMessage = new BMessage(FONT_SIZE)));
 	fontMessage->AddFloat("size", 9.0);
@@ -441,6 +441,15 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 				myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
 			}
 			break;
+		case MSG_COLOURUPDATE:
+//			printf("colour update\n");
+			myDict->ReGetDefinition();
+			break;
+		case MSG_FUZZYUPDATE:
+//			printf("fuzzy update\n");
+			if (config->searchmode == SEARCH_FUZZY)
+				HandleModifiedInput(true);
+			break;
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
 			break;
@@ -474,6 +483,7 @@ void BYdpMainWindow::FrameResized(float width, float height) {
 void BYdpMainWindow::SetFontSize(float fontSize) {
 	config->currentFont.SetSize(fontSize);
 	config->save();
+	myDict->ReGetDefinition();
 }
 
 void BYdpMainWindow::SetFontStyle(const char *fontFamily, const char *fontStyle) {
@@ -493,6 +503,7 @@ void BYdpMainWindow::SetFontStyle(const char *fontFamily, const char *fontStyle)
 	if (superItem != 0)
 		superItem->SetMarked(true);
 	config->save();
+	myDict->ReGetDefinition();
 }
 
 void BYdpMainWindow::DispatchMessage(BMessage *message, BHandler *handler) {
