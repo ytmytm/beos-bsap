@@ -1,30 +1,10 @@
 
 #include <stdio.h>
-#include <string.h>
 #include <SpLocaleApp.h>
 #include "globals.h"
 #include "bydplistview.h"
 
-#define TABLE_UTF8 { \
-		"~", \
-		".", ".", "<o>", "<3>", ".", "<|>", "<E>", "<^>", "<e>", \
-		"θ", "<i>", "<a>", ".", ":", "´", ".", "ŋ", \
-		".", ".", ".", ".", ".", ".", "ð", "æ", \
-		".", ".", ".", ".", ".", ".", ".", ".", \
-		"Ą", ".", "Ł", "¤", "Ľ", "Ś", "§", "¨", \
-		"Š", "Ş", "Ť", "Ź", "­", "Ž", "Ż", "°", \
-		"ą", ".", "ł", "´", "ľ", "ś", ".", "¸", \
-		"ą", "ş", "ť", "ź", ".", "ž", "ż", "Ŕ", \
-		"Á", "Â", "Ă", "Ä", "Ľ", "Ć", "Ç", "Č", \
-		"É", "Ę", "Ë", "Ĕ", "Í", "Î", "Ď", "Ð", \
-		"Ń", "Ň", "Ó", "Ô", "Õ", "Ö", "×", "Ř", \
-		"Ù", "Ú", "Û", "Ü", "Ý", "Ţ", "ß", "ŕ", \
-		"á", "â", "ã", "ä", "ľ", "ć", "ç", "č", \
-		"é", "ę", "ë", "ì", "í", "î", "ď", "đ", \
-		"ń", "ň", "ó", "ô", "õ", "ö", "÷", "ř", \
-		"ù", "ú", "û", "ü", "ý", "ţ", "." }
-
-bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
+bydpListView::bydpListView(const char *name, BHandler *handler, bydpConverter *converter) : BListView(
 		BRect(10,60,200,400),
 		name,
 		B_SINGLE_SELECTION_LIST,B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM) {
@@ -33,6 +13,7 @@ bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 	topIndex = -1;
 //	printf("konstruktor %s\n",name);
 	myHandler = handler;
+	cvt = converter;
 	myBar = NULL;
 	NewSize();
 }
@@ -159,7 +140,7 @@ void bydpListView::ListRefresh(int start=-1, bool update=true) {
 	if (topIndex < 0)
 		topIndex = 0;
 	for (i=0; ((i<visible)&&(i+topIndex<wordCount)); i++)
-		((BStringItem*)this->ItemAt(i))->SetText(ConvertToUtf(words[i+topIndex]));
+		((BStringItem*)this->ItemAt(i))->SetText(cvt->ConvertToUtf(words[i+topIndex]));
 	this->Invalidate();
 	if (update)
 		myBar->SetValue(topIndex);
@@ -179,7 +160,7 @@ void bydpListView::List1Up(void) {
 	topIndex--;
 	for (i=visible-1; i!=0; i--)
 		((BStringItem*)this->ItemAt(i))->SetText(((BStringItem*)this->ItemAt(i-1))->Text());
-	((BStringItem*)this->ItemAt(0))->SetText(ConvertToUtf(words[topIndex]));
+	((BStringItem*)this->ItemAt(0))->SetText(cvt->ConvertToUtf(words[topIndex]));
 	this->Invalidate();
 }
 
@@ -190,7 +171,7 @@ void bydpListView::List1Down(void) {
 	topIndex++;
 	for (i=0; i<visible-1; i++)
 		((BStringItem*)this->ItemAt(i))->SetText(((BStringItem*)this->ItemAt(i+1))->Text());
-	((BStringItem*)this->ItemAt(visible-1))->SetText(ConvertToUtf(words[topIndex+visible-1]));
+	((BStringItem*)this->ItemAt(visible-1))->SetText(cvt->ConvertToUtf(words[topIndex+visible-1]));
 	this->Invalidate();
 }
 
@@ -219,78 +200,4 @@ void bydpScrollBar::ValueChanged(float newValue) {
 
 void bydpScrollBar::BlockSignals(bool block) {
 	blockSig = block;
-}
-
-/////////////////////
-// utf8 <-> cp1250 convertion stuff below
-//
-
-const char *utf8_table[] = TABLE_UTF8;
-const char upper_cp[] = "A�BC�DE�FGHIJKL�MN�O�PQRS�TUVWXYZ��";
-const char lower_cp[] = "a�bc�de�fghijkl�mn�o�pqrs�tuvwxyz��";
-
-char tolower(const char c) {
-    unsigned int i;
-    for (i=0;i<sizeof(upper_cp);i++)
-	if (c == upper_cp[i])
-	    return lower_cp[i];
-    return c;
-}
-
-char *ConvertToUtf(const char *line) {
-	static char buf[1024];
-	static char letter[2] = "\0";
-	unsigned char *inp;
-	memset(buf, 0, sizeof(buf));
-
-	inp = (unsigned char *)line;
-	for (; *inp; inp++) {
-		if (*inp > 126) {
-			strncat(buf, utf8_table[*inp - 127], sizeof(buf) - strlen(buf) - 1);
-		} else {
-			letter[0] = *inp;
-			strncat(buf, letter, sizeof(buf) - strlen(buf) - 1);
-		}
-	}
-	return buf;
-}
-
-char *ConvertFromUtf(const char *input) {
-	static char buf[1024];
-	unsigned char *inp, *inp2;
-	memset(buf, 0, sizeof(buf));
-	int i,k;
-	char a,b;
-	bool notyet;
-
-	k=0;
-	inp = (unsigned char*)input;
-	inp2 = inp; inp2++;
-	for (; *inp; inp++, inp2++) {
-		a = *inp;
-		b = *inp2;
-		i=0;
-		notyet=true;
-		while ((i<129) && (notyet)) {
-			if (a==utf8_table[i][0]) {
-				if (utf8_table[i][1]!=0) {
-					if (b==utf8_table[i][1]) {
-						inp++;
-						inp2++;
-						notyet=false;
-					}
-				} else {
-					notyet=false;
-				}
-			}
-			i++;
-		}
-		if (notyet)
-			buf[k]=a;
-		else
-			buf[k]=i+126;
-		k++;
-	}
-	buf[k]='\0';
-	return buf;
 }

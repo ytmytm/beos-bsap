@@ -10,6 +10,9 @@
 #define SEARCH_BEGINS	1
 #define SEARCH_FUZZY	2
 
+#define DICTIONARY_SAP	1
+#define DICTIONARY_YDP	2
+
 #define CONFIG_NAME "/boot/home/config/settings/bsap"
 
 	class bydpConfig {
@@ -18,12 +21,12 @@
 			~bydpConfig();
 
 			BString topPath;
-			BString dataFName;
 			bool toPolish;
 			bool clipboardTracking;
 			bool setFocusOnSelf;
 			int distance;	// for fuzzy search
 			int searchmode;
+			int dictionarymode;
 			rgb_color colour, colour0, colour1, colour2;
 			BFont currentFont;
 			BRect position;
@@ -34,7 +37,6 @@
 		private:
 			BFile conf;
 			BString cfgname;
-			void updateFName(void);
 
 			void readValue(const char *buf, const char *token, rgb_color *result);
 			void readValue(const char *buf, const char *token, bool *result);

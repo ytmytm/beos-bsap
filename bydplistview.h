@@ -16,10 +16,11 @@
 	};
 
 	#include <ListView.h>
+	#include "bydpconverter.h"
 
 	class bydpListView : public BListView {
 		public:
-			bydpListView(const char *name, BHandler *handler);
+			bydpListView(const char *name, BHandler *handler, bydpConverter *converter);
 			~bydpListView();
 //			virtual void MessageReceived(BMessage *Message);
 			virtual void KeyDown(const char *bytes, int32 numBytes);
@@ -38,6 +39,7 @@
 			int visible;
 			bool valid;
 			bydpScrollBar *myBar;
+			bydpConverter *cvt;
 
 			void List1Up(void);
 			void List1Down(void);
@@ -46,9 +48,5 @@
 	const uint32 MSG_LISTUP =	'LVUp';
 	const uint32 MSG_LISTDOWN =	'LVDo';
 	const uint32 MSG_SCROLL =	'SBSc';
-
-    char tolower(const char c);
-	char *ConvertToUtf(const char *line);
-	char *ConvertFromUtf(const char *input);
 
 #endif

@@ -3,6 +3,7 @@
 //
 // TODO (order of importance):
 //	- if resize would be enabled (find XXX) => menubar is invisible
+//	- write brief docs about my classes and derivatives
 // LATER:
 //	- change config dialog into sth like BeIDE project properties
 //	- rewrite bydpconfig so readValue would return value always the same way
@@ -15,6 +16,7 @@
 #include <Path.h>
 #include <Clipboard.h>
 #include <stdio.h>
+#include "llsap.h"
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -68,7 +70,13 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	outputView->SetStylable(true);
 	MainView->AddChild(new BScrollView("scrolloutput",outputView,B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, 0, true, true));
 
-	dictList = new bydpListView("listView", this);
+	switch(config->dictionarymode) {
+		case DICTIONARY_SAP:
+		default:
+			myConverter = new ConvertSAP();
+	}
+
+	dictList = new bydpListView("listView", this, myConverter);
 	MainView->AddChild(new BScrollView("scrollview", dictList, B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM, 0, false, false, B_FANCY_BORDER));
 	dictList->SetInvocationMessage(new BMessage(MSG_LIST_INVOKED));
 	dictList->SetSelectionMessage(new BMessage(MSG_LIST_SELECTED));
@@ -77,6 +85,12 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	scrollBar = new bydpScrollBar(barr, "scrollbar", dictList);
 	dictList->AddChild(scrollBar);
 	dictList->SetScrollBar(scrollBar);
+
+	switch(config->dictionarymode) {
+		case DICTIONARY_SAP:
+		default:
+			myDict = new LLSAP(outputView, dictList, config, myConverter);
+	}
 
 	BRect r;
 	r = MainView->Bounds();
@@ -105,10 +119,10 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu = new BMenu(tr("Settings"));
 	menu->AddItem(new BMenuItem(tr("Path to dictionary"), new BMessage(MENU_PATH), 'S'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(tr("Translation colour"), new BMessage(MENU_COLOR0)));
-	menu->AddItem(new BMenuItem(tr("Keywords colour"), new BMessage(MENU_COLOR1)));
-	menu->AddItem(new BMenuItem(tr("Qualifiers colour"), new BMessage(MENU_COLOR2)));
-	menu->AddItem(new BMenuItem(tr("Additional text colour"), new BMessage(MENU_COLOR3)));
+	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(0), new BMessage(MENU_COLOR0)));
+	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(1), new BMessage(MENU_COLOR1)));
+	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(2), new BMessage(MENU_COLOR2)));
+	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(3), new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
 	menu->AddItem(menuClip = new BMenuItem(tr("Clipboard tracking"), new BMessage(MENU_CLIP), 'L'));
 	menu->AddItem(menuFocus = new BMenuItem(tr("Popup window"), new BMessage(MENU_FOCUS), 'F'));
@@ -179,7 +193,6 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 		}
 	}
 
-	myDict = new ydpDictionary(outputView, dictList, config);
 	this->FrameResized(0.0, 0.0);
 	UpdateMenus();
 

@@ -3,12 +3,11 @@
 #define _BYDPDICTIONARY_H
 
 #include <String.h>
-#include <File.h>
 #include <TextView.h>
-#include <Font.h>
 
 #include "bydpconfig.h"
 #include "bydplistview.h"
+#include "bydpconverter.h"
 
 #define A_BOLD 1
 #define A_ITALIC 2
@@ -20,22 +19,22 @@
 
 	class ydpDictionary {
 		public:
-			ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config);
-			~ydpDictionary();
+			ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter);
+			virtual ~ydpDictionary();
+			virtual int OpenDictionary(void);
+			virtual void CloseDictionary(void);
+			virtual const char *ColourFunctionName(int);
 
 			void ReGetDefinition(void);
 			void GetDefinition(int index);
-			int OpenDictionary(void);
 			int FindWord(const char *word);
-			void CloseDictionary(void);
 
-			int *wordPairs;		// # current dictList indexes (for fuzzy)
+			bydpConverter *cvt;		// to/from utf converter object
+			int *wordPairs;			// # current dictList indexes (for fuzzy)
 
 		private:
-			int ReadDefinition(int index);
-			void FillWordList(void);
-			void ParseRTF(void);
-			void UpdateAttr(int newattr);
+			virtual int ReadDefinition(int index);
+			virtual void ParseRTF(void);
 			void ClearFuzzyWordList(void);
 			int ScoreWord(const char *w1, const char *w2);
 			int BeginsFindWord(const char *word);
@@ -46,16 +45,26 @@
 			// GUI data holders
 			BTextView *outputView;
 			bydpListView *dictList;
+			// fuzzy search data
+			int fuzzyWordCount;
+			char **fuzzyWords;
+			// caching stuff
+			int lastIndex;
+			bool dictionaryReady;
+
+		protected:
+			inline unsigned int fix32(unsigned int x);
+			inline unsigned short fix16(unsigned short x);
+
+			void ClearView(void);
+			void UpdateAttr(int newattr);
 
 			// configuration holder
 			bydpConfig *cnf;
 
 			// dictionary data
-			BFile fData;
-			int wordCount, fuzzyWordCount;
+			int wordCount;
 			char **words;
-			char **fuzzyWords;
-			char **definitions;
 			char *curDefinition;
 			char *curWord;
 
@@ -65,10 +74,8 @@
 				char **words;
 				char **definitions;
 			} dictCache[2];
-			int lastIndex;
-			bool dictionaryReady;
 
-			// parser variables
+			// UpdateAttr globals (ParseRTF must use that)
 			int textlen;
 			BString line;
 	};

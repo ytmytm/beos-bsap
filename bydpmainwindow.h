@@ -45,6 +45,7 @@
 			void SetFontStyle(const char *fontFamily, const char *fontStyle);
 
 			ydpDictionary *myDict;
+			bydpConverter *myConverter;
 			bydpConfig *config;
 			bydpConfigure *myDialog;
 

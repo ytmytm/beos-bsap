@@ -118,13 +118,13 @@ void bydpConfig::load(void) {
 	readValue(buf,"setFocusOnSelf=",&setFocusOnSelf);
 	readValue(buf,"distance=",&distance);
 	readValue(buf,"searchmode=",&searchmode);
+	readValue(buf,"dictionarymode=",&dictionarymode);
 	readValue(buf,"colour",&colour);
 	readValue(buf,"colour0",&colour0);
 	readValue(buf,"colour1",&colour1);
 	readValue(buf,"colour2",&colour2);
 	readValue(buf,"currentFont",&currentFont);
 	readValue(buf,"position",&position);
-	updateFName();
 }
 
 void bydpConfig::writeValue(BString variable, rgb_color value) {
@@ -223,6 +223,7 @@ void bydpConfig::save(void) {
 	writeValue("setFocusOnSelf",setFocusOnSelf);
 	writeValue("distance",distance);
 	writeValue("searchmode",searchmode);
+	writeValue("dictionarymode",dictionarymode);
 	writeValue("colour",colour);
 	writeValue("colour0",colour0);
 	writeValue("colour1",colour1);
@@ -230,7 +231,6 @@ void bydpConfig::save(void) {
 	writeValue("currentFont",currentFont);
 	writeValue("position",position);
 	conf.Unset();
-	updateFName();	// don't remove this - fname needs to be up-to-date for langswitch
 }
 
 void bydpConfig::setDefaultConfiguration(void) {
@@ -240,6 +240,7 @@ void bydpConfig::setDefaultConfiguration(void) {
 	clipboardTracking = true;
 	setFocusOnSelf = true;
 	searchmode = SEARCH_BEGINS;
+	dictionarymode = DICTIONARY_SAP;
 	distance = 3;
 	currentFont = be_plain_font;
 
@@ -254,9 +255,4 @@ void bydpConfig::setDefaultConfiguration(void) {
 	position.left = 64; position.top = 64;
 	position.right = 585; position.bottom = 480;
 
-	updateFName();
-}
-
-void bydpConfig::updateFName(void) {
-	dataFName = toPolish ? "dvp_1.dic" : "dvp_2.dic";
 }
