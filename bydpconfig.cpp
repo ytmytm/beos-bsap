@@ -144,7 +144,8 @@ void bydpConfig::save(void) {
 }
 
 void bydpConfig::setDefaultConfiguration(void) {
-	topPath = "/boot/home/Desktop/beos/sap/lib";
+//	topPath = "/boot/home/Desktop/beos/sap/lib";
+	topPath = "./";
 	toPolish = true;
 	clipboardTracking = true;
 	setFocusOnSelf = true;
