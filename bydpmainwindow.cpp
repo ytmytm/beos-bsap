@@ -1,12 +1,13 @@
 //
 // BUGS
 //
-// TODO (w porzadku waznosci):
-//	- jesli wlaczyc resize (szukaj XXX), to menubar ginie z ekranu
+// TODO (order of importance):
+//	- use SpLocale
+//	- if resize would be enabled (find XXX) => menubar is invisible
 // LATER:
-//	- zmienic layout konfiguracji z menu+dialog na dialog+taby albo
-//	  lista z lewej, opcje z prawe
-//	- przepisac konfig, zeby readValue zwracal wartosc inaczej i bral defaulty
+//	- change config dialog into sth like BeIDE project properties
+//	- rewrite bydpconfig so readValue would return value always the same way
+//	  and use defaults
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
