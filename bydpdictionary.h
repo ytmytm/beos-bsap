@@ -23,7 +23,6 @@
 			ydpDictionary(BTextView *output, BListView *dict, bydpConfig *config);
 			~ydpDictionary();
 
-			void ReGetDefinition(int index);
 			void GetDefinition(int index);
 			int OpenDictionary(const char *index, const char *data);
 			int OpenDictionary(void);
@@ -37,9 +36,7 @@
 			void FillWordList(void);
 			void ParseRTF(void);
 			void UpdateAttr(int newattr);
-//			char *ParseToken(char *def);
 			void ClearWordList(void);
-//			void FullFillList(void);
 			int ScoreWord(const char *w1, const char *w2);
 			int BeginsFindWord(const char *word);
 			int FuzzyFindWord(const char *word);
@@ -59,26 +56,21 @@
 			// dictionary data
 			BFile fIndex, fData;
 			int wordCount;
-			int *def_lengths;
 			char **words;
 			char **definitions;
 			char *curDefinition;
 			char *curWord;
-			int curDefLength;
 
 			// caching stuff
 			struct dictionaryCache {
 				int wordCount;
 				char **words;
 				char **definitions;
-				int *def_lengths;
 			} dictCache[2];
 			int lastIndex;
 			bool dictionaryReady;
 
 			// parser variables
-			char *def;
-			int newline_, newattr, newphon;
 			int textlen;
 			BString line;
 	};

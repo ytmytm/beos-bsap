@@ -1,6 +1,3 @@
-//
-// TODO:
-//	- def_legnths do wywalenia prawdopodobnie
 
 #include "bydpdictionary.h"
 
@@ -56,7 +53,6 @@ ydpDictionary::ydpDictionary(BTextView *output, BListView *dict, bydpConfig *con
 
 	for (i=0;i<2;i++) {
 		dictCache[i].wordCount = -1;
-		dictCache[i].def_lengths = NULL;
 		dictCache[i].words = NULL;
 		dictCache[i].definitions = NULL;
 	}
@@ -67,7 +63,6 @@ ydpDictionary::~ydpDictionary() {
 
 	for (i=0;i<1;i++) {
 		if (dictCache[i].wordCount>0) {
-			if (dictCache[i].def_lengths) delete [] dictCache[i].def_lengths;
 			if (dictCache[i].words) {
 				for (j=0;j<dictCache[i].wordCount;j++) {
 					delete [] dictCache[i].words[j];
@@ -108,13 +103,11 @@ int ydpDictionary::OpenDictionary(const char *index, const char *data) {
 	if (!(cnf->toPolish)) i++;
 	if (dictCache[i].wordCount>0) {
 		wordCount = dictCache[i].wordCount;
-		def_lengths = dictCache[i].def_lengths;
 		words = dictCache[i].words;
 		definitions = dictCache[i].definitions;
 	} else {
 		FillWordList();
 		dictCache[i].wordCount = wordCount;
-		dictCache[i].def_lengths = def_lengths;
 		dictCache[i].words = words;
 		dictCache[i].definitions = definitions;
 	}
@@ -164,7 +157,6 @@ void ydpDictionary::FillWordList(void) {
 	wordPairs = new int [wordCount];
 	words = new char* [wordCount];
 	definitions = new char* [wordCount];
-	def_lengths = new int [wordCount];
 	pages_offsets = new int [4*npages];
 	fData.Read(pages_offsets,4*npages);
 
@@ -190,7 +182,6 @@ void ydpDictionary::FillWordList(void) {
 			wordlen = *(short*)&body[i*2];
 			definitions[curword] = new char [wordlen+1];
 			memcpy(definitions[curword],current,wordlen);
-			def_lengths[curword] = wordlen;
 			definitions[curword][wordlen] = '\0';
 			current += wordlen;
 			++curword;
@@ -202,7 +193,6 @@ void ydpDictionary::FillWordList(void) {
 int ydpDictionary::ReadDefinition(int index) {
 	curWord = words[index];
 	curDefinition = definitions[index];
-	curDefLength = def_lengths[index];
 	return 0;
 }
 
