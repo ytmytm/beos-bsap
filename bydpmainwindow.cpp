@@ -1,7 +1,6 @@
 //
 // TODO (w porzadku waznosci):
 // LATER:
-//	- cos nie tak z AOGONEK i z' jak z'rebie (zoladz)
 //	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
 //	- po wyszukiwaniu pierwszy klik na liste nie dziala
 //		- przychodzi msg o zmianie inputa!
