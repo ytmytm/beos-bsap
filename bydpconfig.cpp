@@ -1,8 +1,8 @@
 
 #include "bydpconfig.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <Path.h>
+#include <Alert.h>
 
 bydpConfig::bydpConfig() {
 	load();
@@ -103,10 +103,9 @@ void bydpConfig::load(void) {
 	char *result;
 
 	setDefaultConfiguration();
-	if (conf.SetTo(CONFIG_NAME,B_READ_ONLY) != B_OK) {
-		printf("error opening config file for load\n");
+	if (conf.SetTo(CONFIG_NAME,B_READ_ONLY) != B_OK)
 		return;
-	}
+
 	memset(buf,0,sizeof(buf));
 	conf.Read(buf,sizeof(buf)-1);
 	conf.Unset();
@@ -212,7 +211,8 @@ void bydpConfig::writeValue(BString variable, BRect value) {
 
 void bydpConfig::save(void) {
 	if (conf.SetTo(CONFIG_NAME,B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
-		printf("error opening config file for save\n");
+		BAlert *alert = new BAlert("BSAP", "Błąd przy zapisywaniu pliku konfiguracyjnego.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
 		return;
 	}
 	writeValue("topPath",topPath);

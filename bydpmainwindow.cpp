@@ -3,10 +3,9 @@
 //
 // TODO (w porzadku waznosci):
 //	- jesli wlaczyc resize (szukaj XXX), to menubar ginie z ekranu
-//	- zamiast printf/settext w kilku miejscach alerty
 // LATER:
 //	- zmienic layout konfiguracji z menu+dialog na dialog+taby albo
-//	  lista z lewej, opcje z prawej
+//	  lista z lewej, opcje z prawe
 //	- przepisac konfig, zeby readValue zwracal wartosc inaczej i bral defaulty
 
 #include "bydpmainwindow.h"

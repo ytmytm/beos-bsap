@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <Alert.h>
 
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config) {
 	int i;
@@ -41,13 +42,15 @@ void ydpDictionary::ReGetDefinition(void) {
 	if (ReadDefinition(lastIndex) == 0) {
 		ParseRTF();
 	} else {
-		outputView->SetText("Błąd przy odczycie pliku danych!");
+		BAlert *alert = new BAlert("BSAP", "Błąd przy odczycie pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
 	}
 }
 
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
-		outputView->SetText("Proszę skonfigurować ścieżkę dostępu do plików słownika.\n");
+		BAlert *alert = new BAlert("BSAP", "Proszę skonfigurować ścieżkę dostępu do plików słownika.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
 		return;
 	}
 	if (index < 0)
@@ -58,7 +61,8 @@ void ydpDictionary::GetDefinition(int index) {
 	if (ReadDefinition(index) == 0) {
 		ParseRTF();
 	} else {
-		outputView->SetText("Błąd przy odczycie pliku danych!");
+		BAlert *alert = new BAlert("BSAP", "Błąd przy odczycie pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
 	}
 }
 
@@ -66,7 +70,8 @@ int ydpDictionary::OpenDictionary(const char *data) {
 	int i;
 
 	if ((fData.SetTo(data, B_READ_ONLY)) != B_OK) {
-		outputView->SetText("Błąd przy otwieraniu pliku danych!");
+		BAlert *alert = new BAlert("BSAP", "Błąd przy otwieraniu pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
 		return -1;
 	}
 
