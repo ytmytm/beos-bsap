@@ -16,7 +16,7 @@
 #include <Path.h>
 #include <Clipboard.h>
 #include <stdio.h>
-#include "llsap.h"
+#include "engine_sap.h"
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -89,7 +89,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	switch(config->dictionarymode) {
 		case DICTIONARY_SAP:
 		default:
-			myDict = new LLSAP(outputView, dictList, config, myConverter);
+			myDict = new EngineSAP(outputView, dictList, config, myConverter);
 	}
 
 	BRect r;

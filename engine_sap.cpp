@@ -1,23 +1,22 @@
 
-#include "llsap.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <Alert.h>
 #include <SpLocaleApp.h>
 #include "globals.h"
+#include "engine_sap.h"
 
 //
 // to prevent my confusion, everything from base class is prefixed with this: this-> (wow, that's recursive :)
 
-LLSAP::LLSAP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter) : ydpDictionary(output,dict,config,converter) {
+EngineSAP::EngineSAP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter) : ydpDictionary(output,dict,config,converter) {
 	int i;
 	for (i=0;i<2;i++) {
 		dictCache_LL[i].definitions = NULL;
 	}
 }
 
-LLSAP::~LLSAP() {
+EngineSAP::~EngineSAP() {
 	int i,j;
 
 	for (i=0;i<1;i++) {
@@ -31,7 +30,7 @@ LLSAP::~LLSAP() {
 	}
 }
 
-int LLSAP::OpenDictionary(void) {
+int EngineSAP::OpenDictionary(void) {
 	int i;
 	BString dat;
 
@@ -57,12 +56,12 @@ int LLSAP::OpenDictionary(void) {
 	return ydpDictionary::OpenDictionary();	// required call
 }
 
-void LLSAP::CloseDictionary(void) {
+void EngineSAP::CloseDictionary(void) {
 	fData.Unset();
 	ydpDictionary::CloseDictionary();	// required call
 }
 
-void LLSAP::FillWordList(void) {
+void EngineSAP::FillWordList(void) {
 	int magic;
 	int npages;
 	int *pages_offsets;
@@ -113,13 +112,13 @@ void LLSAP::FillWordList(void) {
 	delete body;
 }
 
-int LLSAP::ReadDefinition(int index) {
+int EngineSAP::ReadDefinition(int index) {
 	this->curWord = this->words[index];
 	this->curDefinition = definitions[index];
 	return 0;
 }
 
-const char *LLSAP::ColourFunctionName(int index) {
+const char *EngineSAP::ColourFunctionName(int index) {
 	switch(index) {
 		case 0:
 			return tr("Translation colour");
@@ -181,7 +180,7 @@ struct okreslenia { char *nazwa; int flagi; int maska; } okreslenia[]={
 
 //
 // parses format and (via UpdateAttr and convert) outputs data
-void LLSAP::ParseRTF(void) {
+void EngineSAP::ParseRTF(void) {
 	char *c; int cdoll = 0;
 	int len; int v;
 	int i, mc;

@@ -1,16 +1,16 @@
 
-#ifndef _LLSAP_H
-#define _LLSAP_H
+#ifndef _ENGINESAP_H
+#define _ENGINESAP_H
 
 #include <File.h>
 
 #include "bydpdictionary.h"
 #include "bydpconverter.h"
 
-	class LLSAP : public ydpDictionary {
+	class EngineSAP : public ydpDictionary {
 		public:
-			LLSAP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter);
-			~LLSAP();
+			EngineSAP(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter);
+			~EngineSAP();
 			int OpenDictionary(void);
 			void CloseDictionary(void);
 			const char *ColourFunctionName(int);
