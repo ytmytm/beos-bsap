@@ -2,7 +2,6 @@
 // BUGS
 //
 // TODO (order of importance):
-//	- use SpLocale
 //	- if resize would be enabled (find XXX) => menubar is invisible
 // LATER:
 //	- change config dialog into sth like BeIDE project properties
