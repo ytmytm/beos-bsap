@@ -21,6 +21,7 @@
 			~BYdpMainWindow();
 			virtual void FrameResized(float width, float height);
 			virtual void MessageReceived(BMessage *Message);
+			virtual void DispatchMessage(BMessage *message, BHandler *handler);
 			virtual bool QuitRequested();
 			virtual void RefsReceived(BMessage *Message);
 		private:

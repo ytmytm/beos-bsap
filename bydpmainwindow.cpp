@@ -51,7 +51,6 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	}
 
 	this->Hide();
-	this->AddShortcut(B_ESCAPE,B_SHIFT_KEY,new BMessage(MSG_CLEAR_INPUT));
 
 	config = new bydpConfig();
 
@@ -480,4 +479,20 @@ void BYdpMainWindow::SetFontStyle(const char *fontFamily, const char *fontStyle)
 	if (superItem != 0)
 		superItem->SetMarked(true);
 	config->save();
+}
+
+void BYdpMainWindow::DispatchMessage(BMessage *message, BHandler *handler) {
+	int8 key;
+	status_t result;
+
+	if (message->what == B_KEY_DOWN) {
+		result = message->FindInt8("byte", 0, &key);
+		if (result == B_OK) {
+			if (key == B_ESCAPE){
+				message->MakeEmpty();
+				message->what=MSG_CLEAR_INPUT;
+			}
+		}
+	}
+	BWindow::DispatchMessage(message,handler);	
 }
