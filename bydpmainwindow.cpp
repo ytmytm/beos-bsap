@@ -1,7 +1,8 @@
 //
 // BUGS
-// 	- po wyszukiwaniu podswietlony powinien byc aktualny
-//	- tajemnicze segfaulty po zmianie jezykow (nie wiadomo jak powtorzyc)
+//	- tajemnicze segfaulty po zmianie jezykow
+//		- nie wiadomo jak powtórzyc
+//		- nie wiadomo czy jeszcze sa
 // TODO (w porzadku waznosci):
 // LATER:
 //	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
@@ -325,13 +326,14 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 				myDict->GetDefinition(myDict->wordPairs[item+dictList->topIndex]);
 			break;
 		case MSG_LISTUP:
-			printf("got listup\n");
-			myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
-			break;
 		case MSG_LISTDOWN:
-			printf("got listdown\n");
+//			printf("got listup\n");
 			myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
 			break;
+//		case MSG_LISTDOWN:
+//			printf("got listdown\n");
+//			myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
+//			break;
 		case MSG_CLEAR_INPUT:
 			wordInput->SetText("");
 			wordInput->MakeFocus();

@@ -30,7 +30,7 @@ bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 
 	valid = false;
 	topIndex = -1;
-	printf("konstruktor %s\n",name);
+//	printf("konstruktor %s\n",name);
 	myHandler = handler;
 	myBar = NULL;
 	NewSize();
@@ -45,20 +45,20 @@ void bydpListView::SetScrollBar(bydpScrollBar *newBar) {
 	myBar = newBar;
 }
 
-void bydpListView::MessageReceived(BMessage *Message) {
-
-	switch(Message->what) {
-	/// XXX te komunikaty nigdy tu nie docieraja
+//void bydpListView::MessageReceived(BMessage *Message) {
+//
+//	switch(Message->what) {
+//	/// XXX te komunikaty nigdy tu nie docieraja
 //		case MSG_SCROLL:
 //			printf("lv scroll value changed\n");
 //			if (myBar->Value() != topIndex)
 //				ListRefresh(myBar->Value());
 //			break;
-		default:
-			BListView::MessageReceived(Message);
-			break;
-		}
-}
+//		default:
+//			BListView::MessageReceived(Message);
+//			break;
+//		}
+//}
 
 void bydpListView::KeyDown(const char *bytes, int32 numBytes) {
 	if (numBytes == 1) {
@@ -74,36 +74,32 @@ void bydpListView::KeyDown(const char *bytes, int32 numBytes) {
 				myHandler->Looper()->PostMessage(new BMessage(MSG_LISTUP));
 				break;
 			case B_PAGE_UP:
-				myBar->SetValue(topIndex-visible);
-//				topIndex -= visible;
-//				ListRefresh();
+				topIndex -= visible;
+				ListRefresh();
 				myHandler->Looper()->PostMessage(new BMessage(MSG_LISTUP));
 				this->Select(0);
 				break;
 			case B_PAGE_DOWN:
-				myBar->SetValue(topIndex+visible);
-//				topIndex += visible;
-//				ListRefresh();
+				topIndex += visible;
+				ListRefresh();
 				myHandler->Looper()->PostMessage(new BMessage(MSG_LISTUP));
 				this->Select(visible-1);
 				break;
 			case B_UP_ARROW:
 //				printf("listupmsg\n");
-				myBar->SetValue(myBar->Value()-1);
-//				if (this->CurrentSelection(0) == 0) {
+				if (this->CurrentSelection(0) == 0) {
 					myHandler->Looper()->PostMessage(new BMessage(MSG_LISTUP));
-//					List1Up();
-//				} else
-//					BListView::KeyDown(bytes,numBytes);
+					List1Up();
+				} else
+					BListView::KeyDown(bytes,numBytes);
 				break;
 			case B_DOWN_ARROW:
 //				printf("listdownmsg\n");
-				myBar->SetValue(myBar->Value()+1);
-//				if (this->CurrentSelection(0)+1 == this->CountItems()) {
+				if (this->CurrentSelection(0)+1 == this->CountItems()) {
 					myHandler->Looper()->PostMessage(new BMessage(MSG_LISTDOWN));
-//					List1Down();
-//				} else
-//					BListView::KeyDown(bytes,numBytes);
+					List1Down();
+				} else
+					BListView::KeyDown(bytes,numBytes);
 				break;
 			default:
 				BListView::KeyDown(bytes,numBytes);
@@ -111,48 +107,56 @@ void bydpListView::KeyDown(const char *bytes, int32 numBytes) {
 	} else {
 		BListView::KeyDown(bytes,numBytes);
 	}
+	myBar->BlockSignals(true);
+	myBar->SetValue(topIndex+this->CurrentSelection(0));
+	myBar->BlockSignals(false);
 }
 
-void bydpListView::MakeFocus(bool focused) {
-	printf("in makefocus ");
-	if (focused)
-		printf(" focused\n");
-	else
-		printf(" unfocused\n");
-	BListView::MakeFocus(focused);
-}
+//void bydpListView::MakeFocus(bool focused) {
+//	printf("in makefocus ");
+//	if (focused)
+//		printf(" focused\n");
+//	else
+//		printf(" unfocused\n");
+//	BListView::MakeFocus(focused);
+//}
 
 void bydpListView::NewData(int howmany, char **data, int current) {
-	printf("in newdata w/ %i,%i,%s\n",current,howmany,data[1]);
+//	printf("in newdata w/ %i,%i,%s\n",current,howmany,data[1]);
 	words = data;
 	wordCount = howmany;
 	valid = true;
-	// odswiezenie listy
-	myBar->SetRange(0.0,(float)wordCount-1);
+
+	NewSize();	// updates visible...
+	printf("vis:%i,wc:%i\n",visible,wordCount);
+
 	ListRefresh();
 	ListRefresh(current);	// forced refresh, required
+	this->Select(current-topIndex);
 }
 
 void bydpListView::NewSize(void) {
-	// XXX
-	// zmiana rozmiaru ramki, trzeba:
-	// dodac/usunac elementy do aktualnego rozmiaru
-	// odswiezyc liste
-
 	float dictSize;
 	float itemSize;
-	int spacefor;
 	font_height myHeight;
 
 	this->GetFontHeight(&myHeight);
 	dictSize = this->Bounds().Height();
 	itemSize = myHeight.leading+myHeight.ascent+myHeight.descent;
-	spacefor = (int)(dictSize/itemSize-2);
-	if (spacefor<1) spacefor = 1;
+	visible = (int)(dictSize/itemSize-2);
+	if (visible<1) visible = 1;
 
-	printf("in newsize with %i\n",spacefor);
+	if (visible>wordCount)
+		visible=wordCount;
 
-	visible = spacefor;
+	if (valid) {
+		if (visible<wordCount)
+			myBar->SetRange(0.0,(float)wordCount-1);
+		else
+			myBar->SetRange(0.0, 0.0);
+	}
+
+//	printf("in newsize with %i\n",visible);
 
 	int i;
 	void *anItem;
@@ -161,7 +165,7 @@ void bydpListView::NewSize(void) {
 	this->MakeEmpty();
 
 	for (i=0; i<visible; i++)
-		this->AddItem(new BStringItem("dummy"));
+		this->AddItem(new BStringItem(""));
 
 	ListRefresh();
 }
@@ -169,18 +173,18 @@ void bydpListView::NewSize(void) {
 void bydpListView::ListRefresh(int start=-1, bool update=true) {
 	if (!valid)
 		return;
-	printf("in refresh with %i\n",start);
+//	printf("in refresh with %i\n",start);
 	int i;
 	if (start>=0) {
 		if (topIndex == start)
 			return;
 		topIndex = start;
 	}
-	if (topIndex < 0)
-		topIndex = 0;
 	if ((topIndex+visible)>wordCount)
 		topIndex = wordCount-visible;
-	for (i=0; i<visible; i++)
+	if (topIndex < 0)
+		topIndex = 0;
+	for (i=0; ((i<visible)&&(i+topIndex<wordCount)); i++)
 		((BStringItem*)this->ItemAt(i))->SetText(ConvertToUtf(words[i+topIndex]));
 	this->Invalidate();
 	if (update)
@@ -188,14 +192,7 @@ void bydpListView::ListRefresh(int start=-1, bool update=true) {
 }
 
 void bydpListView::ListScrolled(int value) {
-	printf("got value:%i\n",value);
-//	this->Select(value-1);
-//	topIndex = value / visible;
-//	this->Select(value-(topIndex*visible));
-//	topIndex = value;
-//	if ((topIndex+visible)>wordCount)
-//		topIndex = wordCount-visible;
-//	this->Select(value-topIndex);
+//	printf("got value:%i\n",value);
 	ListRefresh(value,false);
 	this->Select(value-topIndex);
 }
@@ -250,8 +247,8 @@ bydpScrollBar::bydpScrollBar(BRect frame, const char *name, BHandler *handler) :
 	100.0,
 	B_VERTICAL) {
 
-	printf("scrollbar constructor\n");	
 	myHandler = handler;
+	blockSig = false;
 	SetRange(0.0,1000.0);
 }
 
@@ -260,6 +257,11 @@ bydpScrollBar::~bydpScrollBar() {
 }
 
 void bydpScrollBar::ValueChanged(float newValue) {
-	printf("value changed %f\n",newValue);
-	myHandler->Looper()->PostMessage(new BMessage(MSG_SCROLL));
+//	printf("value changed %f\n",newValue);
+	if (!blockSig)
+		myHandler->Looper()->PostMessage(new BMessage(MSG_SCROLL));
+}
+
+void bydpScrollBar::BlockSignals(bool block) {
+	blockSig = block;
 }

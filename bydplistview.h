@@ -9,8 +9,10 @@
 			bydpScrollBar(BRect frame, const char *name, BHandler *handler);
 			~bydpScrollBar();
 			virtual void ValueChanged(float newValue);
+			void BlockSignals(bool block);
 		private:
 			BHandler *myHandler;
+			bool blockSig;
 	};
 
 	#include <ListView.h>
@@ -19,9 +21,9 @@
 		public:
 			bydpListView(const char *name, BHandler *handler);
 			~bydpListView();
-			virtual void MessageReceived(BMessage *Message);
+//			virtual void MessageReceived(BMessage *Message);
 			virtual void KeyDown(const char *bytes, int32 numBytes);
-			virtual void MakeFocus(bool focused);
+//			virtual void MakeFocus(bool focused);
 			void SetScrollBar(bydpScrollBar *newBar);
 			void NewSize(void);
 			void NewData(int howmany, char **data, int current);
