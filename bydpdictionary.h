@@ -25,7 +25,6 @@
 
 			void ReGetDefinition(void);
 			void GetDefinition(int index);
-			int OpenDictionary(const char *data);
 			int OpenDictionary(void);
 			int FindWord(const char *word);
 			void CloseDictionary(void);
@@ -52,7 +51,7 @@
 			bydpConfig *cnf;
 
 			// dictionary data
-			BFile fIndex, fData;
+			BFile fData;
 			int wordCount, fuzzyWordCount;
 			char **words;
 			char **fuzzyWords;

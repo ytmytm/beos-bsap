@@ -247,9 +247,9 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuFocus->SetMarked(config->setFocusOnSelf);
 	menuFocus->SetEnabled(config->clipboardTracking);
 	if (config->toPolish)
-		this->SetTitle("BSAP: Eng->Pol");
+		this->SetTitle(APP_NAME ": Eng->Pol");
 	else
-		this->SetTitle("BSAP: Pol->Eng");
+		this->SetTitle(APP_NAME ": Pol->Eng");
 }
 
 void BYdpMainWindow::UpdateLanguages(bool newlang) {
@@ -403,7 +403,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			break;
 		case MENU_ABOUT: {
 			BString about;
-			about = "\n\nBSAP 0.7 (20050212)\n";
+			about = "\n\n" APP_NAME " " APP_VERSION "\n";
 			about += tr("English-Polish, Polish-English dictionary\n");
 			about += tr("\n\nBeOS version:\n");
 			about += "Maciej Witkowiak <ytm@elysium.pl>";

@@ -44,14 +44,14 @@ void ydpDictionary::ReGetDefinition(void) {
 	if (ReadDefinition(lastIndex) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert("BSAP", tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
 
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
-		BAlert *alert = new BAlert("BSAP", tr("Please setup path to dictionary files."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, tr("Please setup path to dictionary files."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -63,16 +63,21 @@ void ydpDictionary::GetDefinition(int index) {
 	if (ReadDefinition(index) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert("BSAP", tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
 
-int ydpDictionary::OpenDictionary(const char *data) {
+int ydpDictionary::OpenDictionary(void) {
 	int i;
+	BString dat;
 
-	if ((fData.SetTo(data, B_READ_ONLY)) != B_OK) {
-		BAlert *alert = new BAlert("BSAP", tr("Couldn't open data file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+	dat = cnf->topPath;
+	dat.Append("/");
+	dat += cnf->dataFName;
+
+	if ((fData.SetTo(dat.String(), B_READ_ONLY)) != B_OK) {
+		BAlert *alert = new BAlert(APP_NAME, tr("Couldn't open data file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
 	}
@@ -85,26 +90,18 @@ int ydpDictionary::OpenDictionary(const char *data) {
 		definitions = dictCache[i].definitions;
 		delete [] wordPairs;
 		delete [] fuzzyWords;
-		wordPairs = new int [wordCount];
-		fuzzyWords = new char* [wordCount];
 	} else {
 		FillWordList();
 		dictCache[i].wordCount = wordCount;
 		dictCache[i].words = words;
 		dictCache[i].definitions = definitions;
 	}
+	wordPairs = new int [wordCount];
+	fuzzyWords = new char* [wordCount];
+
 	lastIndex = -1;
 	dictionaryReady = true;
 	return 0;
-}
-
-int ydpDictionary::OpenDictionary(void) {
-	BString dat;
-
-	dat = cnf->topPath;
-	dat.Append("/");
-	dat += cnf->dataFName;
-	return OpenDictionary(dat.String());
 }
 
 void ydpDictionary::CloseDictionary(void) {
@@ -136,8 +133,6 @@ void ydpDictionary::FillWordList(void) {
 	wordCount = fix32(wordCount);
 	npages = fix32(npages);
 	magic = fix32(magic);
-	wordPairs = new int [wordCount];
-	fuzzyWords = new char * [wordCount];
 	words = new char* [wordCount];
 	definitions = new char* [wordCount];
 	pages_offsets = new int [4*npages];
