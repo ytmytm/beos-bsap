@@ -96,7 +96,6 @@ void bydpConfig::load(void) {
 	readValue(buf,"setFocusOnSelf=",&setFocusOnSelf);
 	readValue(buf,"distance=",&distance);
 	readValue(buf,"searchmode=",&searchmode);
-	readValue(buf,"todisplay=",&todisplay);
 	readValue(buf,"colour",&colour);
 	readValue(buf,"colour0",&colour0);
 	readValue(buf,"colour1",&colour1);
@@ -179,7 +178,6 @@ void bydpConfig::save(void) {
 	writeValue("setFocusOnSelf",setFocusOnSelf);
 	writeValue("distance",distance);
 	writeValue("searchmode",searchmode);
-	writeValue("todisplay",todisplay);
 	writeValue("colour",colour);
 	writeValue("colour0",colour0);
 	writeValue("colour1",colour1);
@@ -197,7 +195,6 @@ void bydpConfig::setDefaultConfiguration(void) {
 	setFocusOnSelf = true;
 	searchmode = SEARCH_BEGINS;
 	distance = 3;
-	todisplay = 23;
 	currentFont = be_plain_font;
 
 	colour.red = colour.green = colour.blue = 0;

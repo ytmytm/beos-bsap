@@ -5,10 +5,11 @@
 #include <String.h>
 #include <File.h>
 #include <TextView.h>
-#include <ListView.h>
+///#include <ListView.h>
 #include <Font.h>
 
 #include "bydpconfig.h"
+#include "bydplistview.h"
 
 #define A_BOLD 1
 #define A_ITALIC 2
@@ -20,7 +21,7 @@
 
 	class ydpDictionary {
 		public:
-			ydpDictionary(BTextView *output, BListView *dict, bydpConfig *config);
+			ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config);
 			~ydpDictionary();
 
 			void GetDefinition(int index);
@@ -30,14 +31,13 @@
 			void CloseDictionary(void);
 
 			int *wordPairs;		// # indeksow na liscie dictList
-			BFont usedFont;
 
 		private:
 			int ReadDefinition(int index);
 			void FillWordList(void);
 			void ParseRTF(void);
 			void UpdateAttr(int newattr);
-			void ClearWordList(void);
+			void ClearFuzzyWordList(void);
 			int ScoreWord(const char *w1, const char *w2);
 			int BeginsFindWord(const char *word);
 			int FuzzyFindWord(const char *word);
@@ -49,15 +49,16 @@
 
 			// GUI data holders
 			BTextView *outputView;
-			BListView *dictList;
+			bydpListView *dictList;
 
 			// configuration holder
 			bydpConfig *cnf;
 
 			// dictionary data
 			BFile fIndex, fData;
-			int wordCount;
+			int wordCount, fuzzyWordCount;
 			char **words;
+			char **fuzzyWords;
 			char **definitions;
 			char *curDefinition;
 			char *curWord;

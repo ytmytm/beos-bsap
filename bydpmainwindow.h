@@ -7,13 +7,13 @@
 	#include <Window.h>
 	#include <TextControl.h>
 	#include <TextView.h>
-	#include <ListView.h>
 	#include <MenuItem.h>
 	#include <FilePanel.h>
 	#include "globals.h"
 	#include "bydpconfig.h"
 	#include "bydpconfigure.h"
 	#include "bydpdictionary.h"
+	#include "bydplistview.h"
 
 	class BYdpMainWindow : public BWindow {
 		public:
@@ -35,7 +35,8 @@
 			void TryToOpenDict(void);
 			BTextView *outputView;
 			BTextControl *wordInput;
-			BListView *dictList;
+			bydpScrollBar *scrollBar;
+			bydpListView *dictList;
 			BMenuItem *menuFuzzy, *menuPlain, *menuEng, *menuPol, *menuClip;
 			BMenuItem *menuFocus;
 			BMenu *fontMenu;

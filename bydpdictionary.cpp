@@ -42,7 +42,7 @@ struct markpol
 {"stopie� wy�szy",16384|8192,2048|4096|8192|16384},
 {0,0}};
 
-ydpDictionary::ydpDictionary(BTextView *output, BListView *dict, bydpConfig *config) {
+ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config) {
 	int i;
 
 	outputView = output;
@@ -56,6 +56,7 @@ ydpDictionary::ydpDictionary(BTextView *output, BListView *dict, bydpConfig *con
 		dictCache[i].words = NULL;
 		dictCache[i].definitions = NULL;
 	}
+	fuzzyWordCount = -1;
 }
 
 ydpDictionary::~ydpDictionary() {
@@ -105,6 +106,10 @@ int ydpDictionary::OpenDictionary(const char *index, const char *data) {
 		wordCount = dictCache[i].wordCount;
 		words = dictCache[i].words;
 		definitions = dictCache[i].definitions;
+		delete [] wordPairs;
+		delete [] fuzzyWords;
+		wordPairs = new int [wordCount];
+		fuzzyWords = new char* [wordCount];
 	} else {
 		FillWordList();
 		dictCache[i].wordCount = wordCount;
@@ -127,7 +132,8 @@ int ydpDictionary::OpenDictionary(void) {
 
 void ydpDictionary::CloseDictionary(void) {
 	fData.Unset();
-	ClearWordList();
+///	ClearWordList(); XXX
+	ClearFuzzyWordList();
 }
 
 unsigned int fix32(unsigned int x) {
@@ -155,6 +161,7 @@ void ydpDictionary::FillWordList(void) {
 	npages = fix32(npages);
 	magic = fix32(magic);
 	wordPairs = new int [wordCount];
+	fuzzyWords = new char * [wordCount];
 	words = new char* [wordCount];
 	definitions = new char* [wordCount];
 	pages_offsets = new int [4*npages];
@@ -396,7 +403,7 @@ char *ydpDictionary::ConvertFromUtf(const char *input) {
 // search stuff below
 
 int ydpDictionary::FindWord(const char *wordin) {
-	int result,i,j;
+	int result,i;
 
 	if (!dictionaryReady) {
 		outputView->SetText("Proszę skonfigurować ścieżkę dostępu do plików słownika.\n");
@@ -410,14 +417,8 @@ int ydpDictionary::FindWord(const char *wordin) {
 		case SEARCH_BEGINS:
 		default:
 			result = BeginsFindWord(wordin);
-			ClearWordList();
-			j = 0;
-			i = result-(cnf->todisplay/2-1); if (i<0) i=0;
-			for (;(i<wordCount) && (j<cnf->todisplay);i++) {
-				dictList->AddItem(new BStringItem(ConvertToUtf(words[i])));
-				wordPairs[j]=i;
-				j++;
-			}
+			for (i=0;i<wordCount;i++) wordPairs[i]=i;
+			dictList->NewData(wordCount,words,result);
 			return result;
 			break;
 	}
@@ -447,12 +448,12 @@ int ydpDictionary::BeginsFindWord(const char *wordin) {
 	return maxitem;
 }
 
-void ydpDictionary::ClearWordList(void) {
+void ydpDictionary::ClearFuzzyWordList(void) {
 	int i;
-	void *anItem;
-	for (i=0; (anItem=dictList->ItemAt(i)); i++)
-		delete anItem;
-	dictList->MakeEmpty();
+	if (fuzzyWordCount>0)
+		for (i=0;i<fuzzyWordCount;i++)
+			delete [] fuzzyWords[i];
+	fuzzyWordCount = 0;
 }
 
 int ydpDictionary::FuzzyFindWord(const char *wordin) {
@@ -465,14 +466,15 @@ int ydpDictionary::FuzzyFindWord(const char *wordin) {
 
 	char *word = ConvertFromUtf(wordin);
 
-	ClearWordList();
+	ClearFuzzyWordList();
 
     numFound = 0;
     best = 0;
     hiscore = cnf->distance;
     for (i=0;i<wordCount;i++)
 		if ((score=editDistance(word,words[i])) < cnf->distance) {
-			dictList->AddItem(new BStringItem(ConvertToUtf(words[i])));
+			fuzzyWords[numFound] = new char [strlen(words[i])+1];
+			strcpy(fuzzyWords[numFound],words[i]);
 			wordPairs[numFound] = i;
 			numFound++;
 			if (score<hiscore) {
@@ -480,6 +482,8 @@ int ydpDictionary::FuzzyFindWord(const char *wordin) {
 				hiscore = score;
 			}
 		}
+	fuzzyWordCount = numFound;
+	dictList->NewData(fuzzyWordCount,fuzzyWords,best);
 	return best;
 }
 

@@ -1,11 +1,11 @@
 //
+// BUGS
+// 	- po wyszukiwaniu podswietlony powinien byc aktualny
+//	- tajemnicze segfaulty po zmianie jezykow (nie wiadomo jak powtorzyc)
 // TODO (w porzadku waznosci):
 // LATER:
 //	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
-//	- po wyszukiwaniu pierwszy klik na liste nie dziala
-//		- przychodzi msg o zmianie inputa!
-//	- lista wyrazow przy nie-fuzzy zachowuje sie nieintuicyjnie, na razie
-//	  musi wystarczyc, w przyszlosci pewnie lepiej byloby sportowac kydpdict
+//	- procedury konwersji osobno
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
@@ -68,11 +68,15 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	outputView->SetStylable(true);
 	MainView->AddChild(new BScrollView("scrolloutput",outputView,B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, 0, true, true));
 
-	dictList = new BListView(
-		BRect(10,60,200,400), "listView", B_SINGLE_SELECTION_LIST,B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM);
-	MainView->AddChild(new BScrollView("scollbar", dictList, B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM, 0, false, true));
+	dictList = new bydpListView("listView", this);
+	MainView->AddChild(new BScrollView("scrollview", dictList, B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM, 0, false, false, B_FANCY_BORDER));
 	dictList->SetInvocationMessage(new BMessage(MSG_LIST_INVOKED));
 	dictList->SetSelectionMessage(new BMessage(MSG_LIST_SELECTED));
+	BRect barr = dictList->Bounds();
+	barr.left = barr.right-B_V_SCROLL_BAR_WIDTH;
+	scrollBar = new bydpScrollBar(barr, "scrollbar", dictList);
+	dictList->AddChild(scrollBar);
+	dictList->SetScrollBar(scrollBar);
 
 	BRect r;
 	r = MainView->Bounds();
@@ -318,7 +322,15 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			if (item>dictList->CountItems())
 				item = dictList->CountItems();
 			if (item>=0)
-				myDict->GetDefinition(myDict->wordPairs[item]);
+				myDict->GetDefinition(myDict->wordPairs[item+dictList->topIndex]);
+			break;
+		case MSG_LISTUP:
+			printf("got listup\n");
+			myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
+			break;
+		case MSG_LISTDOWN:
+			printf("got listdown\n");
+			myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
 			break;
 		case MSG_CLEAR_INPUT:
 			wordInput->SetText("");
@@ -374,7 +386,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			ConfigDistance();
 			break;
 		case MENU_ABOUT:
-			outputView->SetText("\n\nBSAP 0.5 (XII 2004)\nsłownik angielsko-polski, polsko-angielski\n"
+			outputView->SetText("\n\nBSAP 0.6 (XII 2004)\nsłownik angielsko-polski, polsko-angielski\n"
 				"\n\nwersja dla BeOSa:\nMaciej Witkowiak <ytm@elysium.pl>"
 				"\n\nna podstawie sap v0.2b\n(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita"
 				"\n\nProgram na licencji GNU/GPL"
@@ -414,6 +426,11 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			}
 			SetFontStyle(fontFamily, fontStyle);
 		}
+		case MSG_SCROLL:
+//			printf("scroll value changed\n");
+			if (scrollBar->Value() != dictList->topIndex)
+				dictList->ListScrolled(scrollBar->Value());
+			break;
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
 			break;
@@ -441,19 +458,7 @@ bool BYdpMainWindow::QuitRequested() {
 }
 
 void BYdpMainWindow::FrameResized(float width, float height) {
-	float dictSize;
-	float itemSize;
-	int spacefor;
-	font_height myHeight;
-	dictList->GetFontHeight(&myHeight);
-	dictSize = dictList->Bounds().Height();
-	itemSize = myHeight.leading+myHeight.ascent+myHeight.descent;
-	spacefor = (int)(dictSize/itemSize-2);
-	if (spacefor<1) spacefor = 1;
-	config->todisplay = spacefor;
-//	printf("spacefor: %i\n",spacefor);
-	if (config->searchmode == SEARCH_BEGINS)
-		HandleModifiedInput(true);
+	dictList->NewSize();
 }
 
 void BYdpMainWindow::SetFontSize(float fontSize) {
@@ -466,7 +471,6 @@ void BYdpMainWindow::SetFontStyle(const char *fontFamily, const char *fontStyle)
 	font_style oldStyle;
 
 	config->currentFont.GetFamilyAndStyle(&oldFamily,&oldStyle);
-	// clear that family's bit on the menu, if necessary
 	if (strcmp(oldFamily,fontFamily)) {
 		BMenuItem * oldItem = fontMenu->FindItem(oldFamily);
 		if (oldItem != 0)

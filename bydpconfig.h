@@ -23,7 +23,6 @@
 			bool setFocusOnSelf;
 			int distance;	// for fuzzy search
 			int searchmode;
-			int todisplay;	// how many to show on list with plain search
 			rgb_color colour, colour0, colour1, colour2;
 			BFont currentFont;
 
