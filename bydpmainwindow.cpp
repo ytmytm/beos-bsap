@@ -4,6 +4,7 @@
 //		- nie wiadomo jak powtórzyc
 //		- nie wiadomo czy jeszcze sa
 // TODO (w porzadku waznosci):
+//	- jesli wlaczyc resize (szukaj XXX), to menubar ginie z ekranu
 // LATER:
 
 #include "bydpmainwindow.h"
@@ -38,7 +39,10 @@ const uint32 FONT_FAMILY =			'MFam';
 const uint32 FONT_STYLE =			'MFst';
 
 BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
-	BRect(64, 64, 585, 480), windowTitle, B_TITLED_WINDOW, B_OUTLINE_RESIZE ) {
+	BRect(64, 64, 585, 480), windowTitle, B_DOCUMENT_WINDOW, B_OUTLINE_RESIZE ) {
+
+	this->Hide();
+	config = new bydpConfig();
 
 	BView *MainView(
 		new BView(BWindow::Bounds(), NULL, B_FOLLOW_ALL, 0) );
@@ -49,10 +53,6 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 		return;
 	}
 
-	this->Hide();
-
-	config = new bydpConfig();
-
 	MainView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	BWindow::AddChild(MainView);
 	wordInput = new BTextControl(
@@ -61,7 +61,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	MainView->AddChild(wordInput);
 
 	outputView = new BTextView(
-		BRect(220,24,500,400), "outputView", BRect(10,10,300,200), B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, B_WILL_DRAW|B_PULSE_NEEDED);
+		BRect(220,24,506,402), "outputView", BRect(10,10,300,200), B_FOLLOW_LEFT_RIGHT|B_FOLLOW_TOP_BOTTOM, B_WILL_DRAW|B_PULSE_NEEDED);
 	outputView->SetText("output");
 	outputView->MakeEditable(false);
 	outputView->SetStylable(true);
@@ -105,7 +105,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(new BMenuItem("Kolor tłumaczenia", new BMessage(MENU_COLOR0)));
 	menu->AddItem(new BMenuItem("Kolor słów kluczowych", new BMessage(MENU_COLOR1)));
 	menu->AddItem(new BMenuItem("Kolor kwalifikatorów", new BMessage(MENU_COLOR2)));
-	menu->AddItem(new BMenuItem("Kolor dodatkowyego tekstu", new BMessage(MENU_COLOR3)));
+	menu->AddItem(new BMenuItem("Kolor dodatkowego tekstu", new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
 	menu->AddItem(menuClip = new BMenuItem("Śledzenie schowka", new BMessage(MENU_CLIP), 'L'));
 	menu->AddItem(menuFocus = new BMenuItem("Wyskakujące okno", new BMessage(MENU_FOCUS), 'F'));
@@ -179,6 +179,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	myDict = new ydpDictionary(outputView, dictList, config);
 	this->FrameResized(0.0, 0.0);
 	UpdateMenus();
+
 	wordInput->MakeFocus(true);
 	firstStart = true;
 	TryToOpenDict();
@@ -281,6 +282,10 @@ void BYdpMainWindow::TryToOpenDict(void) {
 //		printf("success\n");
 		firstStart = false;
 		wordInput->SetText("A");
+		this->MoveTo(BPoint(config->position.left, config->position.top));
+//		XXX if this is enabled - menubar is lost
+//		this->ResizeTo(config->position.Width(),config->position.Height());
+
 		this->Show();
 	}
 }
@@ -471,6 +476,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 }
 
 bool BYdpMainWindow::QuitRequested() {
+	config->position = this->Frame();
 	config->save();
 	be_app->PostMessage(B_QUIT_REQUESTED);
 	return BWindow::QuitRequested();
