@@ -1,8 +1,9 @@
 
 #include "bydpdict.h"
 #include "globals.h"
+#include <SpLocaleApp.h>
 
-BYdpApp::BYdpApp() : BApplication(APP_SIGNATURE) {
+BYdpApp::BYdpApp() : SpLocaleApp(APP_SIGNATURE) {
 	myMainWindow = new BYdpMainWindow("BSAP");
 	if (myMainWindow != NULL) {
 		myMainWindow->Show();

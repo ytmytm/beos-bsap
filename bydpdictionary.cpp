@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <Alert.h>
+#include <SpLocaleApp.h>
+#include "globals.h"
 
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config) {
 	int i;
@@ -42,14 +44,14 @@ void ydpDictionary::ReGetDefinition(void) {
 	if (ReadDefinition(lastIndex) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert("BSAP", "Błąd przy odczycie pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert("BSAP", tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
 
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
-		BAlert *alert = new BAlert("BSAP", "Proszę skonfigurować ścieżkę dostępu do plików słownika.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert("BSAP", tr("Please setup path to dictionary files."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -61,7 +63,7 @@ void ydpDictionary::GetDefinition(int index) {
 	if (ReadDefinition(index) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert("BSAP", "Błąd przy odczycie pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert("BSAP", tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
@@ -70,7 +72,7 @@ int ydpDictionary::OpenDictionary(const char *data) {
 	int i;
 
 	if ((fData.SetTo(data, B_READ_ONLY)) != B_OK) {
-		BAlert *alert = new BAlert("BSAP", "Błąd przy otwieraniu pliku danych.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert("BSAP", tr("Couldn't open data file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
 	}
@@ -178,7 +180,8 @@ int ydpDictionary::ReadDefinition(int index) {
 }
 
 /// XXX
-/// to jest ohydne - do zmiany (polskie litery w ISO, bo tlumaczone w UpdateAttr)
+/// this is ugly - change it (polish letters are ISO8859-2 encoded because they pass
+/// through UpdateAttr convert routine)
 struct okreslenia { char *nazwa; int flagi; int maska; } okreslenia[]={
 {"przymiotnik",1,15},
 {"przys��wek",2,15},
@@ -217,7 +220,7 @@ struct okreslenia { char *nazwa; int flagi; int maska; } okreslenia[]={
 {0,0}};
 
 //
-// parsuje rtf i od razu (via UpdateAttr i konwersje) wstawia na wyjscie
+// parses format and (via UpdateAttr and convert) outputs data
 void ydpDictionary::ParseRTF(void) {
 	char *c; int cdoll = 0;
 	int len; int v;
@@ -306,7 +309,7 @@ void ydpDictionary::ParseRTF(void) {
 }
 
 //
-// wstawia na koniec tekst z line z odpowiednimi parametrami
+// appends 'line' to output widget with proper attributes
 void ydpDictionary::UpdateAttr(int newattr) {
 	if (line.Length() == 0)
 		return;
@@ -345,7 +348,7 @@ int ydpDictionary::FindWord(const char *wordin) {
 	int result,i;
 
 	if (!dictionaryReady) {
-		outputView->SetText("Proszę skonfigurować ścieżkę dostępu do plików słownika.\n");
+		outputView->SetText(tr("Please setup path to dictionary files."));
 		return -1;
 	}
 

@@ -2,7 +2,7 @@
 #ifndef _BYDPMAINWINDOW_H
 #define _BYDPMAINWINDOW_H
 
-	#include <Application.h>
+	#include <SpLocaleApp.h>
 	#include <View.h>
 	#include <Window.h>
 	#include <TextControl.h>

@@ -85,41 +85,43 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	BMenuBar *menubar = new BMenuBar(r, "menubar");
 	MainView->AddChild(menubar);
 
-	BMenu *menu = new BMenu("Plik");
-	menu->AddItem(new BMenuItem("O programie...", new BMessage(MENU_ABOUT), 'O'));
-	menu->AddItem(new BMenuItem("Zakończ", new BMessage(B_QUIT_REQUESTED), 'Q'));
+	BMenu *menu = new BMenu(tr("File"));
+	((SpLocaleApp*)be_app)->AddToFileMenu(menu, false, false, false);
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(tr("About..."), new BMessage(MENU_ABOUT), 'O'));
+	menu->AddItem(new BMenuItem(tr("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
 	menubar->AddItem(menu);
 
-	menu = new BMenu("Język");
-	menu->AddItem(new BMenuItem("Przełącz język", new BMessage(MENU_SWITCH), 'J'));
-	menu->AddItem(menuEng = new BMenuItem("Eng -> Pol", new BMessage(MENU_ENG2POL), 'E'));
-	menu->AddItem(menuPol = new BMenuItem("Pol -> Eng", new BMessage(MENU_POL2ENG), 'P'));
+	menu = new BMenu(tr("Dictionary"));
+	menu->AddItem(new BMenuItem(tr("Switch"), new BMessage(MENU_SWITCH), 'J'));
+	menu->AddItem(menuEng = new BMenuItem(tr("Eng -> Pol"), new BMessage(MENU_ENG2POL), 'E'));
+	menu->AddItem(menuPol = new BMenuItem(tr("Pol -> Eng"), new BMessage(MENU_POL2ENG), 'P'));
 	menubar->AddItem(menu);
 
-	menu = new BMenu("Wyszukiwanie");
-	menu->AddItem(menuPlain = new BMenuItem("Zwykłe", new BMessage(MENU_PLAIN), 'Z'));
-	menu->AddItem(menuFuzzy = new BMenuItem("Rozmyte", new BMessage(MENU_FUZZY), 'R'));
+	menu = new BMenu(tr("Search type"));
+	menu->AddItem(menuPlain = new BMenuItem(tr("Plain"), new BMessage(MENU_PLAIN), 'Z'));
+	menu->AddItem(menuFuzzy = new BMenuItem(tr("Fuzzy"), new BMessage(MENU_FUZZY), 'R'));
 	menubar->AddItem(menu);
 
-	menu = new BMenu("Ustawienia");
-	menu->AddItem(new BMenuItem("Ścieżka do słownika", new BMessage(MENU_PATH), 'S'));
+	menu = new BMenu(tr("Settings"));
+	menu->AddItem(new BMenuItem(tr("Path to dictionary"), new BMessage(MENU_PATH), 'S'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Kolor tłumaczenia", new BMessage(MENU_COLOR0)));
-	menu->AddItem(new BMenuItem("Kolor słów kluczowych", new BMessage(MENU_COLOR1)));
-	menu->AddItem(new BMenuItem("Kolor kwalifikatorów", new BMessage(MENU_COLOR2)));
-	menu->AddItem(new BMenuItem("Kolor dodatkowego tekstu", new BMessage(MENU_COLOR3)));
+	menu->AddItem(new BMenuItem(tr("Translation colour"), new BMessage(MENU_COLOR0)));
+	menu->AddItem(new BMenuItem(tr("Keywords colour"), new BMessage(MENU_COLOR1)));
+	menu->AddItem(new BMenuItem(tr("Qualifiers colour"), new BMessage(MENU_COLOR2)));
+	menu->AddItem(new BMenuItem(tr("Additional text colour"), new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
-	menu->AddItem(menuClip = new BMenuItem("Śledzenie schowka", new BMessage(MENU_CLIP), 'L'));
-	menu->AddItem(menuFocus = new BMenuItem("Wyskakujące okno", new BMessage(MENU_FOCUS), 'F'));
+	menu->AddItem(menuClip = new BMenuItem(tr("Clipboard tracking"), new BMessage(MENU_CLIP), 'L'));
+	menu->AddItem(menuFocus = new BMenuItem(tr("Popup window"), new BMessage(MENU_FOCUS), 'F'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Stopień rozmycia", new BMessage(MENU_DISTANCE)));
+	menu->AddItem(new BMenuItem(tr("Fuzzy factor"), new BMessage(MENU_DISTANCE)));
 	menubar->AddItem(menu);
 
 	BMessage *fontMessage;
-	fontMenu = new BMenu("Czcionka");
+	fontMenu = new BMenu(tr("Font"));
 	menu->AddItem(fontMenu);
 
-	BMenu* fontSizeMenu = new BMenu("Rozmiar");
+	BMenu* fontSizeMenu = new BMenu(tr("Size"));
 	fontSizeMenu->SetRadioMode(true);
 	fontMenu->AddItem(fontSizeMenu);
 	fontMenu->AddSeparatorItem();
@@ -262,14 +264,14 @@ void BYdpMainWindow::UpdateLanguages(bool newlang) {
 
 void BYdpMainWindow::ConfigColour(int number) {
 //	printf("configure colour %i\n", number);
-	myDialog = new bydpConfigure("Ustawienie kolorów", this);
+	myDialog = new bydpConfigure(tr("Colour settings"), this);
 	myDialog->SetConfig(config);
 	myDialog->SetupColourDialog(number);
 	myDialog->Show();
 }
 
 void BYdpMainWindow::ConfigDistance(void) {
-	myDialog = new bydpConfigure("Stopień rozmycia wyszukiwania", this);
+	myDialog = new bydpConfigure(tr("Fuzzy search factor"), this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDistanceDialog();
 	myDialog->Show();
@@ -298,7 +300,7 @@ void BYdpMainWindow::ConfigPath(void) {
 	myPanel = new BFilePanel(B_OPEN_PANEL,
 			&mesg, NULL, B_DIRECTORY_NODE, false, NULL, NULL, true, true);
 	myPanel->Show();
-	myPanel->Window()->SetTitle("Wybierz katalog z plikami słownika");
+	myPanel->Window()->SetTitle(tr("Choose directory with dictionary files"));
 }
 
 void BYdpMainWindow::RefsReceived(BMessage *Message) {
@@ -400,13 +402,21 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 		case MENU_DISTANCE:
 			ConfigDistance();
 			break;
-		case MENU_ABOUT:
-			outputView->SetText("\n\nBSAP 0.6 (20050109)\nsłownik angielsko-polski, polsko-angielski\n"
-				"\n\nwersja dla BeOSa:\nMaciej Witkowiak <ytm@elysium.pl>"
-				"\n\nna podstawie sap v0.2b\n(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita"
-				"\n\nProgram na licencji GNU/GPL"
-				"\n\nodwiedź:\nhttp://home.elysium.pl/ytm/html/beos.html\n"
-				"\nprogram powstał dzięki motywacji ze strony:\nhttp://www.haiku-os.pl\n");
+		case MENU_ABOUT: {
+			BString about;
+			about = "\n\nBSAP 0.7 (20050212)\n";
+			about += tr("English-Polish, Polish-English dictionary\n");
+			about += tr("\n\nBeOS version:\n");
+			about += "Maciej Witkowiak <ytm@elysium.pl>";
+			about += tr("\n\nbased on sap v0.2b\n");
+			about += "(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita";
+			about += tr("\n\nLocale support with SpLocale");
+			about += tr("\n\nSoftware released under GNU/GPL license");
+			about += tr("\n\nvisit:\n");
+			about += "http://home.elysium.pl/ytm/html/beos.html\n";
+			about += tr("\nDevelopment has been encouraged by:\n");
+			about += "http://www.haiku-os.pl";
+			outputView->SetText(about.String()); }
 			break;
 		case FONT_SIZE:
 		{

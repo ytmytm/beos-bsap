@@ -3,6 +3,8 @@
 
 #include <Button.h>
 #include <StringView.h>
+#include <SpLocaleApp.h>
+#include "globals.h"
 
 const uint32 BUTTON_OK =		'BuOK';
 const uint32 BUTTON_CANCEL =	'BuCA';
@@ -29,12 +31,12 @@ bydpConfigure::~bydpConfigure() {
 }
 
 void bydpConfigure::SetupDistanceDialog(void) {
-	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", "Anuluj", new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
+	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", tr("Cancel"), new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
 	mainView->AddChild(CancelButton);
-	BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok","OK", new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
+	BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok",tr("OK"), new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
 	mainView->AddChild(OKButton);
-	mySlider = new BSlider(BRect(44,20,22+285,20+100), "slider", "Stopień rozmycia", new BMessage(SLIDER), 1, 5);
-	mySlider->SetLimitLabels("niski", "wysoki");
+	mySlider = new BSlider(BRect(44,20,22+285,20+100), "slider", tr("Fuzzy factor"), new BMessage(SLIDER), 1, 5);
+	mySlider->SetLimitLabels(tr("low"), tr("high"));
 	mySlider->SetHashMarks(B_HASH_MARKS_BOTH);
 	mySlider->SetHashMarkCount(5);
 	mySlider->SetValue(myConfig->distance);
@@ -45,11 +47,11 @@ void bydpConfigure::SetupColourDialog(int colour) {
 
 	myColour = colour;
 
-	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", "Anuluj", new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
+	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", tr("Cancel"), new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
 	mainView->AddChild(CancelButton);
-	BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok","OK", new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
+	BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok",tr("OK"), new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
 	mainView->AddChild(OKButton);
-	exampleText = new BStringView(BRect(22,91,22+258,91+19),"example","Przykładowy tekst.", B_FOLLOW_LEFT, B_WILL_DRAW);
+	exampleText = new BStringView(BRect(22,91,22+258,91+19),"example",tr("Example text."), B_FOLLOW_LEFT, B_WILL_DRAW);
 	exampleText->SetAlignment(B_ALIGN_CENTER);
 	mainView->AddChild(exampleText);
 	myCColor = new BColorControl(BPoint(22,20),B_CELLS_32x8, 8.0, "ccontrol", new BMessage(CCOLOR_MSG), false);

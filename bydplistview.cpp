@@ -1,7 +1,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <Application.h>
+#include <SpLocaleApp.h>
+#include "globals.h"
 #include "bydplistview.h"
 
 #define TABLE_UTF8 { \
@@ -41,7 +42,7 @@ bydpListView::~bydpListView() {
 }
 
 void bydpListView::SetScrollBar(bydpScrollBar *newBar) {
-// teoretycznie niepotrzebne - wystarczy wziac dziecko...
+// in theory this is unneeded - you just need to take child by hand...
 	myBar = newBar;
 }
 

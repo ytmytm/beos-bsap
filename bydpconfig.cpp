@@ -1,8 +1,10 @@
 
-#include "bydpconfig.h"
 #include <stdlib.h>
 #include <Path.h>
 #include <Alert.h>
+#include <SpLocaleApp.h>
+#include "globals.h"
+#include "bydpconfig.h"
 
 bydpConfig::bydpConfig() {
 	load();
@@ -211,7 +213,7 @@ void bydpConfig::writeValue(BString variable, BRect value) {
 
 void bydpConfig::save(void) {
 	if (conf.SetTo(CONFIG_NAME,B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
-		BAlert *alert = new BAlert("BSAP", "Błąd przy zapisywaniu pliku konfiguracyjnego.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert("BSAP", tr("Error writing configuration file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -228,7 +230,7 @@ void bydpConfig::save(void) {
 	writeValue("currentFont",currentFont);
 	writeValue("position",position);
 	conf.Unset();
-	updateFName();	// don't remove this - needs to be up-to-date for langswitch
+	updateFName();	// don't remove this - fname needs to be up-to-date for langswitch
 }
 
 void bydpConfig::setDefaultConfiguration(void) {
