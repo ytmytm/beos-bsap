@@ -319,84 +319,10 @@ void ydpDictionary::UpdateAttr(int newattr) {
 		colour = &cnf->colour2;
 	}
 	outputView->SetFontAndColor(&myfont,B_FONT_ALL,colour);
-	line = ConvertToUtf(line);
+	line = ConvertToUtf(line.String());
 	outputView->Insert(textlen,line.String(),line.Length());
 	textlen+=line.Length();
 	line="";
-}
-
-/////////////////////
-// utf8 <-> cp1250 convertion stuff below
-//
-
-const char *utf8_table[] = TABLE_UTF8;
-const char upper_cp[] = "A¡BCÆDEÊFGHIJKL£MNÑOÓPQRS¦TUVWXYZ¯¬";
-const char lower_cp[] = "a±bcædeêfghijkl³mnñoópqrs¶tuvwxyz¿¼";
-
-char ydpDictionary::tolower(const char c) {
-    unsigned int i;
-    for (i=0;i<sizeof(upper_cp);i++)
-	if (c == upper_cp[i])
-	    return lower_cp[i];
-    return c;
-}
-
-char *ydpDictionary::ConvertToUtf(BString line) {
-	static char buf[1024];
-	static char letter[2] = "\0";
-	unsigned char *inp;
-	memset(buf, 0, sizeof(buf));
-
-	inp = (unsigned char *)line.String();
-	for (; *inp; inp++) {
-		if (*inp > 126) {
-			strncat(buf, utf8_table[*inp - 127], sizeof(buf) - strlen(buf) - 1);
-		} else {
-			letter[0] = *inp;
-			strncat(buf, letter, sizeof(buf) - strlen(buf) - 1);
-		}
-	}
-	return buf;
-}
-
-char *ydpDictionary::ConvertFromUtf(const char *input) {
-	static char buf[1024];
-	unsigned char *inp, *inp2;
-	memset(buf, 0, sizeof(buf));
-	int i,k;
-	char a,b;
-	bool notyet;
-
-	k=0;
-	inp = (unsigned char*)input;
-	inp2 = inp; inp2++;
-	for (; *inp; inp++, inp2++) {
-		a = *inp;
-		b = *inp2;
-		i=0;
-		notyet=true;
-		while ((i<129) && (notyet)) {
-			if (a==utf8_table[i][0]) {
-				if (utf8_table[i][1]!=0) {
-					if (b==utf8_table[i][1]) {
-						inp++;
-						inp2++;
-						notyet=false;
-					}
-				} else {
-					notyet=false;
-				}
-			}
-			i++;
-		}
-		if (notyet)
-			buf[k]=a;
-		else
-			buf[k]=i+126;
-		k++;
-	}
-	buf[k]='\0';
-	return buf;
 }
 
 ////////////////

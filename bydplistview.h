@@ -39,7 +39,6 @@
 			bool valid;
 			bydpScrollBar *myBar;
 
-			char *ConvertToUtf(const char *line);
 			void List1Up(void);
 			void List1Down(void);
 	};
@@ -47,5 +46,9 @@
 	const uint32 MSG_LISTUP =	'LVUp';
 	const uint32 MSG_LISTDOWN =	'LVDo';
 	const uint32 MSG_SCROLL =	'SBSc';
+
+    char tolower(const char c);
+	char *ConvertToUtf(const char *line);
+	char *ConvertFromUtf(const char *input);
 
 #endif

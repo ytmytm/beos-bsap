@@ -6,7 +6,6 @@
 // TODO (w porzadku waznosci):
 // LATER:
 //	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
-//	- procedury konwersji osobno
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
@@ -430,8 +429,10 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 		}
 		case MSG_SCROLL:
 //			printf("scroll value changed\n");
-			if (scrollBar->Value() != dictList->topIndex)
+			if (scrollBar->Value() != dictList->topIndex) {
 				dictList->ListScrolled(scrollBar->Value());
+				myDict->GetDefinition(myDict->wordPairs[dictList->topIndex+dictList->CurrentSelection(0)]);
+			}
 			break;
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
