@@ -323,8 +323,8 @@ void ydpDictionary::UpdateAttr(int newattr) {
 //
 
 const char *utf8_table[] = TABLE_UTF8;
-const char upper_cp[] = "A¥BCÆDEÊFGHIJKL£MNÑOÓPQRSŒTUVWXYZ¯";
-const char lower_cp[] = "a¹bcædeêfghijkl³mnñoópqrsœtuvwxyz¿Ÿ";
+const char upper_cp[] = "A¡BCÆDEÊFGHIJKL£MNÑOÓPQRS¦TUVWXYZ¯¬";
+const char lower_cp[] = "a±bcædeêfghijkl³mnñoópqrs¶tuvwxyz¿¼";
 
 char ydpDictionary::tolower(const char c) {
     unsigned int i;
