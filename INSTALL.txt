@@ -1,0 +1,40 @@
+
+BSAP 0.7
+(c) 2005 Maciej Witkowiak <ytm@elysium.pl>
+http://members.elysium.pl/ytm/html/beos.html
+http://ytm.bossstation.dnsalias.org/html/beos.html
+
+BUILD
+Just open bsap.proj in BeIDE and build.
+After that you can reduce its size by using Terminal, and from command line doing:
+	strip -R .comment -R .note BSAP
+
+Dictionary data files are in lib/
+Contents of locale/ should be copied to /boot/home/config/locale/
+
+NOTES
+Bug list (empty! :), things to fix and do (in the future) is at the top of bydpmainwindow.cpp
+Source files and classes have 'ydp' in their names because when I started this was
+supposed to be interface for Collins dictionaries, released by YDP Poland. Later I've changed
+my mind. BYDPDict can be found at the above URLs.
+
+LEGAL
+Although files don't have that note at their top (I was too lazy to add it) - everything that is
+packaged in this archive is under terms of GNU/GPL (included). It means that you are free to
+use this code in your programs as long as they are under GNU/GPL too. I don't have to mention
+that you should mention the origin of the code then.
+
+FUTURE
+After finishing TODO list it would be nice to integrate BSAP with BYDPDict. The two differ only
+in some GUI/config details and bydpdictionary.cpp methods.
+
+READY-FOR-USE CODE
+Take a look at bydpListView. It allows to comfortably handle element list with a slider.
+It differs from BListView inside BScrollView because my class doesn't have problems with
+handling thousands of elements on the list. (BScrollView is terrible even with few hundred).
+
+You might find bydpConfig class useful for managing text configuration files.
+
+The code is under GNU/GPL terms. I encourage to use, correct and extend it in your own
+projects. And if you do, I would be very happy to receive patches so they could be integrated
+into future BSAP releases.

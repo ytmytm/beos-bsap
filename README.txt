@@ -1,0 +1,47 @@
+
+BSAP 0.7
+(c) 2005 Maciej Witkowiak <ytm@elysium.pl>
+http://members.elysium.pl/ytm/html/beos.html
+http://ytm.bossstation.dnsalias.org/html/beos.html
+
+BSAP is an English-Polish, Polish-English dictionary program that uses dictionary data files
+from sap. I have used ideas contained in sap code thus BSAP is under GNU/GPL terms.
+
+Requirements
+The program requires BeOS configured for Polish keymap and with installed fonts with Polish
+letters.
+The program also requires SpLocale library.
+URL: http://bebits.com/app/1869
+
+Configuration
+On the first execution the program will ask for directory that contains dictionary files -
+dvp_1.dic and dvp_2.dic.
+This is important - you need to select a directory, not files within it.
+The program has its configuration file in /home/config/settings/bsap. It is a plain text file
+that you can edit or, in case of problems, delete.
+
+Usage
+Trivial :). However there are some things worth to be mentioned:
+The program has two search modes - plain search and fuzzy search.
+In plain search mode as the search result there is returned that word which shares the most
+common characters (from the left) with given query.
+Fuzzy search works by finding words that are similar to the given one. It utilizes edit distance
+algorithm for that purpose. Due to performance reasons with fuzzy search caseness does
+matter. You can control how similar the words should be by fuzzy factor menu option.
+
+Clipboard
+If "Clipboard tracking" option is on, then any text copied to the clipboard will be automatically
+intercepted and searched in the dictionary. If combined with "Popup window" option - the
+dictionary window will place itself above all other windows in the workspace.
+
+Keyboard shortucts
+There is only one invisible shortcut - ESC key will clear the edit line and move focus there.
+Otherwise the program should be quite comfortable controlled with keyboard only.
+
+Known bugs
+I guess that my default colour scheme is ugly and can be only changed :). I don't like some
+option names also.
+
+Final word
+If you're a programmer take a look at the end of INSTALL.txt file for some info about code that
+might be useful in your projects.

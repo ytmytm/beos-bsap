@@ -11,7 +11,6 @@ dlatego został wydany na licencji GNU/GPL.
 Wymagania
 Program wymaga skonfigurowania BeOSa do obsługi polskiego układu klawiatury
 oraz instalacji czcionek z polskimi znakami.
-Pomoc: 
 Program wymaga zainstalowanej biblioteki SpLocale.
 Pomoc: http://bebits.com/app/1869
 
@@ -46,3 +45,7 @@ nadzieję) obsługiwać wyłącznie korzystając z klawiatury.
 Znane błędy
 Prawdopodobnie mój domyślny układ kolorów nadaje się tylko do zmiany, nazwy opcji
 również pozostawiają trochę do życzenia :).
+
+Na koniec
+Jeśli interesujesz się pisaniem programów pod BeOSa, zajrzyj na koniec pliku INSTALACJA.txt.
+Znajdziesz tam kilka informacji o kodzie, który może być przydatny w twoich programach.
