@@ -191,6 +191,7 @@ void BYdpMainWindow::NewClipData(void) {
 	const char *text; 
 	int32 textLen; 
 	BString result;
+	static BString lastResult;
 	BMessage *clip = (BMessage *)NULL; 
 
 	if (!config->clipboardTracking)
@@ -202,9 +203,12 @@ void BYdpMainWindow::NewClipData(void) {
 		be_clipboard->Unlock();
 		result.SetTo(text,textLen);
 		result.RemoveSet(" ");
-		wordInput->SetText(result.String());
-		if (config->setFocusOnSelf)
-			this->Activate();
+		if (lastResult.Compare(result) != 0) {
+			lastResult = result;
+			wordInput->SetText(result.String());
+			if (config->setFocusOnSelf)
+				this->Activate();
+		}
 //		printf("got:%s:clip\n",result.String());
 	}
 }
@@ -228,6 +232,10 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuClip->SetMarked(config->clipboardTracking);
 	menuFocus->SetMarked(config->setFocusOnSelf);
 	menuFocus->SetEnabled(config->clipboardTracking);
+	if (config->toPolish)
+		this->SetTitle("BSAP: Eng->Pol");
+	else
+		this->SetTitle("BSAP: Pol->Eng");
 }
 
 void BYdpMainWindow::UpdateLanguages(bool newlang) {
