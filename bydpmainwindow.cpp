@@ -1,6 +1,6 @@
 //
 // BUGS
-//	- colour menu names not updated upon engine change
+//
 // TODO (order of importance):
 //	- direct utf8 convert for ydp phonetic signs
 //	- if resize would be enabled (find XXX) => menubar is invisible (reposition it there?)
@@ -134,10 +134,10 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu = new BMenu(tr("Settings"));
 	menu->AddItem(new BMenuItem(tr("Path to dictionary"), new BMessage(MENU_PATH), 'S'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(0), new BMessage(MENU_COLOR0)));
-	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(1), new BMessage(MENU_COLOR1)));
-	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(2), new BMessage(MENU_COLOR2)));
-	menu->AddItem(new BMenuItem(myDict->ColourFunctionName(3), new BMessage(MENU_COLOR3)));
+	menu->AddItem(menuCol0 = new BMenuItem(myDict->ColourFunctionName(0), new BMessage(MENU_COLOR0)));
+	menu->AddItem(menuCol1 = new BMenuItem(myDict->ColourFunctionName(1), new BMessage(MENU_COLOR1)));
+	menu->AddItem(menuCol2 = new BMenuItem(myDict->ColourFunctionName(2), new BMessage(MENU_COLOR2)));
+	menu->AddItem(menuCol3 = new BMenuItem(myDict->ColourFunctionName(3), new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
 	menu->AddItem(menuClip = new BMenuItem(tr("Clipboard tracking"), new BMessage(MENU_CLIP), 'L'));
 	menu->AddItem(menuFocus = new BMenuItem(tr("Popup window"), new BMessage(MENU_FOCUS), 'F'));
@@ -276,6 +276,10 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuFocus->SetEnabled(config->clipboardTracking);
 	menuSAP->SetMarked(config->dictionarymode == DICTIONARY_SAP);
 	menuYDP->SetMarked(config->dictionarymode == DICTIONARY_YDP);
+	menuCol0->SetLabel(myDict->ColourFunctionName(0));
+	menuCol1->SetLabel(myDict->ColourFunctionName(1));
+	menuCol2->SetLabel(myDict->ColourFunctionName(2));
+	menuCol3->SetLabel(myDict->ColourFunctionName(3));
 	if (config->toPolish)
 		this->SetTitle(APP_NAME ": Eng->Pol");
 	else

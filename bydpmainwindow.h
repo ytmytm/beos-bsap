@@ -40,6 +40,7 @@
 			bydpListView *dictList;
 			BMenuItem *menuFuzzy, *menuPlain, *menuEng, *menuPol, *menuClip;
 			BMenuItem *menuFocus, *menuSAP, *menuYDP;
+			BMenuItem *menuCol0, *menuCol1, *menuCol2, *menuCol3;
 			BMenu *fontMenu;
 			BMenuItem *currentFontItem;
 			void SetFontSize(float fontSize);
