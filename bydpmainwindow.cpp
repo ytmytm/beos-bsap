@@ -1,7 +1,7 @@
 //
 // TODO (w porzadku waznosci):
 // LATER:
-//	- cos chyba nie tak z AOGONEK
+//	- cos nie tak z AOGONEK i z' jak z'rebie (zoladz)
 //	- nie ma odswiezenia outputView po zmianie kolorow (jakos to sie pieprzy)
 //	- po wyszukiwaniu pierwszy klik na liste nie dziala
 //		- przychodzi msg o zmianie inputa!
@@ -135,6 +135,7 @@ void BYdpMainWindow::NewClipData(void) {
 			clip->FindData("text/plain", B_MIME_TYPE,(const void **)&text, &textLen);
 		be_clipboard->Unlock();
 		result.SetTo(text,textLen);
+		result.RemoveSet(" ");
 		wordInput->SetText(result.String());
 		if (config->setFocusOnSelf)
 			this->Activate();
