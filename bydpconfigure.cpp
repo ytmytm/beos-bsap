@@ -4,10 +4,10 @@
 #include <Button.h>
 #include <StringView.h>
 
-const uint32 BUTTON_OK = 'BuOK';
-const uint32 BUTTON_CANCEL = 'BuCA';
-const uint32 CCOLOR_MSG = 'ColM';
-const uint32 SLIDER = 'Slid';
+const uint32 BUTTON_OK =		'BuOK';
+const uint32 BUTTON_CANCEL =	'BuCA';
+const uint32 CCOLOR_MSG =		'ColM';
+const uint32 SLIDER =			'Slid';
 
 bydpConfigure::bydpConfigure(const char *title, void *par) : BWindow(
 		BRect(62, 100, 62+370, 260),
@@ -114,8 +114,7 @@ void bydpConfigure::ConfigUpdate(void) {
 	myConfig->save();
 }
 
-void bydpConfigure::MessageReceived(BMessage * Message)
-{
+void bydpConfigure::MessageReceived(BMessage * Message) {
 	switch(Message->what)
 	{
 		case BUTTON_OK:
@@ -140,7 +139,6 @@ void bydpConfigure::MessageReceived(BMessage * Message)
 }
 
 bool bydpConfigure::QuitRequested() {
-///	((BYdpMainWindow*)parent)->ConfigUpdate();
 	Hide();
 	return BWindow::QuitRequested();
 }

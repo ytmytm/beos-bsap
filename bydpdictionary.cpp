@@ -288,7 +288,6 @@ void ydpDictionary::ParseRTF(void) {
 //
 // wstawia na koniec tekst z line z odpowiednimi parametrami
 void ydpDictionary::UpdateAttr(int newattr) {
-//	printf("adding line, oldattr %i, newattr %i, line:%s:\n",oldattr,newattr,line.String());
 	if (line.Length() == 0)
 		return;
 	rgb_color *colour;
