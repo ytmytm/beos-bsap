@@ -5,6 +5,7 @@
 	#include <View.h>
 	#include <Window.h>
 	#include <ColorControl.h>
+	#include <Slider.h>
 	#include "bydpconfig.h"
 
 	class bydpConfigure : public BWindow {
@@ -15,6 +16,7 @@
 			virtual bool QuitRequested();
 			void SetConfig(bydpConfig *config);
 			void SetupColourDialog(int colour);
+			void SetupDistanceDialog(void);
 		private:
 			void ConfigUpdate(void);
 			void CopyNewColours(rgb_color *to);
@@ -25,6 +27,7 @@
 
 			BColorControl *myCColor;
 			BStringView *exampleText;
+			BSlider *mySlider;
 			BView *mainView;
 	};
 

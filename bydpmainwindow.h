@@ -23,15 +23,14 @@
 			virtual void MessageReceived(BMessage *Message);
 			virtual bool QuitRequested();
 			virtual void RefsReceived(BMessage *Message);
-//			void ConfigUpdate(void);
 		private:
 			void NewClipData(void);
 			void HandleModifiedInput(bool force);
 			void UpdateMenus(void);
 			void UpdateLanguages(bool newlang);
-//			void ConfigDialog(void);
 			void ConfigPath(void);
 			void ConfigColour(int number);
+			void ConfigDistance(void);
 			void TryToOpenDict(void);
 			BTextView *outputView;
 			BTextControl *wordInput;

@@ -1,6 +1,5 @@
 
 #include "bydpconfigure.h"
-//#include <stdio.h>
 
 #include <Button.h>
 #include <StringView.h>
@@ -8,6 +7,7 @@
 const uint32 BUTTON_OK = 'BuOK';
 const uint32 BUTTON_CANCEL = 'BuCA';
 const uint32 CCOLOR_MSG = 'ColM';
+const uint32 SLIDER = 'Slid';
 
 bydpConfigure::bydpConfigure(const char *title, void *par) : BWindow(
 		BRect(62, 100, 62+370, 260),
@@ -26,6 +26,19 @@ bydpConfigure::bydpConfigure(const char *title, void *par) : BWindow(
 
 bydpConfigure::~bydpConfigure() {
 
+}
+
+void bydpConfigure::SetupDistanceDialog(void) {
+	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", "Anuluj", new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
+	mainView->AddChild(CancelButton);
+	BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok","OK", new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
+	mainView->AddChild(OKButton);
+	mySlider = new BSlider(BRect(44,20,22+285,20+100), "slider", "Stopień rozmycia", new BMessage(SLIDER), 1, 5);
+	mySlider->SetLimitLabels("niski", "wysoki");
+	mySlider->SetHashMarks(B_HASH_MARKS_BOTH);
+	mySlider->SetHashMarkCount(5);
+	mySlider->SetValue(myConfig->distance);
+	mainView->AddChild(mySlider);
 }
 
 void bydpConfigure::SetupColourDialog(int colour) {
@@ -95,6 +108,8 @@ void bydpConfigure::ConfigUpdate(void) {
 			default:
 				break;
 		}
+	} else {
+		myConfig->distance = mySlider->Value();
 	}
 	myConfig->save();
 }
@@ -115,6 +130,8 @@ void bydpConfigure::MessageReceived(BMessage * Message)
 		case CCOLOR_MSG:
 //			printf("color msg\n");
 			UpdateExampleColour();
+			break;
+		case SLIDER:
 			break;
 		default:
 		  BWindow::MessageReceived(Message);
