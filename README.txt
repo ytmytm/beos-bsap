@@ -5,17 +5,23 @@ http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
 
 BSAP is an English-Polish, Polish-English dictionary program that uses dictionary data files
-from sap. I have used ideas contained in sap code thus BSAP is under GNU/GPL terms.
+from sap. It can also read dictionary data from Collins dictionary released by YDP
+http://www.ydp.com.pl
+I have used ideas from sap and kydpdict code thus BSAP is under GNU/GPL terms.
 
 Requirements
 The program requires BeOS configured for Polish keymap and with installed fonts with Polish
 letters.
 The program also requires SpLocale library.
 URL: http://bebits.com/app/1869
+To use YDP dictionary you have to copy data files from already installed Windows program.
+The best location for them would be the directory with SAP files. You need these files:
+dict100.dat, dict101.dat, dict100.idx, dict101.idx. (everything lowercase).
 
 Configuration
 On the first execution the program will ask for directory that contains dictionary files -
-dvp_1.dic and dvp_2.dic.
+dvp_1.dic and dvp_2.dic. These are SAP dictionary files. Of course YDP data files might be
+in another location.
 This is important - you need to select a directory, not files within it.
 The program has its configuration file in /home/config/settings/bsap. It is a plain text file
 that you can edit or, in case of problems, delete.

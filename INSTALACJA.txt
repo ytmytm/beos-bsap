@@ -10,15 +10,16 @@ Można jeszcze zmniejszyć jego rozmiar przechodząc w terminalu
 do katalogu ze skompilowanym BSAP i wydając polecenie:
 	strip -R .comment -R .note BSAP
 
-Pliki słownika znajdują się w podkatalogu lib/
+Pliki słownika znajdują się w podkatalogu lib/, należy skopiować je w jakieś wygodne
+miejsce (np. /boot/home/config/share/sap lub coś podobnego).
 Zawartość katalogu locale/ należy skopiować do /boot/home/config/locale/
 
 NOTATKI
 Lista błędów (pusta! :), rzeczy do poprawienia i zrobienia (kiedyś tam) znajduje się
 na samej górze pliku bydpmainwindow.cpp
 Pliki źródłowe i klasy mają w nazwie 'ydp', bo gdy zaczynałem miał to być interface
-dla słowników Collinsa wydanych przez YDP Poland. Ostatecznie zmieniłem zdanie.
-BYDPDict jest do znalezienia na w/w URLach.
+dla słowników Collinsa wydanych przez YDP Poland. Ostatecznie wyszło coś trochę
+ogólniejszego.
 
 LEGALNE
 Chociaż poszczególne pliki nie mają tej informacji w nagłówku (uznałem to za stratę
@@ -29,17 +30,18 @@ wolność w tworzeniu programów z wykorzystaniem zawartego tutaj kodu, pod waru
 wówczas podać również pochodzenie użytego kodu.
 
 PRZYSZŁOŚĆ
-Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji z BYDPDict.
-Różni się właściwie tylko kilkoma szczegółami w GUI/konfiguracji oraz poszczególnymi
-metodami w bydpdictionary.cpp
+Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji nowych
+modułów słownika - jest to kwestia napisania dodatkowych dziedziczonych klas Engine
+oraz Convert. Np. dodanie słownika opartego o bazę danych SQLite z jakimś osobnym
+programem do jej edycji (BeAccesible czy QueryLite).
 
 GOTOWY KOD ŹRÓDŁOWY
 Chciałbym zwrócić uwagę na klasę bydpListView. Pozwala ona w wygodny sposób
 przedstawiać listę elementów z suwakiem. Od zwykłego BListView zakotwiczonego w
 BScrollView odróżnia ją to, że nie ma problemu z obsługą wielu tysięcy elementów listy.
-(BScrollView poważnie spowalnia już przy kilkuset elementach).
+(BScrollView poważnie spowalnia po dodaniu już kilkuset elementach).
 
-Użyteczna może być również klasa bydpConfig do obslugi tekstowych plików konfiguracyjnych.
+Użyteczna może być również klasa bydpConfig do obsługi tekstowych plików konfiguracyjnych.
 
 Program jest na GNU/GPL - zachęcam do wykorzystania, poprawienia i rozszerzenia tego kodu
 we własnych projektach. Będę też wdzięczny za przysłanie poprawek, aby mogły być
