@@ -223,6 +223,10 @@ void ydpDictionary::ParseRTF(void) {
 				line += *c++;
 				if (!strchr(".,",*c)) line += ' ';
 				continue;
+			case '(':
+				line += *c++;
+				UpdateAttr(attr[level]);
+				continue;
 			case '$':
 				if (cdoll) line += "; "; else line += '\n';
 				UpdateAttr(attr[level]);
@@ -283,7 +287,6 @@ void ydpDictionary::ParseRTF(void) {
 
 //
 // wstawia na koniec tekst z line z odpowiednimi parametrami
-// (parametr newattr jest zbedny, liczy sie tylko oldattr)
 void ydpDictionary::UpdateAttr(int newattr) {
 //	printf("adding line, oldattr %i, newattr %i, line:%s:\n",oldattr,newattr,line.String());
 	if (line.Length() == 0)
@@ -393,8 +396,7 @@ char *ydpDictionary::ConvertFromUtf(const char *input) {
 ////////////////
 // search stuff below
 
-int ydpDictionary::FindWord(const char *wordin)
-{
+int ydpDictionary::FindWord(const char *wordin) {
 	int result,i,j;
 
 	if (!dictionaryReady) {
@@ -454,8 +456,7 @@ void ydpDictionary::ClearWordList(void) {
 	dictList->MakeEmpty();
 }
 
-int ydpDictionary::FuzzyFindWord(const char *wordin)
-{
+int ydpDictionary::FuzzyFindWord(const char *wordin) {
 	int i, numFound, best, score, hiscore;
 
     if ((wordCount<0) || (words == NULL))
@@ -483,40 +484,38 @@ int ydpDictionary::FuzzyFindWord(const char *wordin)
 	return best;
 }
 
-int ydpDictionary::min3(const int a, const int b, const int c)
-{
-    int min=a;
-    if (b<min) min = b;
-    if (c<min) min = c;
-    return min;
+int ydpDictionary::min3(const int a, const int b, const int c) {
+	int min=a;
+	if (b<min) min = b;
+	if (c<min) min = c;
+	return min;
 }
 
-int ydpDictionary::editDistance(const char*slowo1, const char*slowo2)
-{
-    int *row0, *row1, *row;
-    int cost,i,j,m,n;
-    static int rowx[512];		// speedup!
+int ydpDictionary::editDistance(const char*slowo1, const char*slowo2) {
+	int *row0, *row1, *row;
+	int cost,i,j,m,n;
+	static int rowx[512];		// speedup!
 	static int rowy[512];
 
-    n = strlen(slowo1);	if (n>510) n=510;	// n+1 is used
-    m = strlen(slowo2);
+	n = strlen(slowo1);	if (n>510) n=510;	// n+1 is used
+	m = strlen(slowo2);
 
 	row0 = rowx;
 	row1 = rowy;
 
-    for (i=0;i<=n;i++)
-	row0[i] = i;
+	for (i=0;i<=n;i++)
+		row0[i] = i;
 
-    for (j=1;j<=m;j++) {
-	row1[0] = j;
-	for (i=1;i<=n;i++) {
-	    cost = (slowo1[i-1]==slowo2[j-1]) ? 0 : 1;
-	    row1[i] = min3(row0[i]+1,row1[i-1]+1,row0[i-1]+cost);
+	for (j=1;j<=m;j++) {
+		row1[0] = j;
+		for (i=1;i<=n;i++) {
+			cost = (slowo1[i-1]==slowo2[j-1]) ? 0 : 1;
+			row1[i] = min3(row0[i]+1,row1[i-1]+1,row0[i-1]+cost);
+		}
+		row = row0;
+		row0 = row1;
+		row1 = row;
 	}
-	row = row0;
-	row0 = row1;
-	row1 = row;
-    }
-    cost = row0[n];
-    return cost;
+	cost = row0[n];
+	return cost;
 }

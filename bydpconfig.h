@@ -17,7 +17,6 @@
 			~bydpConfig();
 
 			BString topPath;
-//			BString indexFName;
 			BString dataFName;
 			bool toPolish;
 			bool clipboardTracking;
@@ -35,15 +34,15 @@
 			BString cfgname;
 			void updateFName(void);
 
-			void readRGB(const char *buf, const char *token, rgb_color *result);
-			void readBoolean(const char *buf, const char *token, bool *result);
-			void readInt(const char *buf, const char *token, int *result);
-			char *readString(const char *buf, const char *token);
+			void readValue(const char *buf, const char *token, rgb_color *result);
+			void readValue(const char *buf, const char *token, bool *result);
+			void readValue(const char *buf, const char *token, int *result);
+			char *readValue(const char *buf, const char *token);
 
-			void writeRGB(BString variable, rgb_color value);
-			void writeInt(BString variable, int value);
-			void writeString(BString variable, BString value);
-			void writeBoolean(BString variable, bool value);
+			void writeValue(BString variable, rgb_color value);
+			void writeValue(BString variable, int value);
+			void writeValue(BString variable, BString value);
+			void writeValue(BString variable, bool value);
 	};
 
 #endif
