@@ -5,7 +5,6 @@
 #include <String.h>
 #include <File.h>
 #include <TextView.h>
-///#include <ListView.h>
 #include <Font.h>
 
 #include "bydpconfig.h"
@@ -26,12 +25,12 @@
 
 			void ReGetDefinition(void);
 			void GetDefinition(int index);
-			int OpenDictionary(const char *index, const char *data);
+			int OpenDictionary(const char *data);
 			int OpenDictionary(void);
 			int FindWord(const char *word);
 			void CloseDictionary(void);
 
-			int *wordPairs;		// # indeksow na liscie dictList
+			int *wordPairs;		// # current dictList indexes (for fuzzy)
 
 		private:
 			int ReadDefinition(int index);

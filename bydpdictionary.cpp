@@ -62,7 +62,7 @@ void ydpDictionary::GetDefinition(int index) {
 	}
 }
 
-int ydpDictionary::OpenDictionary(const char *index, const char *data) {
+int ydpDictionary::OpenDictionary(const char *data) {
 	int i;
 
 	if ((fData.SetTo(data, B_READ_ONLY)) != B_OK) {
@@ -92,12 +92,12 @@ int ydpDictionary::OpenDictionary(const char *index, const char *data) {
 }
 
 int ydpDictionary::OpenDictionary(void) {
-	BString idx, dat;
+	BString dat;
 
 	dat = cnf->topPath;
 	dat.Append("/");
 	dat += cnf->dataFName;
-	return OpenDictionary(idx.String(),dat.String());
+	return OpenDictionary(dat.String());
 }
 
 void ydpDictionary::CloseDictionary(void) {
