@@ -7,11 +7,6 @@
 //		- przychodzi msg o zmianie inputa!
 //	- lista wyrazow przy nie-fuzzy zachowuje sie nieintuicyjnie, na razie
 //	  musi wystarczyc, w przyszlosci pewnie lepiej byloby sportowac kydpdict
-// DOCUMENT:
-//	- ze wybiera sie katalog w sciezce
-//	- po co sa ktore opcje
-//	- ze CTRL+SHIFT+ESC czysci input
-//	- fuzzysearch nie jest case insensitive - trwa za dlugo
 
 #include "bydpmainwindow.h"
 #include <ScrollView.h>
@@ -28,7 +23,6 @@ const uint32 MSG_CLEAR_INPUT =		'IClr';	// shortcut - czyszczenie linii
 const uint32 MENU_SWITCH =			'MSwi';
 const uint32 MENU_ENG2POL =			'ME2P';
 const uint32 MENU_POL2ENG =			'MP2E';
-//const uint32 MENU_SETTINGS =		'MSet';
 const uint32 MENU_FUZZY =			'MFuz';
 const uint32 MENU_PLAIN =			'MPla';
 const uint32 MENU_PATH =			'MPat';
@@ -256,20 +250,13 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			wordInput->SetText("");
 			wordInput->MakeFocus();
 			break;
-//		case MENU_SETTINGS:
-//			printf("menu settings\n");
-//			ConfigDialog();
-//			break;
 		case MENU_ENG2POL:
-//			printf("eng2pol\n");
 			UpdateLanguages(true);
 			break;
 		case MENU_POL2ENG:
-//			printf("pol2eng\n");
 			UpdateLanguages(false);
 			break;
 		case MENU_SWITCH:
-//			printf("menu switch\n");
 			UpdateLanguages(!config->toPolish);
 			break;
 		case MENU_FUZZY:
