@@ -22,17 +22,14 @@
 			void FillWordList(void);
 
 			// dictionary data
-//			BFile fData;
 			sqlite *dbData;
-			sqlite_vm *dbSqlVm;
-			char *dbSqlTail;
 			char *dbErrMsg;
 
-			char **definitions;
+			int *ids;
 			char *curWord;
 			// caching stuff
 			struct LL_dictionaryCache {
-				char **definitions;
+				int *ids;
 			} dictCache_LL[2];
 	};
 
@@ -40,12 +37,6 @@
 		public:
 			ConvertSQ2(void);
 			~ConvertSQ2();
-			char tolower(const char c);
-			char *ConvertToUtf(const char *line);
-			char *ConvertFromUtf(const char *input);
-
-		private:
-			const char **utf8_table;
 	};
 
 #endif
