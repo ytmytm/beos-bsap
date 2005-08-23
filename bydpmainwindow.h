@@ -39,15 +39,15 @@
 			bydpScrollBar *scrollBar;
 			bydpListView *dictList;
 			BMenuItem *menuFuzzy, *menuPlain, *menuEng, *menuPol, *menuClip;
-			BMenuItem *menuFocus, *menuSAP, *menuYDP;
+			BMenuItem *menuFocus, *menuSAP, *menuYDP, *menuSQ2;
 			BMenuItem *menuCol0, *menuCol1, *menuCol2, *menuCol3;
 			BMenu *fontMenu;
 			BMenuItem *currentFontItem;
 			void SetFontSize(float fontSize);
 			void SetFontStyle(const char *fontFamily, const char *fontStyle);
 
-			ydpDictionary *myDict, *sapDict, *ydpDict;
-			bydpConverter *myConverter, *sapConv, *ydpConv;
+			ydpDictionary *myDict, *sapDict, *ydpDict, *sq2Dict;
+			bydpConverter *myConverter, *sapConv, *ydpConv, *sq2Conv;
 			bydpConfig *config;
 			bydpConfigure *myDialog;
 

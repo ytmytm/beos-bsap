@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include "engine_sap.h"
 #include "engine_ydp.h"
+#include "engine_sq2.h"
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -33,6 +34,7 @@ const uint32 MENU_FUZZY =			'MFuz';
 const uint32 MENU_PLAIN =			'MPla';
 const uint32 MENU_ENGINESAP =		'MESA';
 const uint32 MENU_ENGINEYDP =		'MEYD';
+const uint32 MENU_ENGINESQ2 =		'MES2';
 const uint32 MENU_PATH =			'MPat';
 const uint32 MENU_COLOR0 =			'MCo0';
 const uint32 MENU_COLOR1 =			'MCo1';
@@ -87,9 +89,15 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 
 	ydpConv = new ConvertYDP();
 	sapConv = new ConvertSAP();
+	sq2Conv = new ConvertSQ2();
 	ydpDict = new EngineYDP(outputView, dictList, config, ydpConv);
 	sapDict = new EngineSAP(outputView, dictList, config, sapConv);
+	sq2Dict = new EngineSQ2(outputView, dictList, config, sq2Conv);
 	switch(config->dictionarymode) {
+		case DICTIONARY_SQ2:
+			myDict = sq2Dict;
+			myConverter = sq2Conv;
+			break;
 		case DICTIONARY_YDP:
 			myDict = ydpDict;
 			myConverter = ydpConv;
@@ -124,6 +132,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(engineMenu = new BMenu(tr("Dictionary engine")));
 	engineMenu->AddItem(menuSAP = new BMenuItem("SAP", new BMessage(MENU_ENGINESAP)));
 	engineMenu->AddItem(menuYDP = new BMenuItem("YDP", new BMessage(MENU_ENGINEYDP)));
+	engineMenu->AddItem(menuSQ2 = new BMenuItem("SQ2", new BMessage(MENU_ENGINESQ2)));
 	menubar->AddItem(menu);
 
 	menu = new BMenu(tr("Search type"));
@@ -276,6 +285,7 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuFocus->SetEnabled(config->clipboardTracking);
 	menuSAP->SetMarked(config->dictionarymode == DICTIONARY_SAP);
 	menuYDP->SetMarked(config->dictionarymode == DICTIONARY_YDP);
+	menuSQ2->SetMarked(config->dictionarymode == DICTIONARY_SQ2);
 	menuCol0->SetLabel(myDict->ColourFunctionName(0));
 	menuCol1->SetLabel(myDict->ColourFunctionName(1));
 	menuCol2->SetLabel(myDict->ColourFunctionName(2));
@@ -320,6 +330,10 @@ void BYdpMainWindow::SwitchEngine(int newengine) {
 void BYdpMainWindow::TryToOpenDict(void) {
 //		printf("about to reopen dict\n");
 	switch (config->dictionarymode) {
+		case DICTIONARY_SQ2:
+			myDict = sq2Dict;
+			myConverter = sq2Conv;
+			break;
 		case DICTIONARY_YDP:
 			myDict = ydpDict;
 			myConverter = ydpConv;
@@ -427,6 +441,9 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			config->save();
 			HandleModifiedInput(true);
 			UpdateMenus();
+			break;
+		case MENU_ENGINESQ2:
+			SwitchEngine(DICTIONARY_SQ2);
 			break;
 		case MENU_ENGINESAP:
 			SwitchEngine(DICTIONARY_SAP);
