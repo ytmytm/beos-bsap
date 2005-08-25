@@ -1,15 +1,19 @@
 //
 // DB schema:
-// CREATE TABLE words (id INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,key)); 
+// CREATE TABLE dictionaries (id INTEGER, name TEXT, desc TEXT, PRIMARY KEY(id));
+// CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,dictionary,key)); 
 //
 // TODO:
-// - check for errors and/or empty results set, use dbErrMsg
-// - put both directions of translation into one DB?
-// - decide about name
-// - update docs
+// - put 0,0 as default dictionary pair
+// - update docs, put info about schema, population (BeAcc) and default dict0/1,
+//   put commands for sample sqldata, info about utf8 encoding
+// - update translation, commit updates
+// - config dialog option with dictionaries table contents
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <Alert.h>
 #include <SpLocaleApp.h>
 
@@ -44,14 +48,22 @@ EngineSQ2::~EngineSQ2() {
 int EngineSQ2::OpenDictionary(void) {
 	int i;
 	BString dat;
+	BFile fData;
 
 	dat = this->cnf->topPath;
 	dat.Append("/");
-	dat += this->cnf->toPolish ? "sap_en-pl.sq2" : "sap_pl-en.sq2";	// XXX what about these???
+	dat += "bsapdict.sq2";
 
+	// fData test wouldn't be necessary if sqlite_open worked as advertised or I don't understand it
+	int fResult = fData.SetTo(dat.String(), B_READ_ONLY);
 	dbData = sqlite_open(dat.String(), 0444, &dbErrMsg);
-	if (dbErrMsg!=0) {
-		BAlert *alert = new BAlert(APP_NAME, tr("Couldn't open data file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+	if ((dbData==0)||(dbErrMsg!=0)||(fResult!=B_OK)) {
+		// clean up after sqlite_open - file didn't exist before it, but it exists now
+		unlink(dat.String());
+		BString message;
+		message = tr("Couldn't open data file.");
+		message << "\n" << dbErrMsg;
+		BAlert *alert = new BAlert(APP_NAME, message.String(), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
 	}
@@ -75,16 +87,31 @@ void EngineSQ2::CloseDictionary(void) {
 void EngineSQ2::FillWordList(void) {
 	int i, len, nRows, nCols;
 	char **result;
+	BString sqlQuery;
 
-	sqlite_get_table(dbData, "SELECT id, key FROM words", &result, &nRows, &nCols, &dbErrMsg);
+	sqlQuery = "SELECT words.id,words.key FROM words,dictionaries WHERE dictionaries.id = words.dictionary AND dictionaries.id =";
+	if (this->cnf->toPolish)
+		i = this->cnf->sqlDictionary[0];
+	else
+		i = this->cnf->sqlDictionary[1];
+	sqlQuery << i;
+
+	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
 	this->wordCount = nRows;
 	this->words = new char* [this->wordCount];
 	this->ids = new int [this->wordCount];
+	if (nRows<2) {
+		BString message;
+		message = tr("Database query returned no results. Please read included documentation for what might be the cause. Program will end now.\n");
+		BAlert *alert = new BAlert(APP_NAME, message.String(), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		alert->Go();
+		exit(-1);
+	}
 	for (i=1;i<=wordCount;i++) {
 		len = strlen(result[i*2+1])+1;
 		this->words[i-1] = new char[len];
 		strcpy(this->words[i-1],result[i*2+1]);
-		sscanf(result[i*2],"%i",&(this->ids[i-1]));
+		this->ids[i-1] = strtol(result[i*2],NULL,10);
 	}
 	sqlite_free_table(result);
 }
@@ -93,9 +120,15 @@ int EngineSQ2::ReadDefinition(int index) {
 	BString sqlQuery;
 	int nRows, nCols;
 	char **result;
+	int i;
 
+	if (this->cnf->toPolish)
+		i = this->cnf->sqlDictionary[0];
+	else
+		i = this->cnf->sqlDictionary[1];
 	this->curWord = this->words[index];
 	sqlQuery << "SELECT desc FROM words WHERE id = " << this->ids[index];
+	sqlQuery << " AND dictionary = " << i;
 	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
 
 	delete [] this->curDefinition;
@@ -138,8 +171,25 @@ void EngineSQ2::ParseRTF(void) {
 	this->UpdateAttr(A_BOLD|A_COLOR0);
 	this->line += " - ";
 	this->UpdateAttr(0);
-	this->line.SetTo(this->curDefinition);
-
+	char *c = this->curDefinition;
+	while (*c) {
+		switch (*c) {
+			case '\\':
+				this->line += '\n';
+				c++;
+				c++;
+				continue;
+			case '[':
+				this->UpdateAttr(0);
+				c++;
+				continue;
+			case ']':
+				this->UpdateAttr(A_COLOR1);
+				c++;
+				continue;
+		}
+		this->line += *c++;
+	}
 	this->UpdateAttr(0);
 }
 

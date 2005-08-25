@@ -25,6 +25,8 @@
 			bool toPolish;
 			bool clipboardTracking;
 			bool setFocusOnSelf;
+			// SQL dictionaries [0]==toPolish, [1]==!toPolish
+			int sqlDictionary[2];
 			int distance;	// for fuzzy search
 			int searchmode;
 			int dictionarymode;

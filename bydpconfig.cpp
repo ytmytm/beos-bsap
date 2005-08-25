@@ -125,6 +125,8 @@ void bydpConfig::load(void) {
 	readValue(buf,"colour2",&colour2);
 	readValue(buf,"currentFont",&currentFont);
 	readValue(buf,"position",&position);
+	readValue(buf,"sqlDictionary0=",&sqlDictionary[0]);
+	readValue(buf,"sqlDictionary1=",&sqlDictionary[1]);
 }
 
 void bydpConfig::writeValue(BString variable, rgb_color value) {
@@ -230,6 +232,8 @@ void bydpConfig::save(void) {
 	writeValue("colour2",colour2);
 	writeValue("currentFont",currentFont);
 	writeValue("position",position);
+	writeValue("sqlDictionary0",sqlDictionary[0]);
+	writeValue("sqlDictionary1",sqlDictionary[1]);
 	conf.Unset();
 }
 
@@ -255,4 +259,5 @@ void bydpConfig::setDefaultConfiguration(void) {
 	position.left = 64; position.top = 64;
 	position.right = 585; position.bottom = 480;
 
+	sqlDictionary[0] = 1; sqlDictionary[1] = 0;
 }
