@@ -324,7 +324,7 @@ void BYdpMainWindow::ConfigDistance(void) {
 }
 
 void BYdpMainWindow::ConfigSQLTables(void) {
-	printf("in csql\n");
+//	printf("in csql\n");
 	myDialog = new bydpConfigure(tr("Choose SQL dictionaries"), this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDialog(BYDPCONF_SQL);
@@ -501,7 +501,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			about += "Maciej Witkowiak <ytm@elysium.pl>";
 			about += tr("\n\nSAP engine based on sap v0.2b\n");
 			about += "(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita";
-			about += tr("\nYDP engine by Maciej Witkowiak\n");
+			about += tr("\nYDP and SQL engines by Maciej Witkowiak\n");
 			about += tr("\n\nLocale support with SpLocale");
 			about += tr("\n\nSoftware released under GNU/GPL license");
 			about += tr("\n\nvisit:\n");
@@ -559,6 +559,10 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 //			printf("fuzzy update\n");
 			if (config->searchmode == SEARCH_FUZZY)
 				HandleModifiedInput(true);
+			break;
+		case MSG_SQLTABLESUPDATE:
+//			printf("sql tables updated\n");
+			SwitchEngine(config->dictionarymode);
 			break;
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
