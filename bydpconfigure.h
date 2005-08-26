@@ -30,6 +30,7 @@
 			BHandler *myHandler;
 			bydpConfig *myConfig;
 			int myColour;
+			int mySqlDict[2];
 			int dialogType;
 
 			BColorControl *myCColor;
@@ -40,5 +41,6 @@
 
 	const uint32 MSG_COLOURUPDATE =		'CNUp';
 	const uint32 MSG_FUZZYUPDATE =		'CNFu';
+	const uint32 MSG_SQLTABLESUPDATE =	'CNSq';
 
 #endif

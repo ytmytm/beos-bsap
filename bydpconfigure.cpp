@@ -2,11 +2,19 @@
 #include "bydpconfigure.h"
 
 #include <Button.h>
+#include <MenuItem.h>
+#include <PopUpMenu.h>
+#include <MenuField.h>
 #include <StringView.h>
 #include <SpLocaleApp.h>
 #include "globals.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sqlite.h>
 
+const uint32 CHOOSEDICT0 =		'ChD0';
+const uint32 CHOOSEDICT1 =		'ChD1';
 const uint32 BUTTON_OK =		'BuOK';
 const uint32 BUTTON_CANCEL =	'BuCA';
 const uint32 CCOLOR_MSG =		'ColM';
@@ -94,7 +102,70 @@ void bydpConfigure::SetupColourDialog(int colour) {
 }
 
 void bydpConfigure::SetupSQLDialog(void) {
-	printf("in setup sql dialog\n");
+
+	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", tr("Cancel"), new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
+	mainView->AddChild(CancelButton);
+
+	// this is ripped from engine_sq2
+	sqlite *dbData;
+	char *dbErrMsg;
+	BString dat;
+	BFile fData;
+
+	dat = myConfig->topPath;
+	dat.Append("/");
+	dat += "bsapdict.sq2";
+
+	// fData test wouldn't be necessary if sqlite_open worked as advertised or I don't understand it
+	int fResult = fData.SetTo(dat.String(), B_READ_ONLY);
+	dbData = sqlite_open(dat.String(), 0444, &dbErrMsg);
+	if ((dbData==0)||(dbErrMsg!=0)||(fResult!=B_OK)) {
+		// clean up after sqlite_open - file didn't exist before it, but it exists now
+		unlink(dat.String());
+		BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Example text."), B_FOLLOW_LEFT, B_WILL_DRAW);
+		sqlMessageText->SetAlignment(B_ALIGN_CENTER);
+		mainView->AddChild(sqlMessageText);
+	} else {
+		// suck SQL dictdata
+		char **result;
+		int nRows, nCols;
+		sqlite_get_table(dbData, "SELECT id, name FROM dictionaries ORDER BY id", &result, &nRows, &nCols, &dbErrMsg);
+//		printf("got: %ix%i\n",nRows,nCols);
+		if (nRows<1) {
+		// show error
+//			printf("to few dictionaries\n");
+			BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Example text."), B_FOLLOW_LEFT, B_WILL_DRAW);
+			sqlMessageText->SetAlignment(B_ALIGN_CENTER);
+			mainView->AddChild(sqlMessageText);		
+		} else {
+			// add into two popupmenus
+			int i, j, id, type;
+			BPopUpMenu *dictMenu;
+			BMenuField *menuField;
+			BMenuItem *menuItem;
+			BMessage *msg;
+			BString tmp, tmp2;
+			for (j=0;j<=1;j++) {
+				dictMenu = new BPopUpMenu(tr("unknown"));
+				for (i=1;i<=nRows;i++) {
+					type = (j==0) ? CHOOSEDICT0 : CHOOSEDICT1;
+					id = strtol(result[i*2],NULL,10);
+					msg = new BMessage(type);
+					msg->AddInt32("_dictid",id);
+					menuItem = new BMenuItem(result[i*2+1], msg);
+					menuItem->SetMarked(id==myConfig->sqlDictionary[j]);
+					dictMenu->AddItem(menuItem);
+//					printf("added %s,%i\n",result[i*2+1],id);
+				}
+				tmp = tr("Dictionary "); tmp2 = "menuField";
+				tmp << j+1; tmp2 << j;
+				menuField = new BMenuField(BRect(10,10+30*j,300,10+30*j+22), tmp2.String(), tmp.String(), dictMenu, B_FOLLOW_LEFT, B_WILL_DRAW);
+				mainView->AddChild(menuField);
+			}
+			BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok",tr("OK"), new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
+			mainView->AddChild(OKButton);
+		}
+	}
 }
 
 void bydpConfigure::SetConfig(bydpConfig *config) {
@@ -116,14 +187,17 @@ void bydpConfigure::ConfigUpdate(void) {
 //	printf("update config in dialog\n");
 	switch (dialogType) {
 		case BYDPCONF_SQL:
-			printf("update sql\n");
+//			printf("update sql\n");
+			myConfig->sqlDictionary[0] = mySqlDict[0];
+			myConfig->sqlDictionary[1] = mySqlDict[1];
 			break;
 		case BYDPCONF_DISTANCE:
-			printf("update dist\n");
+//			printf("update dist\n");
 			myConfig->distance = mySlider->Value();
 			break;
+		case BYDPCONF_COLOUR:
 		default:
-		printf("update colour %i\n",myColour);
+//		printf("update colour %i\n",myColour);
 			switch(myColour) {
 				case 0:
 					CopyNewColours(&myConfig->colour);
@@ -153,11 +227,12 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 			ConfigUpdate();
 			switch (dialogType) {
 				case BYDPCONF_SQL:
-					printf("ok - sql\n");
+					myHandler->Looper()->PostMessage(new BMessage(MSG_SQLTABLESUPDATE));
 					break;
 				case BYDPCONF_DISTANCE:
 					myHandler->Looper()->PostMessage(new BMessage(MSG_FUZZYUPDATE));
 					break;
+				case BYDPCONF_COLOUR:
 				default:
 					myHandler->Looper()->PostMessage(new BMessage(MSG_COLOURUPDATE));
 					break;
@@ -173,6 +248,20 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 			UpdateExampleColour();
 			break;
 		case SLIDER:
+			break;
+		case CHOOSEDICT0:
+			{
+				int32 id = 0;
+				if (Message->FindInt32("_dictid",&id) == B_OK)
+					mySqlDict[0] = id;
+			}
+			break;
+		case CHOOSEDICT1:
+			{
+				int32 id = 0;
+				if (Message->FindInt32("_dictid",&id) == B_OK)
+					mySqlDict[1] = id;
+			}
 			break;
 		default:
 		  BWindow::MessageReceived(Message);
