@@ -5,10 +5,12 @@
 //
 // TODO:
 // - put 0,0 as default dictionary pair
-// - update docs, put info about schema, population (BeAcc) and default dict0/1,
-//   put commands for sample sqldata, info about utf8 encoding
-// - update translation, commit updates
-// - config dialog option with dictionaries table contents
+// - update docs, put info about schema, population (BeAcc, QueryLite) and default dict0/1,
+//   put commands for sample sqldata, info about utf8 encoding, and weak parser
+//   info about docs
+// - update translation, remove obsolete, commit updates
+// - after configuration sql engine cache should be flushed and reread
+// - window caption should be taken from engine (extend to all engines)
 
 #include <stdio.h>
 #include <stdlib.h>
