@@ -5,6 +5,7 @@
 #include <StringView.h>
 #include <SpLocaleApp.h>
 #include "globals.h"
+#include <stdio.h>
 
 const uint32 BUTTON_OK =		'BuOK';
 const uint32 BUTTON_CANCEL =	'BuCA';
@@ -24,6 +25,23 @@ bydpConfigure::bydpConfigure(const char *title, BHandler *handler) : BWindow(
 
 	mainView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	BWindow::AddChild(mainView);
+}
+
+void bydpConfigure::SetupDialog(int type, int param = -1) {
+
+	dialogType = type;
+
+	switch (dialogType) {
+		case BYDPCONF_SQL:
+			SetupSQLDialog();
+			break;
+		case BYDPCONF_DISTANCE:
+			SetupDistanceDialog();
+			break;
+		default:
+			SetupColourDialog(param);
+			break;
+	}
 }
 
 bydpConfigure::~bydpConfigure() {
@@ -75,6 +93,10 @@ void bydpConfigure::SetupColourDialog(int colour) {
 	UpdateExampleColour();
 }
 
+void bydpConfigure::SetupSQLDialog(void) {
+	printf("in setup sql dialog\n");
+}
+
 void bydpConfigure::SetConfig(bydpConfig *config) {
 	myConfig = config;
 }
@@ -92,26 +114,33 @@ void bydpConfigure::UpdateExampleColour(void) {
 
 void bydpConfigure::ConfigUpdate(void) {
 //	printf("update config in dialog\n");
-	if (myColour > -1) {
-//		printf("update colour %i\n",myColour);
-		switch(myColour) {
-			case 0:
-				CopyNewColours(&myConfig->colour);
-				break;
-			case 1:
-				CopyNewColours(&myConfig->colour0);
-				break;
-			case 2:
-				CopyNewColours(&myConfig->colour1);
-				break;
-			case 3:
-				CopyNewColours(&myConfig->colour2);
-				break;
-			default:
-				break;
-		}
-	} else {
-		myConfig->distance = mySlider->Value();
+	switch (dialogType) {
+		case BYDPCONF_SQL:
+			printf("update sql\n");
+			break;
+		case BYDPCONF_DISTANCE:
+			printf("update dist\n");
+			myConfig->distance = mySlider->Value();
+			break;
+		default:
+		printf("update colour %i\n",myColour);
+			switch(myColour) {
+				case 0:
+					CopyNewColours(&myConfig->colour);
+					break;
+				case 1:
+					CopyNewColours(&myConfig->colour0);
+					break;
+				case 2:
+					CopyNewColours(&myConfig->colour1);
+					break;
+				case 3:
+					CopyNewColours(&myConfig->colour2);
+					break;
+				default:
+					break;
+			}
+			break;
 	}
 	myConfig->save();
 }
@@ -122,10 +151,17 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 		case BUTTON_OK:
 //			printf("ok\n");
 			ConfigUpdate();
-			if (myColour > -1)
-				myHandler->Looper()->PostMessage(new BMessage(MSG_COLOURUPDATE));
-			else
-				myHandler->Looper()->PostMessage(new BMessage(MSG_FUZZYUPDATE));
+			switch (dialogType) {
+				case BYDPCONF_SQL:
+					printf("ok - sql\n");
+					break;
+				case BYDPCONF_DISTANCE:
+					myHandler->Looper()->PostMessage(new BMessage(MSG_FUZZYUPDATE));
+					break;
+				default:
+					myHandler->Looper()->PostMessage(new BMessage(MSG_COLOURUPDATE));
+					break;
+			}
 			QuitRequested();
 			break;
 		case BUTTON_CANCEL:

@@ -44,6 +44,7 @@ const uint32 MENU_CLIP =			'MCli';
 const uint32 MENU_FOCUS =			'MFoc';
 const uint32 MENU_ABOUT =			'MAbo';
 const uint32 MENU_DISTANCE =		'MDis';
+const uint32 MENU_SQL =				'MSQL';
 const uint32 FONT_SIZE =			'MFsi';
 const uint32 FONT_FAMILY =			'MFam';
 const uint32 FONT_STYLE =			'MFst';
@@ -152,6 +153,8 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(menuFocus = new BMenuItem(tr("Popup window"), new BMessage(MENU_FOCUS), 'F'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(tr("Fuzzy factor"), new BMessage(MENU_DISTANCE)));
+	menu->AddItem(new BMenuItem(tr("SQL data source"), new BMessage(MENU_SQL)));
+	menu->AddSeparatorItem();
 	menubar->AddItem(menu);
 
 	BMessage *fontMessage;
@@ -309,14 +312,22 @@ void BYdpMainWindow::ConfigColour(int number) {
 //	printf("configure colour %i\n", number);
 	myDialog = new bydpConfigure(tr("Colour settings"), this);
 	myDialog->SetConfig(config);
-	myDialog->SetupColourDialog(number);
+	myDialog->SetupDialog(BYDPCONF_COLOUR,number);
 	myDialog->Show();
 }
 
 void BYdpMainWindow::ConfigDistance(void) {
 	myDialog = new bydpConfigure(tr("Fuzzy search factor"), this);
 	myDialog->SetConfig(config);
-	myDialog->SetupDistanceDialog();
+	myDialog->SetupDialog(BYDPCONF_DISTANCE);
+	myDialog->Show();
+}
+
+void BYdpMainWindow::ConfigSQLTables(void) {
+	printf("in csql\n");
+	myDialog = new bydpConfigure(tr("Choose SQL dictionaries"), this);
+	myDialog->SetConfig(config);
+	myDialog->SetupDialog(BYDPCONF_SQL);
 	myDialog->Show();
 }
 
@@ -478,6 +489,9 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			break;
 		case MENU_DISTANCE:
 			ConfigDistance();
+			break;
+		case MENU_SQL:
+			ConfigSQLTables();
 			break;
 		case MENU_ABOUT: {
 			BString about;

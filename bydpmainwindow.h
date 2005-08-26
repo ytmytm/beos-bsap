@@ -32,6 +32,7 @@
 			void ConfigPath(void);
 			void ConfigColour(int number);
 			void ConfigDistance(void);
+			void ConfigSQLTables(void);
 			void TryToOpenDict(void);
 			void SwitchEngine(int newengine);
 			BTextView *outputView;
