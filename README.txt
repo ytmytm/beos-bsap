@@ -52,7 +52,11 @@ CREATE TABLE dictionaries (id INTEGER, name TEXT, desc TEXT, PRIMARY KEY(id));
 CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,dictionary,key));
 The 'dictionaries' table keeps track of all dictionaries available in database and "SQL data source" menu option uses it to allow you to choose two active dictionaries.
 The 'words' table has words definitions. For a given 'dictionary' value the pair id-key must be unique. The definitions must be encoded in UTF8.
-Program assumes that the dictionary with id==0 is always available.
+Program assumes that the dictionary with id==0 is always available. This is default and fallback
+if there is no configuration file.
+If BSAP complains about no results from database it means that there are no words in
+dictionary with given id. Just edit or delete configuration file in /boot/home/config/settings/bsap
+then.
 With large database file reading its index may take some time so on the webpage of BSAP
 I have put some source files that you can use with sqlite program and build your own
 bsapdict.sq2 from scratch with given set of dictionaries.

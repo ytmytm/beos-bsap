@@ -60,7 +60,11 @@ CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY
 Tabela 'dictionaries' zawiera listę słowników obecnych w bazie, opcja menu 'Źródło danych SQL' służy do wyboru
 dwóch aktywnych słowników.
 Tabela 'words' zawiera same definicje haseł, w obrębie jednej wartości pola 'dictionary' musi mieć unikalne 'id' oraz 'key'. Definicje muszą być zakodowane w UTF8.
-Program zakłada, że zawsze jest obecny słownik o id=0.
+Program zakłada, że zawsze jest obecny słownik o id=0. To jest wartość domyślna używana
+jeśli nie ma pliku konfiguracyjnego.
+Jeżeli BSAP inforumuje na starcie, że zapytanie bazy danych nie dało żadnego wyniku, to
+znaczy, że nie ma słownika o danym id. Przeedytuj lub skasuj wtedy plik konfiguracyjny
+/boot/home/config/settings/bsap.
 Przy dużej bazie danych odczytanie indeksu słów może chwilę potrwać, dlatego na stronie
 programu udostępniłem przykładowe pliki źródłowe, które można ściągnąć i za pomocą sqlite
 zbudować własny plik bsapdict.sq2 z wybranym zestawem słowników.
