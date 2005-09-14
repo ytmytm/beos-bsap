@@ -293,10 +293,15 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuCol1->SetLabel(myDict->ColourFunctionName(1));
 	menuCol2->SetLabel(myDict->ColourFunctionName(2));
 	menuCol3->SetLabel(myDict->ColourFunctionName(3));
-	if (config->toPolish)
-		this->SetTitle(APP_NAME ": Eng->Pol");
-	else
-		this->SetTitle(APP_NAME ": Pol->Eng");
+
+	BString name = APP_NAME;
+	name += ": ";
+	name += myDict->AppBarName();
+	this->SetTitle(name.String());
+//	if (config->toPolish)
+//		this->SetTitle(APP_NAME ": Eng->Pol");
+//	else
+//		this->SetTitle(APP_NAME ": Pol->Eng");
 }
 
 void BYdpMainWindow::UpdateLanguages(bool newlang) {
@@ -562,6 +567,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			break;
 		case MSG_SQLTABLESUPDATE:
 //			printf("sql tables updated\n");
+			myDict->FlushCache();
 			SwitchEngine(config->dictionarymode);
 			break;
 		case B_CLIPBOARD_CHANGED:

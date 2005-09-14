@@ -14,7 +14,9 @@
 			~EngineSQ2();
 			int OpenDictionary(void);
 			void CloseDictionary(void);
+			void FlushCache(void);
 			const char *ColourFunctionName(int);
+			const char *AppBarName(void);
 
 		private:
 			int ReadDefinition(int index);

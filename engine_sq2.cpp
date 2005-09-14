@@ -4,13 +4,10 @@
 // CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,dictionary,key)); 
 //
 // TODO:
-// - put 0,0 as default dictionary pair
 // - update docs, put info about schema, population (BeAcc, QueryLite) and default dict0/1,
 //   put commands for sample sqldata, info about utf8 encoding, and weak parser
 //   info about docs
 // - update translation, remove obsolete, commit updates
-// - after configuration sql engine cache should be flushed and reread
-// - window caption should be taken from engine (extend to all engines)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +28,7 @@ EngineSQ2::EngineSQ2(BTextView *output, bydpListView *dict, bydpConfig *config, 
 		dictCache_LL[i].ids = NULL;
 	}
 	dbErrMsg = 0;
+	dbData = 0;
 }
 
 EngineSQ2::~EngineSQ2() {
@@ -39,12 +37,35 @@ EngineSQ2::~EngineSQ2() {
 	for (i=0;i<2;i++) {
 		if (this->dictCache[i].wordCount>0) {
 			if (this->dictCache[i].words) {
-				for (j=0;j<this->dictCache[i].wordCount;j++) {
-					delete [] dictCache_LL[j].ids;
-				}
+//				for (j=0;j<this->dictCache[i].wordCount;j++) {
+//					delete [] dictCache_LL[j].ids;
+//				}
+				delete [] dictCache_LL[i].ids;
 			}
 		}
 	}
+}
+
+void EngineSQ2::FlushCache(void) {
+	int i,j;
+	printf ("in flush\n");
+	for (i=0;i<2;i++) {
+		printf("flush :%i\n",i);
+		if (this->dictCache[i].wordCount>0) {
+			if (this->dictCache[i].words) {
+				printf("have words %i\n", this->dictCache[i].wordCount);
+				for (j=0;j<this->dictCache[i].wordCount;j++) {
+//					printf("%i\n",j);
+					delete [] this->dictCache[i].words[j];
+				}
+				delete [] this->dictCache_LL[i].ids;
+				delete [] this->dictCache[i].words;
+			}
+		}
+	}
+	printf("after flush\n");
+	this->dictCache[0].wordCount = 0;
+	this->dictCache[1].wordCount = 0;
 }
 
 int EngineSQ2::OpenDictionary(void) {
@@ -160,6 +181,33 @@ const char *EngineSQ2::ColourFunctionName(int index) {
 			break;
 	}
 	return "Illegal index";
+}
+
+const char *EngineSQ2::AppBarName(void) {
+
+	if (dbData == 0)
+		return "No dictionary";
+
+	int i;
+	char **result;
+	int nRows, nCols;
+
+	if (this->cnf->toPolish)
+		i = this->cnf->sqlDictionary[0];
+	else
+		i = this->cnf->sqlDictionary[1];
+
+	BString sqlQuery = "SELECT name FROM dictionaries WHERE id = ";
+	sqlQuery << i;
+	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
+	static BString dictName;
+	if (nRows<1) {
+		dictName = "no name";
+	} else {
+		dictName = result[1];
+	}
+	sqlite_free_table(result);
+	return dictName.String();
 }
 
 //

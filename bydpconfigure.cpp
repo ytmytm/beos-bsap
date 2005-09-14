@@ -122,7 +122,7 @@ void bydpConfigure::SetupSQLDialog(void) {
 	if ((dbData==0)||(dbErrMsg!=0)||(fResult!=B_OK)) {
 		// clean up after sqlite_open - file didn't exist before it, but it exists now
 		unlink(dat.String());
-		BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Example text."), B_FOLLOW_LEFT, B_WILL_DRAW);
+		BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Could not open data file."), B_FOLLOW_LEFT, B_WILL_DRAW);
 		sqlMessageText->SetAlignment(B_ALIGN_CENTER);
 		mainView->AddChild(sqlMessageText);
 	} else {
@@ -133,8 +133,7 @@ void bydpConfigure::SetupSQLDialog(void) {
 //		printf("got: %ix%i\n",nRows,nCols);
 		if (nRows<1) {
 		// show error
-//			printf("to few dictionaries\n");
-			BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Example text."), B_FOLLOW_LEFT, B_WILL_DRAW);
+			BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("There are no dictionaries defined in database."), B_FOLLOW_LEFT, B_WILL_DRAW);
 			sqlMessageText->SetAlignment(B_ALIGN_CENTER);
 			mainView->AddChild(sqlMessageText);		
 		} else {
@@ -165,7 +164,10 @@ void bydpConfigure::SetupSQLDialog(void) {
 			BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok",tr("OK"), new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
 			mainView->AddChild(OKButton);
 		}
+		sqlite_free_table(result);
 	}
+	mySqlDict[0] = myConfig->sqlDictionary[0];
+	mySqlDict[1] = myConfig->sqlDictionary[1];
 }
 
 void bydpConfigure::SetConfig(bydpConfig *config) {
