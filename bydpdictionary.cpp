@@ -25,18 +25,7 @@ ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *
 }
 
 ydpDictionary::~ydpDictionary() {
-	int i,j;
-
-	for (i=0;i<1;i++) {
-		if (dictCache[i].wordCount>0) {
-			if (dictCache[i].words) {
-				for (j=0;j<dictCache[i].wordCount;j++) {
-					delete [] dictCache[i].words[j];
-				}
-				delete [] dictCache[i].words;
-			}
-		}
-	}
+	FlushCache();
 }
 
 void ydpDictionary::ReGetDefinition(void) {
@@ -88,6 +77,22 @@ int ydpDictionary::OpenDictionary(void) {
 	return 0;		// never fails because only inherited may fail
 }
 
+void ydpDictionary::FlushCache(void) {
+	int i,j;
+
+	for (i=0;i<1;i++) {
+		if (dictCache[i].wordCount>0) {
+			if (dictCache[i].words) {
+				for (j=0;j<dictCache[i].wordCount;j++) {
+					delete [] dictCache[i].words[j];
+				}
+				delete [] dictCache[i].words;
+			}
+		}
+	}
+	dictCache[0].wordCount = 0;
+}
+
 void ydpDictionary::CloseDictionary(void) {
 	ClearFuzzyWordList();
 }
@@ -110,6 +115,10 @@ const char *ydpDictionary::ColourFunctionName(int index) {
 			break;
 	}
 	return "illegal index";
+}
+
+const char *ydpDictionary::AppBarName(void) {
+	return "No engine";
 }
 
 int ydpDictionary::ReadDefinition(int index) {

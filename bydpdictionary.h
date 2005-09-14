@@ -24,6 +24,8 @@
 			virtual int OpenDictionary(void);
 			virtual void CloseDictionary(void);
 			virtual const char *ColourFunctionName(int);
+			virtual const char *AppBarName(void);
+			virtual void FlushCache(void);
 
 			void ReGetDefinition(void);
 			void GetDefinition(int index);
