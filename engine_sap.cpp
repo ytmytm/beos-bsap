@@ -138,6 +138,13 @@ const char *EngineSAP::ColourFunctionName(int index) {
 	return "Illegal index";
 }
 
+const char *EngineSAP::AppBarName(void) {
+	if (cnf->toPolish)
+		return "Eng->Pol";
+	else
+		return "Pol->Eng";
+}
+
 /// XXX
 /// this is ugly - change it (polish letters are ISO8859-2 encoded because they pass
 /// through UpdateAttr convert routine)

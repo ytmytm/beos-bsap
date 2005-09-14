@@ -134,6 +134,13 @@ const char *EngineYDP::ColourFunctionName(int index) {
 	return "Illegal index";
 }
 
+const char *EngineYDP::AppBarName(void) {
+	if (cnf->toPolish)
+		return "Eng->Pol";
+	else
+		return "Pol->Eng";
+}
+
 //
 // parses format and (via UpdateAttr and convert) outputs data
 void EngineYDP::ParseRTF(void) {

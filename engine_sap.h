@@ -14,6 +14,7 @@
 			int OpenDictionary(void);
 			void CloseDictionary(void);
 			const char *ColourFunctionName(int);
+			const char *AppBarName(void);
 
 		private:
 			int ReadDefinition(int index);
