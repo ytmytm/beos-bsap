@@ -31,7 +31,7 @@ EngineSQ2::EngineSQ2(BTextView *output, bydpListView *dict, bydpConfig *config, 
 }
 
 EngineSQ2::~EngineSQ2() {
-	int i,j;
+	int i;
 
 	for (i=0;i<2;i++) {
 		if (this->dictCache[i].wordCount>0) {
