@@ -259,5 +259,5 @@ void bydpConfig::setDefaultConfiguration(void) {
 	position.left = 64; position.top = 64;
 	position.right = 585; position.bottom = 480;
 
-	sqlDictionary[0] = 1; sqlDictionary[1] = 0;
+	sqlDictionary[0] = 0; sqlDictionary[1] = 0;
 }
