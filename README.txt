@@ -1,5 +1,5 @@
 
-BSAP 0.7
+BSAP 0.8
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
@@ -13,14 +13,16 @@ REQUIREMENTS
 The program requires BeOS to be configured for Polish keymap and installed fonts with Polish
 letters.
 The program also requires SpLocale library. http://bebits.com/app/1869
+For SQL data management, you need Sqlite2 http://bebits.com/app/3156
 To use YDP dictionary you have to copy data files from already installed Windows program.
-The best location for them would be the directory with SAP files. You need these files:
+The best location for them would be the directory with SAP and SQL files. You need these files:
 dict100.dat, dict101.dat, dict100.idx, dict101.idx. (everything lowercase).
 
 CONFIGURATION
 Upon the first execution the program will ask for directory that contains dictionary files -
-dvp_1.dic and dvp_2.dic. These are SAP dictionary files. Of course YDP data files might be
-in another location.
+dvp_1.dic and dvp_2.dic. These are SAP dictionary files. SQL database (SAP converted into
+sqlite2 database) - bsapdict.sq2 should be in the very same work directory.
+Of course YDP data files might be in another location.
 This is important - you need to select a directory, not files within it.
 The program keeps its configuration file in /home/config/settings/bsap. It is a plain text file
 that you can edit or, in case of problems, delete.
@@ -42,6 +44,18 @@ dictionary window will place itself above all other windows in the workspace.
 KEYBOARD SHORTCUTS
 There is only one invisible shortcut - ESC key will clear the edit line and move focus there.
 Otherwise the program should be quite comfortable controlled with keyboard only.
+
+SQL
+SQL engine (SQ2 - SqLite2) uses only bsapdict.sq2 data file, that you can freely modify with
+sqlite2 program and SQL language. Whole database schema consists of these two lines:
+CREATE TABLE dictionaries (id INTEGER, name TEXT, desc TEXT, PRIMARY KEY(id));
+CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,dictionary,key));
+The 'dictionaries' table keeps track of all dictionaries available in database and "SQL data source" menu option uses it to allow you to choose two active dictionaries.
+The 'words' table has words definitions. For a given 'dictionary' value the pair id-key must be unique. The definitions must be encoded in UTF8.
+Program assumes that the dictionary with id==0 is always available.
+With large database file reading its index may take some time so on the webpage of BSAP
+I have put some source files that you can use with sqlite program and build your own
+bsapdict.sq2 from scratch with given set of dictionaries.
 
 KNOWN BUGS
 I guess that my default colour scheme is ugly and can be only changed :). I don't like some

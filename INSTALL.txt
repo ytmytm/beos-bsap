@@ -1,13 +1,13 @@
 
-BSAP 0.7
+BSAP 0.8
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
 
 INSTALL
 SAP dictionary data files that are in lib/, should  be copied to a location of your choice(e.g.
-/boot/home/config/share/sap or something similar). You might want to keep YDP Collins
-dictionary files there too.
+/boot/home/config/share/sap or something similar). Do the same with Sqlite database - file
+bsapdict.sq2 from lib/. You might want to keep YDP Collins dictionary files there too.
 Contents of locale/ should be copied to /boot/home/config/locale/
 
 BUILD
@@ -28,9 +28,8 @@ use this code in your programs as long as they are under GNU/GPL too. I don't ha
 that you should mention the origin of the code then.
 
 FUTURE
-After finishing TODO list it would be nice to write more dictionary engines. One idea might be to
-use SQLite database to store data and edit it with a separate application (BeAccessible or
-QueryLite).
+After finishing TODO list it would be nice to write more dictionary engines and write better
+converters from existing dictionaries into SQL database.
 
 SOURCE CODE
 bydpListView class allows to comfortably handle element list with a slider. Contrary to

@@ -1,5 +1,5 @@
 
-BSAP 0.7
+BSAP 0.8
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
@@ -8,6 +8,8 @@ INSTALACJA
 Pliki słownika SAP znajdujące się w podkatalogu lib/, należy skopiować je w jakieś wygodne
 miejsce (np. /boot/home/config/share/sap lub coś podobnego). Można tam również umieścić
 pliki słownika YDP z już zainstalowanego słownika pod Windows.
+Bazę słownika SQL, również spod lib/bsapdict.sq2 należy skopiować w to samo miejsce, co
+pliki SAP.
 Zawartość katalogu locale/ należy skopiować do /boot/home/config/locale/
 
 KOMPILACJA
@@ -33,8 +35,7 @@ wówczas podać również pochodzenie użytego kodu.
 
 PRZYSZŁOŚĆ
 Po wyczerpaniu spraw z listy 'do zrobienia' można byłoby pomyśleć o integracji nowych
-modułów słownika. Np. dodanie słownika opartego o bazę danych SQLite z jakimś osobnym
-programem do jej edycji (BeAccesible czy QueryLite).
+modułów słownika lub napisaniu lepszych konwerterów już dostępnych słowników do SQL.
 
 KOD ŹRÓDŁOWY
 Klasa bydpListView pozwala w wygodny sposób przedstawiać listę elementów z suwakiem.

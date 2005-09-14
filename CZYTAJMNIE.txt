@@ -1,5 +1,5 @@
 
-BSAP 0.7
+BSAP 0.8
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html
@@ -14,14 +14,17 @@ WYMAGANIA
 Program wymaga skonfigurowania BeOSa do obsługi polskiego układu klawiatury
 oraz instalacji czcionek z polskimi znakami.
 Program wymaga zainstalowanej biblioteki SpLocale. http://bebits.com/app/1869
+Do manipulacji bazą danych SQL potrzebny jest Sqlite2 http://bebits.com/app/3156
 Dla korzystania z modułu słownika YDP Collins niezbędne jest posiadanie plików danych z już
 zainstalowanego pod Windows programu słownika. Najwygodniej jest skopiować je do
-tego samego katalogu, co pliki danych słownika SAP. Chodzi o pliki:
+tego samego katalogu, co pliki danych słownika SAP i bazę SQL. Chodzi o pliki:
 dict100.dat, dict101.dat, dict100.idx oraz dict101.idx. (wszystkie małymi literami)
 
 KONFIGURACJA
 Przy pierwszym uruchomieniu program poprosi o wskazanie katalogu, w którym
 znajdują się pliki słownika - dvp_1.dic oraz dvp_2.dic. Są to pliki danych dla modułu SAP.
+Baza danych SQL (przekonwertowany zbiór danych słownika SAP) - bsapdict.sq2 również
+musi znajdować się w tym katalogu roboczym.
 Pliki danych modułu YDP mogą oczywiście znajdować się w innym miejscu.
 Zwracam uwagę - chodzi o wskazanie katalogu, a nie któregoś z plików wewnątrz niego.
 Program zapisuje swój plik konfiguracyjny w /home/config/settings/bsap. Jest to
@@ -47,6 +50,20 @@ SKRÓTY
 Jest tylko jeden niewidoczny skrót klawiaturowy, który należy opisać: ESC
 wyczyści linię edycji i przeniesie tam focus. Program można w miarę wygodnie (mam
 nadzieję) obsługiwać wyłącznie korzystając z klawiatury.
+
+SQL
+Moduł SQL (SQ2 - SqLite2) korzysta z pliku danych bsapdict.sq2, który można zmieniać
+bezpośrednio za pomocą programu sqlite2 i wyrażeń SQL. Cały schemat bazy danych zawiera
+się w dwóch tabelach:
+CREATE TABLE dictionaries (id INTEGER, name TEXT, desc TEXT, PRIMARY KEY(id));
+CREATE TABLE words (id INTEGER, dictionary INTEGER, key TEXT, desc TEXT, PRIMARY KEY(id,dictionary,key)); 
+Tabela 'dictionaries' zawiera listę słowników obecnych w bazie, opcja menu 'Źródło danych SQL' służy do wyboru
+dwóch aktywnych słowników.
+Tabela 'words' zawiera same definicje haseł, w obrębie jednej wartości pola 'dictionary' musi mieć unikalne 'id' oraz 'key'. Definicje muszą być zakodowane w UTF8.
+Program zakłada, że zawsze jest obecny słownik o id=0.
+Przy dużej bazie danych odczytanie indeksu słów może chwilę potrwać, dlatego na stronie
+programu udostępniłem przykładowe pliki źródłowe, które można ściągnąć i za pomocą sqlite
+zbudować własny plik bsapdict.sq2 z wybranym zestawem słowników.
 
 ZNANE BŁĘDY
 Prawdopodobnie mój domyślny układ kolorów nadaje się tylko do zmiany, nazwy opcji
