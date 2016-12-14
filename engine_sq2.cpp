@@ -8,12 +8,16 @@
 //   put commands for sample sqldata, info about utf8 encoding, and weak parser
 //   info about docs
 
+#include <sqlite3.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <Alert.h>
-#include <SpLocaleApp.h>
+
+//#include "SpLocaleApp.h"
 
 #include "globals.h"
 #include "engine_sq2.h"
@@ -26,8 +30,8 @@ EngineSQ2::EngineSQ2(BTextView *output, bydpListView *dict, bydpConfig *config, 
 	for (i=0;i<2;i++) {
 		dictCache_LL[i].ids = NULL;
 	}
-	dbErrMsg = 0;
-	dbData = 0;
+	char dbErrMsg = 0;
+	sqlite3* db = 0;
 }
 
 EngineSQ2::~EngineSQ2() {
@@ -60,23 +64,25 @@ void EngineSQ2::FlushCache(void) {
 }
 
 int EngineSQ2::OpenDictionary(void) {
+	sqlite3* db;
 	int i;
+	int dbErrId;
 	BString dat;
-	BFile fData;
+//	BFile fData;
 
 	dat = this->cnf->topPath;
 	dat.Append("/");
 	dat += "bsapdict.sq2";
 
 	// fData test wouldn't be necessary if sqlite_open worked as advertised or I don't understand it
-	int fResult = fData.SetTo(dat.String(), B_READ_ONLY);
-	dbData = sqlite_open(dat.String(), 0444, &dbErrMsg);
-	if ((dbData==0)||(dbErrMsg!=0)||(fResult!=B_OK)) {
+//	int fResult = fData.SetTo(dat.String(), B_READ_ONLY);
+	dbErrId = sqlite3_open(dat.String(), &db);
+	if (dbErrId!=0) {
 		// clean up after sqlite_open - file didn't exist before it, but it exists now
 		unlink(dat.String());
 		BString message;
 		message = tr("Couldn't open data file.");
-		message << "\n" << dbErrMsg;
+		message << "\n" << sqlite3_errmsg(db);
 		BAlert *alert = new BAlert(APP_NAME, message.String(), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
@@ -94,7 +100,8 @@ int EngineSQ2::OpenDictionary(void) {
 }
 
 void EngineSQ2::CloseDictionary(void) {
-	sqlite_close(dbData);
+	sqlite3* db;
+	sqlite3_close(db);
 	ydpDictionary::CloseDictionary();	// required call
 }
 
@@ -102,6 +109,7 @@ void EngineSQ2::FillWordList(void) {
 	int i, len, nRows, nCols;
 	char **result;
 	BString sqlQuery;
+	sqlite3* db;
 
 	sqlQuery = "SELECT words.id,words.key FROM words,dictionaries WHERE dictionaries.id = words.dictionary AND dictionaries.id =";
 	if (this->cnf->toPolish)
@@ -110,7 +118,7 @@ void EngineSQ2::FillWordList(void) {
 		i = this->cnf->sqlDictionary[1];
 	sqlQuery << i;
 
-	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
+	sqlite3_get_table(db, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
 	this->wordCount = nRows;
 	this->words = new char* [this->wordCount];
 	this->ids = new int [this->wordCount];
@@ -127,11 +135,12 @@ void EngineSQ2::FillWordList(void) {
 		strcpy(this->words[i-1],result[i*2+1]);
 		this->ids[i-1] = strtol(result[i*2],NULL,10);
 	}
-	sqlite_free_table(result);
+	sqlite3_free_table(result);
 }
 
 int EngineSQ2::ReadDefinition(int index) {
 	BString sqlQuery;
+	sqlite3* db;
 	int nRows, nCols;
 	char **result;
 	int i;
@@ -143,13 +152,13 @@ int EngineSQ2::ReadDefinition(int index) {
 	this->curWord = this->words[index];
 	sqlQuery << "SELECT desc FROM words WHERE id = " << this->ids[index];
 	sqlQuery << " AND dictionary = " << i;
-	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
+	sqlite3_get_table(db, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
 
 	delete [] this->curDefinition;
 	this->curDefinition = new char [strlen(result[1])+1];
 	strcpy(this->curDefinition, result[1]);
 
-	sqlite_free_table(result);
+	sqlite3_free_table(result);
 
 	return 0;
 }
@@ -175,8 +184,10 @@ const char *EngineSQ2::ColourFunctionName(int index) {
 }
 
 const char *EngineSQ2::AppBarName(void) {
-
-	if (dbData == 0)
+	
+	sqlite3* db;
+	
+	if (db == 0)
 		return "No dictionary";
 
 	int i;
@@ -190,14 +201,14 @@ const char *EngineSQ2::AppBarName(void) {
 
 	BString sqlQuery = "SELECT name FROM dictionaries WHERE id = ";
 	sqlQuery << i;
-	sqlite_get_table(dbData, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
+	sqlite3_get_table(db, sqlQuery.String(), &result, &nRows, &nCols, &dbErrMsg);
 	static BString dictName;
 	if (nRows<1) {
 		dictName = "no name";
 	} else {
 		dictName = result[1];
 	}
-	sqlite_free_table(result);
+	sqlite3_free_table(result);
 	return dictName.String();
 }
 

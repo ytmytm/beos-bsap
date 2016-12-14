@@ -3,6 +3,7 @@
 #define _ENGINESAP_H
 
 #include <File.h>
+#include <TextView.h>
 
 #include "bydpdictionary.h"
 #include "bydpconverter.h"
@@ -32,9 +33,9 @@
 	};
 
 	class ConvertSAP : public bydpConverter {
-		public:
+	public:
 			ConvertSAP(void);
-			~ConvertSAP();
+		    ~ConvertSAP();
 			char tolower(const char c);
 			char *ConvertToUtf(const char *line);
 			char *ConvertFromUtf(const char *input);

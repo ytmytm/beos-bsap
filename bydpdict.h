@@ -2,11 +2,11 @@
 #ifndef _BYDPAPP_H
 #define _BYDPAPP_H
 
-#include <SpLocaleApp.h>
+//#include "SpLocaleApp.h"
 
 #include "bydpmainwindow.h"
 
-class BYdpApp : public SpLocaleApp {
+class BYdpApp : public BApplication {
 	public:
 		BYdpApp();
 		~BYdpApp();

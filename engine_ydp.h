@@ -34,9 +34,9 @@
 	};
 
 	class ConvertYDP : public bydpConverter {
-		public:
+	public:
 			ConvertYDP(void);
-			~ConvertYDP();
+		    ~ConvertYDP();
 			char tolower(const char c);
 			char *ConvertToUtf(const char *line);
 			char *ConvertFromUtf(const char *input);

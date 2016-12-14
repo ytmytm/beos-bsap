@@ -1,10 +1,13 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include <Alert.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
+//#include "SpLocaleApp.h"
+
 #include "engine_sap.h"
+#include "globals.h"
 
 //
 // to prevent my confusion, everything from base class is prefixed with this: this-> (wow, that's recursive :)
@@ -74,9 +77,9 @@ void EngineSAP::FillWordList(void) {
 	fData.Read(&magic,4);
 	fData.Read(&this->wordCount,4);
 	fData.Read(&npages,4);
-	this->wordCount = this->fix32(this->wordCount);
-	npages = this->fix32(npages);
-	magic = this->fix32(magic);
+//	this->wordCount = this->fix32(this->wordCount);
+//	npages = this->fix32(npages);
+//	magic = this->fix32(magic);
 	this->words = new char* [this->wordCount];
 	definitions = new char* [this->wordCount];
 	pages_offsets = new int [4*npages];
@@ -88,9 +91,9 @@ void EngineSAP::FillWordList(void) {
 		fData.Seek(pages_offsets[curpage],SEEK_SET);
 		wordspp = dsize = dvoffset = 0;
 		wordspps = dsizes = dvoffsets = 0;
-		fData.Read(&wordspps,2); wordspp = fix16(wordspps);
-		fData.Read(&dsizes,2); dsize = fix16(dsizes);
-		fData.Read(&dvoffsets,2); dvoffset = fix16(dvoffsets);
+		fData.Read(&wordspps,2); //wordspp = fix16(wordspps);
+		fData.Read(&dsizes,2); //dsize = fix16(dsizes);
+		fData.Read(&dvoffsets,2); //dvoffset = fix16(dvoffsets);
 		fData.Read(body,dsize);
 		char *current = &body[2*wordspp];
 		for (i=0;i<wordspp;i++) {	

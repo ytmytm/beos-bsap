@@ -11,13 +11,17 @@
 //	  and use defaults
 
 #include "bydpmainwindow.h"
-#include <ScrollView.h>
+
+#include <Alert.h>
+#include <Application.h>
+#include <Clipboard.h>
 #include <Menu.h>
 #include <MenuBar.h>
 #include <Path.h>
-#include <Clipboard.h>
-#include <Alert.h>
+#include <ScrollView.h>
+
 #include <stdio.h>
+
 #include "engine_sap.h"
 #include "engine_ydp.h"
 #include "engine_sq2.h"
@@ -118,7 +122,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	MainView->AddChild(menubar);
 
 	BMenu *menu = new BMenu(tr("File"));
-	((SpLocaleApp*)be_app)->AddToFileMenu(menu, false, false, false);
+//	((SpLocaleApp*)be_app)->AddToFileMenu(menu, false, false, false);
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(tr("About..."), new BMessage(MENU_ABOUT), 'O'));
 	menu->AddItem(new BMenuItem(tr("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));

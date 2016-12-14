@@ -2,16 +2,19 @@
 #include "bydpconfigure.h"
 
 #include <Button.h>
+#include <MenuField.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
-#include <MenuField.h>
 #include <StringView.h>
-#include <SpLocaleApp.h>
+
+//#include "SpLocaleApp.h"
+
 #include "globals.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sqlite.h>
+#include <sqlite3.h>
 
 const uint32 CHOOSEDICT0 =		'ChD0';
 const uint32 CHOOSEDICT1 =		'ChD1';
@@ -35,7 +38,7 @@ bydpConfigure::bydpConfigure(const char *title, BHandler *handler) : BWindow(
 	BWindow::AddChild(mainView);
 }
 
-void bydpConfigure::SetupDialog(int type, int param = -1) {
+void bydpConfigure::SetupDialog(int type, int param) {
 
 	dialogType = type;
 
@@ -107,19 +110,22 @@ void bydpConfigure::SetupSQLDialog(void) {
 	mainView->AddChild(CancelButton);
 
 	// this is ripped from engine_sq2
-	sqlite *dbData;
+	sqlite3 *db;
 	char *dbErrMsg;
+	int dbErrId;
 	BString dat;
-	BFile fData;
+//	BFile fData;
 
 	dat = myConfig->topPath;
 	dat.Append("/");
 	dat += "bsapdict.sq2";
 
 	// fData test wouldn't be necessary if sqlite_open worked as advertised or I don't understand it
-	int fResult = fData.SetTo(dat.String(), B_READ_ONLY);
-	dbData = sqlite_open(dat.String(), 0444, &dbErrMsg);
-	if ((dbData==0)||(dbErrMsg!=0)||(fResult!=B_OK)) {
+	// ^^^^^^^^^This data test doesn't seem necessary anymore in sqlite3 being this was using sqlite2
+//	fResult = fData.SetTo(dat.String(), B_READ_ONLY);
+	dbErrId = sqlite3_open(dat.String(), &db);
+	
+	if (dbErrId!=0) {
 		// clean up after sqlite_open - file didn't exist before it, but it exists now
 		unlink(dat.String());
 		BStringView *sqlMessageText = new BStringView(BRect(22,22,22+258,22+19),"example",tr("Could not open data file."), B_FOLLOW_LEFT, B_WILL_DRAW);
@@ -129,7 +135,7 @@ void bydpConfigure::SetupSQLDialog(void) {
 		// suck SQL dictdata
 		char **result;
 		int nRows, nCols;
-		sqlite_get_table(dbData, "SELECT id, name FROM dictionaries ORDER BY id", &result, &nRows, &nCols, &dbErrMsg);
+		sqlite3_get_table(db, "SELECT id, name FROM dictionaries ORDER BY id", &result, &nRows, &nCols, &dbErrMsg);
 //		printf("got: %ix%i\n",nRows,nCols);
 		if (nRows<1) {
 		// show error
@@ -164,7 +170,7 @@ void bydpConfigure::SetupSQLDialog(void) {
 			BButton *OKButton = new BButton(BRect(285,123,285+75,123+24),"ok",tr("OK"), new BMessage(BUTTON_OK), B_FOLLOW_LEFT, B_WILL_DRAW);
 			mainView->AddChild(OKButton);
 		}
-		sqlite_free_table(result);
+		sqlite3_free_table(result);
 	}
 	mySqlDict[0] = myConfig->sqlDictionary[0];
 	mySqlDict[1] = myConfig->sqlDictionary[1];

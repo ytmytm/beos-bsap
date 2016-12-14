@@ -1,0 +1,4 @@
+objects.x86-gcc2-debug/*
+objects.x86-gcc2-release/*
+objects.x86-gcc5-debug/*
+objects.x86-gcc5-release/*

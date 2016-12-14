@@ -1,8 +1,13 @@
 
 #include <stdlib.h>
-#include <Path.h>
+
 #include <Alert.h>
-#include <SpLocaleApp.h>
+#include <FindDirectory.h>
+#include <Path.h>
+#include <String.h>
+
+//#include "SpLocaleApp.h"
+
 #include "globals.h"
 #include "bydpconfig.h"
 
@@ -103,9 +108,17 @@ void bydpConfig::readValue(const char *buf, const char *token, BRect *result) {
 void bydpConfig::load(void) {
 	static char buf[1024];
 	char *result;
+	BFile conf;
+	BPath config;
 
 	setDefaultConfiguration();
-	if (conf.SetTo(CONFIG_NAME,B_READ_ONLY) != B_OK)
+	
+	if (find_directory (B_USER_SETTINGS_DIRECTORY, &config, true) != B_OK)
+		return;
+	
+	config.Append("bsap");
+
+	if (conf.SetTo(config.Path(), B_READ_ONLY) != B_OK)
 		return;
 
 	memset(buf,0,sizeof(buf));
@@ -214,11 +227,20 @@ void bydpConfig::writeValue(BString variable, BRect value) {
 }
 
 void bydpConfig::save(void) {
-	if (conf.SetTo(CONFIG_NAME,B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
+	BFile conf;
+	BPath config;
+	
+	if (find_directory (B_USER_SETTINGS_DIRECTORY, &config, true) != B_OK)
+		return;
+	
+	config.Append("bsap");
+
+	if (conf.SetTo(config.Path(), B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
 		BAlert *alert = new BAlert(APP_NAME, tr("Error writing configuration file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
+	
 	writeValue("topPath",topPath);
 	writeValue("toPolish",toPolish);
 	writeValue("clipboardTracking",clipboardTracking);

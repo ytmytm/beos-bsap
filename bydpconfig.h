@@ -4,6 +4,7 @@
 
 #include <String.h>
 #include <Font.h>
+#include <FindDirectory.h>
 #include <File.h>
 #include <Rect.h>
 
@@ -14,7 +15,7 @@
 #define DICTIONARY_YDP	2
 #define DICTIONARY_SQ2	3
 
-#define CONFIG_NAME "/boot/home/config/settings/bsap"
+//#define CONFIG_NAME "/boot/home/config/settings/bsap"
 
 	class bydpConfig {
 		public:
