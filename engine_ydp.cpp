@@ -1,10 +1,13 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include <Alert.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
+//#include "SpLocaleApp.h"
+
 #include "engine_ydp.h"
+#include "globals.h"
 
 //
 // to prevent my confusion, everything from base class is prefixed with this: this-> (wow, that's recursive :)
@@ -74,7 +77,8 @@ void EngineYDP::FillWordList(void) {
 	this->wordCount = 0;
 	fIndex.Seek(0x08, SEEK_SET);
 	fIndex.Read(&wcount, 2);
-	this->wordCount = (int)fix16(wcount);
+//	this->wordCount = (int)fix16(wcount);
+	this->wordCount = wcount;
 
 	indexes = new unsigned long [this->wordCount+2];
 	this->words = new char* [this->wordCount+2];
@@ -84,14 +88,17 @@ void EngineYDP::FillWordList(void) {
 	// read index table offset
 	fIndex.Seek(0x10, SEEK_SET);
 	fIndex.Read(&pos, sizeof(unsigned long));
-	pos=fix32(pos);
+//	pos = fix32(pos);
 
 	fIndex.Seek(pos, SEEK_SET);
 	do {
 		fIndex.Read(&index[0], 8);
-		indexes[current]=fix32(index[1]);
-		this->words[current] = new char [fix32(index[0]) & 0xff];
-		fIndex.Read(this->words[current], fix32(index[0]) & 0xff);
+//		indexes[current] = fix32(index[1]);
+		indexes[current] = index[1];
+//		this->words[current] = new char [fix32(index[0]) & 0xff];
+//		fIndex.Read(this->words[current], fix32(index[0]) & 0xff);
+		this->words[current] = new char [index[0] & 0xff];
+		fIndex.Read(this->words[current], index[0] & 0xff);
 	} while (++current < this->wordCount);
 	// XXX fix dictionary index errors (Provencial?)
 }
@@ -103,7 +110,7 @@ int EngineYDP::ReadDefinition(int index) {
 	dsize = 0;
 	fData.Seek(indexes[index], SEEK_SET);
 	fData.Read((char*)&dsize, sizeof(unsigned long));
-	dsize = fix32(dsize);
+//	dsize = fix32(dsize);
 
 	def = new char [dsize+1];
 	if ((size = fData.Read(def,dsize)) != dsize) return -1;

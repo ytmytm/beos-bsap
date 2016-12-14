@@ -1,8 +1,15 @@
 
 #include <stdio.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
+#include <Handler.h>
+#include <Looper.h>
+#include <Message.h>
+#include <UTF8.h>
+
+//#include "SpLocaleApp.h"
+
 #include "bydplistview.h"
+#include "globals.h"
 
 bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 		BRect(10,60,200,400),
@@ -129,7 +136,7 @@ void bydpListView::NewSize(void) {
 	ListRefresh();
 }
 
-void bydpListView::ListRefresh(int start=-1, bool update=true) {
+void bydpListView::ListRefresh(int start, bool update) {
 	if (!valid)
 		return;
 //	printf("in refresh with %i\n",start);
@@ -144,7 +151,7 @@ void bydpListView::ListRefresh(int start=-1, bool update=true) {
 	if (topIndex < 0)
 		topIndex = 0;
 	for (i=0; ((i<visible)&&(i+topIndex<wordCount)); i++)
-		((BStringItem*)this->ItemAt(i))->SetText(cvt->ConvertToUtf(words[i+topIndex]));
+		((BStringItem*)this->ItemAt(i))->SetText(/*cvt->ConvertToUtf(words[i+topIndex])*/words[i+topIndex]);
 	this->Invalidate();
 	if (update)
 		myBar->SetValue(topIndex);
@@ -164,7 +171,7 @@ void bydpListView::List1Up(void) {
 	topIndex--;
 	for (i=visible-1; i!=0; i--)
 		((BStringItem*)this->ItemAt(i))->SetText(((BStringItem*)this->ItemAt(i-1))->Text());
-	((BStringItem*)this->ItemAt(0))->SetText(cvt->ConvertToUtf(words[topIndex]));
+	((BStringItem*)this->ItemAt(0))->SetText(/*cvt->ConvertToUtf(words[topIndex])*/words[topIndex]);
 	this->Invalidate();
 }
 
@@ -175,7 +182,7 @@ void bydpListView::List1Down(void) {
 	topIndex++;
 	for (i=0; i<visible-1; i++)
 		((BStringItem*)this->ItemAt(i))->SetText(((BStringItem*)this->ItemAt(i+1))->Text());
-	((BStringItem*)this->ItemAt(visible-1))->SetText(cvt->ConvertToUtf(words[topIndex+visible-1]));
+	((BStringItem*)this->ItemAt(visible-1))->SetText(/*cvt->ConvertToUtf(words[topIndex+visible-1])*/words[topIndex+visible-1]);
 	this->Invalidate();
 }
 

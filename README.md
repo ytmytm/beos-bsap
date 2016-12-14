@@ -2,6 +2,16 @@
 BSAP 0.8
 ========
 
+#Notes from CodeforEvolution (GCI)
+Currently, this builds on just gcc5
+and when loading the dictionary files from the lib folder it crashes.
+So far I have removed the old sqlite2 code and SpLocale Code with
+ 
+#TODO for GCI
+-Convert old included sqlite2 database to an sqlite3 database
+-Fix running on compiling gcc5
+-Fix build on x86_gcc2
+
 (c) 2005 Maciej Witkowiak <ytm@elysium.pl>
 http://members.elysium.pl/ytm/html/beos.html
 http://ytm.bossstation.dnsalias.org/html/beos.html

@@ -2,6 +2,9 @@
 #ifndef _BYDPLISTVIEW
 #define _BYDPLISTVIEW
 
+    #include "bydpconverter.h"
+
+    #include <ListView.h>
 	#include <ScrollBar.h>
 
 	class bydpScrollBar : public BScrollBar {
@@ -15,9 +18,6 @@
 			bool blockSig;
 	};
 
-	#include <ListView.h>
-	#include "bydpconverter.h"
-
 	class bydpListView : public BListView {
 		public:
 			bydpListView(const char *name, BHandler *handler);
@@ -29,7 +29,7 @@
 			void SetConverter(bydpConverter *convert);
 			void NewSize(void);
 			void NewData(int howmany, char **data, int current);
-			void ListRefresh(int start=-1, bool update=true);
+			void ListRefresh(int start = -1, bool update = true);
 			void ListScrolled(int value);
 
 			int topIndex;

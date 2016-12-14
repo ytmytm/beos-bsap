@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include <Alert.h>
-#include <SpLocaleApp.h>
+
+//#include "SpLocaleApp.h"
+
 #include "globals.h"
 
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter) {
@@ -202,12 +205,30 @@ int ydpDictionary::FindWord(const char *wordin) {
 	}
 }
 
-int ydpDictionary::ScoreWord(const char *w1, const char *w2) {
+int ydpDictionary::ScoreWord(const char* w1, const char* w2) {
+	BString w1c; 
+	BString w2c;
 	int i = 0;
-	int len1 = strlen(w1);
-	int len2 = strlen(w2);
+	int len1 = 0;
+	int len2 = 0;
+	
+	if (w1 != NULL && w1 != "")
+		w1c << w1;
+		
+//	if (w2 != NULL && w2 != "")
+//		w2c << w2;
+	
+//	int len1 = strlen(w1);
+//	int len2 = strlen(w2);
+
+    if (w1c != NULL && w1c != "")
+		int len1 = w1c.CountChars();
+		
+//	if (w2c != NULL && w2c != "")
+//		int len2 = w2c.CountChars();
+				
 	for (; ((i<len1) && (i<len2)); i++)
-		if (cvt->tolower(w1[i])!=cvt->tolower(w2[i]))
+		if (cvt->tolower(w1c[i])!=cvt->tolower(w2c[i]))
 			break;
 	return i;
 }

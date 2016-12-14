@@ -3,7 +3,8 @@
 #define _ENGINESQ2_H
 
 #include <File.h>
-#include <sqlite.h>
+
+#include <sqlite3.h>
 
 #include "bydpdictionary.h"
 #include "bydpconverter.h"
@@ -24,7 +25,7 @@
 			void FillWordList(void);
 
 			// dictionary data
-			sqlite *dbData;
+			sqlite3 *db;
 			char *dbErrMsg;
 
 			int *ids;

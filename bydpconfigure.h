@@ -6,10 +6,12 @@
 #define BYDPCONF_DISTANCE	-1
 #define BYDPCONF_SQL		-2
 
-	#include <View.h>
-	#include <Window.h>
 	#include <ColorControl.h>
 	#include <Slider.h>
+	#include <StringView.h>
+	#include <View.h>
+	#include <Window.h>
+	
 	#include "bydpconfig.h"
 
 	class bydpConfigure : public BWindow {
@@ -33,10 +35,10 @@
 			int mySqlDict[2];
 			int dialogType;
 
-			BColorControl *myCColor;
-			BStringView *exampleText;
-			BSlider *mySlider;
-			BView *mainView;
+			BColorControl* myCColor;
+			BStringView* exampleText;
+			BSlider* mySlider;
+			BView* mainView;
 	};
 
 	const uint32 MSG_COLOURUPDATE =		'CNUp';
