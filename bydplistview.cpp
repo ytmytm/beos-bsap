@@ -1,8 +1,10 @@
 
 #include <stdio.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
+#include <Application.h>
+
 #include "bydplistview.h"
+#include "globals.h"
 
 bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 		BRect(10,60,200,400),

@@ -6,10 +6,12 @@
 #define BYDPCONF_DISTANCE	-1
 #define BYDPCONF_SQL		-2
 
+    #include <ColorControl.h>
+	#include <Slider.h>
+	#include <StringView.h>
 	#include <View.h>
 	#include <Window.h>
-	#include <ColorControl.h>
-	#include <Slider.h>
+
 	#include "bydpconfig.h"
 
 	class bydpConfigure : public BWindow {

@@ -2,18 +2,19 @@
 #ifndef _BYDPMAINWINDOW_H
 #define _BYDPMAINWINDOW_H
 
-	#include <SpLocaleApp.h>
-	#include <View.h>
-	#include <Window.h>
+	#include <Application.h>
+	#include <FilePanel.h>
+	#include <MenuItem.h>
 	#include <TextControl.h>
 	#include <TextView.h>
-	#include <MenuItem.h>
-	#include <FilePanel.h>
-	#include "globals.h"
+	#include <View.h>
+	#include <Window.h>
+	
 	#include "bydpconfig.h"
 	#include "bydpconfigure.h"
 	#include "bydpdictionary.h"
 	#include "bydplistview.h"
+	#include "globals.h"
 
 	class BYdpMainWindow : public BWindow {
 		public:

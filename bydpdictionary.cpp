@@ -1,10 +1,10 @@
 
-#include "bydpdictionary.h"
+#include <Alert.h>
 
 #include <stdio.h>
 #include <string.h>
-#include <Alert.h>
-#include <SpLocaleApp.h>
+
+#include "bydpdictionary.h"
 #include "globals.h"
 
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter) {
@@ -32,14 +32,14 @@ void ydpDictionary::ReGetDefinition(void) {
 	if (ReadDefinition(lastIndex) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Data file read error.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
 
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
-		BAlert *alert = new BAlert(APP_NAME, tr("Please setup path to dictionary files."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Please setup path to dictionary files.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -51,7 +51,7 @@ void ydpDictionary::GetDefinition(int index) {
 	if (ReadDefinition(index) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Data file read error.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
@@ -184,7 +184,7 @@ int ydpDictionary::FindWord(const char *wordin) {
 	int result,i;
 
 	if (!dictionaryReady) {
-		outputView->SetText(tr("Please setup path to dictionary files."));
+		outputView->SetText("Please setup path to dictionary files.");
 		return -1;
 	}
 

@@ -10,14 +10,18 @@
 //	- rewrite bydpconfig so readValue would return value always the same way
 //	  and use defaults
 
-#include "bydpmainwindow.h"
-#include <ScrollView.h>
+
+
+#include <Alert.h>
+#include <Clipboard.h>
 #include <Menu.h>
 #include <MenuBar.h>
 #include <Path.h>
-#include <Clipboard.h>
-#include <Alert.h>
+#include <ScrollView.h>
+
 #include <stdio.h>
+
+#include "bydpmainwindow.h"
 #include "engine_sap.h"
 #include "engine_ydp.h"
 #include "engine_sq2.h"
@@ -117,51 +121,49 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	BMenuBar *menubar = new BMenuBar(r, "menubar");
 	MainView->AddChild(menubar);
 
-	BMenu *menu = new BMenu(tr("File"));
-	((SpLocaleApp*)be_app)->AddToFileMenu(menu, false, false, false);
-	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(tr("About..."), new BMessage(MENU_ABOUT), 'O'));
-	menu->AddItem(new BMenuItem(tr("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
+	BMenu *menu = new BMenu("File");
+	menu->AddItem(new BMenuItem("About...", new BMessage(MENU_ABOUT), 'O'));
+	menu->AddItem(new BMenuItem("Quit", new BMessage(B_QUIT_REQUESTED), 'Q'));
 	menubar->AddItem(menu);
 
 	BMenu *engineMenu;
-	menu = new BMenu(tr("Dictionary"));
-	menu->AddItem(new BMenuItem(tr("Switch"), new BMessage(MENU_SWITCH), 'J'));
-	menu->AddItem(menuEng = new BMenuItem(tr("Eng -> Pol"), new BMessage(MENU_ENG2POL), 'E'));
-	menu->AddItem(menuPol = new BMenuItem(tr("Pol -> Eng"), new BMessage(MENU_POL2ENG), 'P'));
+	menu = new BMenu("Dictionary");
+	menu->AddItem(new BMenuItem("Switch", new BMessage(MENU_SWITCH), 'J'));
+	menu->AddItem(menuEng = new BMenuItem("Eng -> Pol", new BMessage(MENU_ENG2POL), 'E'));
+	menu->AddItem(menuPol = new BMenuItem("Pol -> Eng", new BMessage(MENU_POL2ENG), 'P'));
 	menu->AddSeparatorItem();
-	menu->AddItem(engineMenu = new BMenu(tr("Dictionary engine")));
+	menu->AddItem(engineMenu = new BMenu("Dictionary engine"));
 	engineMenu->AddItem(menuSAP = new BMenuItem("SAP", new BMessage(MENU_ENGINESAP)));
 	engineMenu->AddItem(menuYDP = new BMenuItem("YDP", new BMessage(MENU_ENGINEYDP)));
 	engineMenu->AddItem(menuSQ2 = new BMenuItem("SQ2", new BMessage(MENU_ENGINESQ2)));
 	menubar->AddItem(menu);
 
-	menu = new BMenu(tr("Search type"));
-	menu->AddItem(menuPlain = new BMenuItem(tr("Plain"), new BMessage(MENU_PLAIN), 'Z'));
-	menu->AddItem(menuFuzzy = new BMenuItem(tr("Fuzzy"), new BMessage(MENU_FUZZY), 'R'));
+	menu = new BMenu("Search type");
+	menu->AddItem(menuPlain = new BMenuItem("Plain", new BMessage(MENU_PLAIN), 'Z'));
+	menu->AddItem(menuFuzzy = new BMenuItem("Fuzzy", new BMessage(MENU_FUZZY), 'R'));
 	menubar->AddItem(menu);
 
-	menu = new BMenu(tr("Settings"));
-	menu->AddItem(new BMenuItem(tr("Path to dictionary"), new BMessage(MENU_PATH), 'S'));
+	menu = new BMenu("Settings");
+	menu->AddItem(new BMenuItem("Path to dictionary", new BMessage(MENU_PATH), 'S'));
 	menu->AddSeparatorItem();
 	menu->AddItem(menuCol0 = new BMenuItem(myDict->ColourFunctionName(0), new BMessage(MENU_COLOR0)));
 	menu->AddItem(menuCol1 = new BMenuItem(myDict->ColourFunctionName(1), new BMessage(MENU_COLOR1)));
 	menu->AddItem(menuCol2 = new BMenuItem(myDict->ColourFunctionName(2), new BMessage(MENU_COLOR2)));
 	menu->AddItem(menuCol3 = new BMenuItem(myDict->ColourFunctionName(3), new BMessage(MENU_COLOR3)));
 	menu->AddSeparatorItem();
-	menu->AddItem(menuClip = new BMenuItem(tr("Clipboard tracking"), new BMessage(MENU_CLIP), 'L'));
-	menu->AddItem(menuFocus = new BMenuItem(tr("Popup window"), new BMessage(MENU_FOCUS), 'F'));
+	menu->AddItem(menuClip = new BMenuItem("Clipboard tracking", new BMessage(MENU_CLIP), 'L'));
+	menu->AddItem(menuFocus = new BMenuItem("Popup window", new BMessage(MENU_FOCUS), 'F'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(tr("Fuzzy factor"), new BMessage(MENU_DISTANCE)));
-	menu->AddItem(new BMenuItem(tr("SQL data source"), new BMessage(MENU_SQL)));
+	menu->AddItem(new BMenuItem("Fuzzy factor", new BMessage(MENU_DISTANCE)));
+	menu->AddItem(new BMenuItem("SQL data source", new BMessage(MENU_SQL)));
 	menu->AddSeparatorItem();
 	menubar->AddItem(menu);
 
 	BMessage *fontMessage;
-	fontMenu = new BMenu(tr("Font"));
+	fontMenu = new BMenu("Font");
 	menu->AddItem(fontMenu);
 
-	BMenu* fontSizeMenu = new BMenu(tr("Size"));
+	BMenu* fontSizeMenu = new BMenu("Size");
 	fontSizeMenu->SetRadioMode(true);
 	fontMenu->AddItem(fontSizeMenu);
 	fontMenu->AddSeparatorItem();
@@ -315,14 +317,14 @@ void BYdpMainWindow::UpdateLanguages(bool newlang) {
 
 void BYdpMainWindow::ConfigColour(int number) {
 //	printf("configure colour %i\n", number);
-	myDialog = new bydpConfigure(tr("Colour settings"), this);
+	myDialog = new bydpConfigure("Colour settings", this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDialog(BYDPCONF_COLOUR,number);
 	myDialog->Show();
 }
 
 void BYdpMainWindow::ConfigDistance(void) {
-	myDialog = new bydpConfigure(tr("Fuzzy search factor"), this);
+	myDialog = new bydpConfigure("Fuzzy search factor", this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDialog(BYDPCONF_DISTANCE);
 	myDialog->Show();
@@ -330,7 +332,7 @@ void BYdpMainWindow::ConfigDistance(void) {
 
 void BYdpMainWindow::ConfigSQLTables(void) {
 //	printf("in csql\n");
-	myDialog = new bydpConfigure(tr("Choose SQL dictionaries"), this);
+	myDialog = new bydpConfigure("Choose SQL dictionaries", this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDialog(BYDPCONF_SQL);
 	myDialog->Show();
@@ -384,7 +386,7 @@ void BYdpMainWindow::ConfigPath(void) {
 	myPanel = new BFilePanel(B_OPEN_PANEL,
 			&mesg, NULL, B_DIRECTORY_NODE, false, NULL, NULL, true, true);
 	myPanel->Show();
-	myPanel->Window()->SetTitle(tr("Choose directory with dictionary files"));
+	myPanel->Window()->SetTitle("Choose directory with dictionary files");
 }
 
 void BYdpMainWindow::RefsReceived(BMessage *Message) {
