@@ -233,8 +233,8 @@ void bydpConfig::save(void) {
 	writeValue("colour2",colour2);
 	writeValue("currentFont",currentFont);
 	writeValue("position",position);
-	writeValue("sqlDictionary0",sqlDictionary[0]);
-	writeValue("sqlDictionary1",sqlDictionary[1]);
+//	writeValue("sqlDictionary0",sqlDictionary[0]);
+//	writeValue("sqlDictionary1",sqlDictionary[1]);
 	conf.Unset();
 }
 
@@ -260,5 +260,5 @@ void bydpConfig::setDefaultConfiguration(void) {
 	position.left = 64; position.top = 64;
 	position.right = 585; position.bottom = 480;
 
-	sqlDictionary[0] = 0; sqlDictionary[1] = 0;
+//	sqlDictionary[0] = 0; sqlDictionary[1] = 0;
 }
