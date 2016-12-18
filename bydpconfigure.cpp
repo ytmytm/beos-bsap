@@ -5,7 +5,7 @@
 #include <PopUpMenu.h>
 #include <StringView.h>
 
-#include <sqlite.h>
+//#include <sqlite.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,14 +35,14 @@ bydpConfigure::bydpConfigure(const char *title, BHandler *handler) : BWindow(
 	BWindow::AddChild(mainView);
 }
 
-void bydpConfigure::SetupDialog(int type, int param = -1) {
+void bydpConfigure::SetupDialog(int type, int param) {
 
 	dialogType = type;
 
 	switch (dialogType) {
-		case BYDPCONF_SQL:
+/*		case BYDPCONF_SQL:
 			SetupSQLDialog();
-			break;
+			break; */
 		case BYDPCONF_DISTANCE:
 			SetupDistanceDialog();
 			break;
@@ -101,7 +101,7 @@ void bydpConfigure::SetupColourDialog(int colour) {
 	UpdateExampleColour();
 }
 
-void bydpConfigure::SetupSQLDialog(void) {
+/*void bydpConfigure::SetupSQLDialog(void) {
 
 	BButton *CancelButton = new BButton(BRect(22,123,23+75,123+24), "cancel", "Cancel", new BMessage(BUTTON_CANCEL), B_FOLLOW_LEFT, B_WILL_DRAW);
 	mainView->AddChild(CancelButton);
@@ -168,7 +168,7 @@ void bydpConfigure::SetupSQLDialog(void) {
 	}
 	mySqlDict[0] = myConfig->sqlDictionary[0];
 	mySqlDict[1] = myConfig->sqlDictionary[1];
-}
+} */
 
 void bydpConfigure::SetConfig(bydpConfig *config) {
 	myConfig = config;
@@ -188,11 +188,11 @@ void bydpConfigure::UpdateExampleColour(void) {
 void bydpConfigure::ConfigUpdate(void) {
 //	printf("update config in dialog\n");
 	switch (dialogType) {
-		case BYDPCONF_SQL:
+/*		case BYDPCONF_SQL:
 //			printf("update sql\n");
 			myConfig->sqlDictionary[0] = mySqlDict[0];
 			myConfig->sqlDictionary[1] = mySqlDict[1];
-			break;
+			break; */
 		case BYDPCONF_DISTANCE:
 //			printf("update dist\n");
 			myConfig->distance = mySlider->Value();
@@ -228,9 +228,9 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 //			printf("ok\n");
 			ConfigUpdate();
 			switch (dialogType) {
-				case BYDPCONF_SQL:
+/*				case BYDPCONF_SQL:
 					myHandler->Looper()->PostMessage(new BMessage(MSG_SQLTABLESUPDATE));
-					break;
+					break; */
 				case BYDPCONF_DISTANCE:
 					myHandler->Looper()->PostMessage(new BMessage(MSG_FUZZYUPDATE));
 					break;
@@ -251,7 +251,7 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 			break;
 		case SLIDER:
 			break;
-		case CHOOSEDICT0:
+/*		case CHOOSEDICT0:
 			{
 				int32 id = 0;
 				if (Message->FindInt32("_dictid",&id) == B_OK)
@@ -264,7 +264,7 @@ void bydpConfigure::MessageReceived(BMessage * Message) {
 				if (Message->FindInt32("_dictid",&id) == B_OK)
 					mySqlDict[1] = id;
 			}
-			break;
+			break; */
 		default:
 		  BWindow::MessageReceived(Message);
 		  break;

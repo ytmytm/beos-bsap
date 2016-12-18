@@ -131,7 +131,7 @@ void bydpListView::NewSize(void) {
 	ListRefresh();
 }
 
-void bydpListView::ListRefresh(int start=-1, bool update=true) {
+void bydpListView::ListRefresh(int start, bool update) {
 	if (!valid)
 		return;
 //	printf("in refresh with %i\n",start);

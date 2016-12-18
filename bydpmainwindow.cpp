@@ -24,7 +24,7 @@
 #include "bydpmainwindow.h"
 #include "engine_sap.h"
 #include "engine_ydp.h"
-#include "engine_sq2.h"
+//#include "engine_sq2.h"
 
 const uint32 MSG_MODIFIED_INPUT =	'MInp';	// wpisanie litery
 const uint32 MSG_LIST_SELECTED =	'LSel'; // klik na liscie
@@ -38,7 +38,7 @@ const uint32 MENU_FUZZY =			'MFuz';
 const uint32 MENU_PLAIN =			'MPla';
 const uint32 MENU_ENGINESAP =		'MESA';
 const uint32 MENU_ENGINEYDP =		'MEYD';
-const uint32 MENU_ENGINESQ2 =		'MES2';
+//const uint32 MENU_ENGINESQ2 =		'MES2';
 const uint32 MENU_PATH =			'MPat';
 const uint32 MENU_COLOR0 =			'MCo0';
 const uint32 MENU_COLOR1 =			'MCo1';
@@ -48,7 +48,7 @@ const uint32 MENU_CLIP =			'MCli';
 const uint32 MENU_FOCUS =			'MFoc';
 const uint32 MENU_ABOUT =			'MAbo';
 const uint32 MENU_DISTANCE =		'MDis';
-const uint32 MENU_SQL =				'MSQL';
+//const uint32 MENU_SQL =				'MSQL';
 const uint32 FONT_SIZE =			'MFsi';
 const uint32 FONT_FAMILY =			'MFam';
 const uint32 FONT_STYLE =			'MFst';
@@ -94,15 +94,15 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 
 	ydpConv = new ConvertYDP();
 	sapConv = new ConvertSAP();
-	sq2Conv = new ConvertSQ2();
+//	sq2Conv = new ConvertSQ2();
 	ydpDict = new EngineYDP(outputView, dictList, config, ydpConv);
 	sapDict = new EngineSAP(outputView, dictList, config, sapConv);
-	sq2Dict = new EngineSQ2(outputView, dictList, config, sq2Conv);
+//	sq2Dict = new EngineSQ2(outputView, dictList, config, sq2Conv);
 	switch(config->dictionarymode) {
-		case DICTIONARY_SQ2:
+/*		case DICTIONARY_SQ2:
 			myDict = sq2Dict;
 			myConverter = sq2Conv;
-			break;
+			break; */
 		case DICTIONARY_YDP:
 			myDict = ydpDict;
 			myConverter = ydpConv;
@@ -135,7 +135,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(engineMenu = new BMenu("Dictionary engine"));
 	engineMenu->AddItem(menuSAP = new BMenuItem("SAP", new BMessage(MENU_ENGINESAP)));
 	engineMenu->AddItem(menuYDP = new BMenuItem("YDP", new BMessage(MENU_ENGINEYDP)));
-	engineMenu->AddItem(menuSQ2 = new BMenuItem("SQ2", new BMessage(MENU_ENGINESQ2)));
+//	engineMenu->AddItem(menuSQ2 = new BMenuItem("SQ2", new BMessage(MENU_ENGINESQ2)));
 	menubar->AddItem(menu);
 
 	menu = new BMenu("Search type");
@@ -155,7 +155,7 @@ BYdpMainWindow::BYdpMainWindow(const char *windowTitle) : BWindow(
 	menu->AddItem(menuFocus = new BMenuItem("Popup window", new BMessage(MENU_FOCUS), 'F'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem("Fuzzy factor", new BMessage(MENU_DISTANCE)));
-	menu->AddItem(new BMenuItem("SQL data source", new BMessage(MENU_SQL)));
+//	menu->AddItem(new BMenuItem("SQL data source", new BMessage(MENU_SQL)));
 	menu->AddSeparatorItem();
 	menubar->AddItem(menu);
 
@@ -290,7 +290,7 @@ void BYdpMainWindow::UpdateMenus(void) {
 	menuFocus->SetEnabled(config->clipboardTracking);
 	menuSAP->SetMarked(config->dictionarymode == DICTIONARY_SAP);
 	menuYDP->SetMarked(config->dictionarymode == DICTIONARY_YDP);
-	menuSQ2->SetMarked(config->dictionarymode == DICTIONARY_SQ2);
+//	menuSQ2->SetMarked(config->dictionarymode == DICTIONARY_SQ2);
 	menuCol0->SetLabel(myDict->ColourFunctionName(0));
 	menuCol1->SetLabel(myDict->ColourFunctionName(1));
 	menuCol2->SetLabel(myDict->ColourFunctionName(2));
@@ -330,13 +330,13 @@ void BYdpMainWindow::ConfigDistance(void) {
 	myDialog->Show();
 }
 
-void BYdpMainWindow::ConfigSQLTables(void) {
+/* void BYdpMainWindow::ConfigSQLTables(void) {
 //	printf("in csql\n");
 	myDialog = new bydpConfigure("Choose SQL dictionaries", this);
 	myDialog->SetConfig(config);
 	myDialog->SetupDialog(BYDPCONF_SQL);
 	myDialog->Show();
-}
+} */
 
 void BYdpMainWindow::SwitchEngine(int newengine) {
 	myDict->CloseDictionary();
@@ -348,10 +348,10 @@ void BYdpMainWindow::SwitchEngine(int newengine) {
 void BYdpMainWindow::TryToOpenDict(void) {
 //		printf("about to reopen dict\n");
 	switch (config->dictionarymode) {
-		case DICTIONARY_SQ2:
+/*		case DICTIONARY_SQ2:
 			myDict = sq2Dict;
 			myConverter = sq2Conv;
-			break;
+			break; */
 		case DICTIONARY_YDP:
 			myDict = ydpDict;
 			myConverter = ydpConv;
@@ -460,9 +460,9 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			HandleModifiedInput(true);
 			UpdateMenus();
 			break;
-		case MENU_ENGINESQ2:
+/*		case MENU_ENGINESQ2:
 			SwitchEngine(DICTIONARY_SQ2);
-			break;
+			break; */
 		case MENU_ENGINESAP:
 			SwitchEngine(DICTIONARY_SAP);
 			break;
@@ -497,23 +497,22 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 		case MENU_DISTANCE:
 			ConfigDistance();
 			break;
-		case MENU_SQL:
+/*		case MENU_SQL:
 			ConfigSQLTables();
-			break;
+			break; */
 		case MENU_ABOUT: {
 			BString about;
 			about = "\n\n" APP_NAME " " APP_VERSION "\n";
-			about += tr("English-Polish, Polish-English dictionary\n");
-			about += tr("\n\nBeOS version:\n");
+			about += "English-Polish, Polish-English dictionary\n";
+			about += "\n\nBeOS version:\n";
 			about += "Maciej Witkowiak <ytm@elysium.pl>";
-			about += tr("\n\nSAP engine based on sap v0.2b\n");
+			about += "\n\nSAP engine based on sap v0.2b\n";
 			about += "(c) 1998 Bohdan R. Rau,\n(c) 2001 Daniel Mealha Cabrita";
-			about += tr("\nYDP and SQL engines by Maciej Witkowiak\n");
-			about += tr("\n\nLocale support with SpLocale");
-			about += tr("\n\nSoftware released under GNU/GPL license");
-			about += tr("\n\nvisit:\n");
+			about += "\nYDP and SQL engines by Maciej Witkowiak\n";
+			about += "\n\nSoftware released under GNU/GPL license";
+			about += "\n\nvisit:\n";
 			about += "http://home.elysium.pl/ytm/html/beos.html\n";
-			about += tr("\nDevelopment has been encouraged by:\n");
+			about += "\nDevelopment has been encouraged by:\n";
 			about += "http://www.haiku-os.pl";
 			outputView->SetText(about.String()); }
 			break;
@@ -567,11 +566,11 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 			if (config->searchmode == SEARCH_FUZZY)
 				HandleModifiedInput(true);
 			break;
-		case MSG_SQLTABLESUPDATE:
+/*		case MSG_SQLTABLESUPDATE:
 //			printf("sql tables updated\n");
 			myDict->FlushCache();
 			SwitchEngine(config->dictionarymode);
-			break;
+			break; */
 		case B_CLIPBOARD_CHANGED:
 			NewClipData();
 			break;
@@ -582,7 +581,7 @@ void BYdpMainWindow::MessageReceived(BMessage *Message) {
 //			printf("canceled\n");
 			if (firstStart) {
 				config->dictionarymode = DICTIONARY_SAP;	// will be saved in QuitRequested below
-				BAlert *alert = new BAlert(APP_NAME, tr("Couldn't open dictionary. Dictionary engine has been reset to SAP."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+				BAlert *alert = new BAlert(APP_NAME, "Couldn't open dictionary. Dictionary engine has been reset to SAP.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 				alert->Go();
 				QuitRequested();
 			}

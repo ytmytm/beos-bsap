@@ -36,7 +36,7 @@ SRCS = BSAPApp.cpp \
        bydplistview.cpp \
        bydpmainwindow.cpp \
        engine_sap.cpp \
-       engine_sq2.cpp \
+#      engine_sq2.cpp \
        engine_ydp.cpp \   
 
 #	Specify the resource definition files to use. Full or relative paths can be
@@ -63,7 +63,7 @@ RSRCS =
 #	- 	if your library does not follow the standard library naming scheme,
 #		you need to specify the path to the library and it's name.
 #		(e.g. for mylib.a, specify "mylib.a" or "path/mylib.a")
-LIBS = be root tracker sqlite3
+LIBS = $(STDCPPLIBS) be root tracker
 
 #	Specify additional paths to directories following the standard libXXX.so
 #	or libXXX.a naming scheme. You can specify full paths or paths relative
