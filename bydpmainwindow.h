@@ -14,6 +14,7 @@
 	#include "bydpconfigure.h"
 	#include "bydpdictionary.h"
 	#include "bydplistview.h"
+	#include "engine_ydp.h"
 	#include "globals.h"
 
 	class BYdpMainWindow : public BWindow {

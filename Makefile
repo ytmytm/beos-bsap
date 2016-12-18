@@ -36,8 +36,8 @@ SRCS = BSAPApp.cpp \
        bydplistview.cpp \
        bydpmainwindow.cpp \
        engine_sap.cpp \
-#      engine_sq2.cpp \
-       engine_ydp.cpp \   
+       engine_ydp.cpp
+#      engine_sq2.cpp \   
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.

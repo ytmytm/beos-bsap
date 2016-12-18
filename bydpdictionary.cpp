@@ -1,5 +1,6 @@
 
 #include <Alert.h>
+#include <ByteOrder.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -126,14 +127,28 @@ int ydpDictionary::ReadDefinition(int index) {
 	return 0;
 }
 
-inline unsigned int ydpDictionary::fix32(unsigned int x) {
-	// write properly! what is defined for PPC?
+inline unsigned int ydpDictionary::fix32(unsigned int x)
+{
+#if (B_HOST_IS_LENDIAN == 1)
 	return x;
+#else
+	return (unsigned int)
+	     (((x & (unsigned int) 0x000000ffU) << 24) |
+          ((x & (unsigned int) 0x0000ff00U) << 8) |
+          ((x & (unsigned int) 0x00ff0000U) >> 8) |
+          ((x & (unsigned int) 0xff000000U) >> 24));
+#endif
 }
 
-inline unsigned short ydpDictionary::fix16(unsigned short x) {
-	// write poperly! what is defined for PPC?
+inline unsigned short ydpDictionary::fix16(unsigned short x)
+{
+#if (B_HOST_IS_LENDIAN == 1)
 	return x;
+#else
+	 return (unsigned short)
+		  (((x & (unsigned short) 0x00ffU) << 8) |
+           ((x & (unsigned short) 0xff00U) >> 8));
+#endif
 }
 
 void ydpDictionary::ParseRTF(void) {

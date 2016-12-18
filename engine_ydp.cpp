@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "bydpdictionary.h"
 #include "engine_ydp.h"
 #include "globals.h"
 

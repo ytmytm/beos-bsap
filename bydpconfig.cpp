@@ -126,8 +126,8 @@ void bydpConfig::load(void) {
 	readValue(buf,"colour2",&colour2);
 	readValue(buf,"currentFont",&currentFont);
 	readValue(buf,"position",&position);
-	readValue(buf,"sqlDictionary0=",&sqlDictionary[0]);
-	readValue(buf,"sqlDictionary1=",&sqlDictionary[1]);
+//	readValue(buf,"sqlDictionary0=",&sqlDictionary[0]);
+//	readValue(buf,"sqlDictionary1=",&sqlDictionary[1]);
 }
 
 void bydpConfig::writeValue(BString variable, rgb_color value) {
