@@ -3,10 +3,11 @@
 #define _ENGINESQ2_H
 
 #include <File.h>
+
 #include <sqlite.h>
 
-#include "bydpdictionary.h"
 #include "bydpconverter.h"
+#include "bydpdictionary.h"
 
 	class EngineSQ2 : public ydpDictionary {
 		public:

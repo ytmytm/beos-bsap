@@ -2,17 +2,17 @@
 #ifndef _BYDPCONFIG_H
 #define _BYDPCONFIG_H
 
-#include <String.h>
-#include <Font.h>
 #include <File.h>
+#include <Font.h>
 #include <Rect.h>
+#include <String.h>
 
 #define SEARCH_BEGINS	1
 #define SEARCH_FUZZY	2
 
 #define DICTIONARY_SAP	1
 #define DICTIONARY_YDP	2
-#define DICTIONARY_SQ2	3
+//#define DICTIONARY_SQ2	3
 
 #define CONFIG_NAME "/boot/home/config/settings/bsap"
 

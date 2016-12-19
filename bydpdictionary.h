@@ -25,6 +25,8 @@
 			virtual void CloseDictionary(void);
 			virtual const char *ColourFunctionName(int);
 			virtual const char *AppBarName(void);
+			virtual unsigned int fix32(unsigned int x);
+			virtual unsigned short fix16(unsigned short x);
 			virtual void FlushCache(void);
 
 			void ReGetDefinition(void);
@@ -55,9 +57,6 @@
 			bool dictionaryReady;
 
 		protected:
-			inline unsigned int fix32(unsigned int x);
-			inline unsigned short fix16(unsigned short x);
-
 			void ClearView(void);
 			void UpdateAttr(int newattr);
 

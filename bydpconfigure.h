@@ -4,12 +4,14 @@
 
 #define BYDPCONF_COLOUR		0		// anything >0 in fact
 #define BYDPCONF_DISTANCE	-1
-#define BYDPCONF_SQL		-2
+//#define BYDPCONF_SQL		-2
 
+    #include <ColorControl.h>
+	#include <Slider.h>
+	#include <StringView.h>
 	#include <View.h>
 	#include <Window.h>
-	#include <ColorControl.h>
-	#include <Slider.h>
+
 	#include "bydpconfig.h"
 
 	class bydpConfigure : public BWindow {
@@ -23,14 +25,14 @@
 		private:
 			void SetupColourDialog(int colour);
 			void SetupDistanceDialog(void);
-			void SetupSQLDialog(void);
+//			void SetupSQLDialog(void);
 			void ConfigUpdate(void);
 			void CopyNewColours(rgb_color *to);
 			void UpdateExampleColour();
 			BHandler *myHandler;
 			bydpConfig *myConfig;
 			int myColour;
-			int mySqlDict[2];
+//			int mySqlDict[2];
 			int dialogType;
 
 			BColorControl *myCColor;
@@ -41,6 +43,6 @@
 
 	const uint32 MSG_COLOURUPDATE =		'CNUp';
 	const uint32 MSG_FUZZYUPDATE =		'CNFu';
-	const uint32 MSG_SQLTABLESUPDATE =	'CNSq';
+//	const uint32 MSG_SQLTABLESUPDATE =	'CNSq';
 
 #endif

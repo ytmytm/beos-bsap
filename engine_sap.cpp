@@ -1,10 +1,11 @@
 
+#include <Alert.h>
+
 #include <stdio.h>
 #include <string.h>
-#include <Alert.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
 #include "engine_sap.h"
+#include "globals.h"
 
 //
 // to prevent my confusion, everything from base class is prefixed with this: this-> (wow, that's recursive :)
@@ -39,7 +40,7 @@ int EngineSAP::OpenDictionary(void) {
 	dat += this->cnf->toPolish ? "dvp_1.dic" : "dvp_2.dic";
 
 	if ((fData.SetTo(dat.String(), B_READ_ONLY)) != B_OK) {
-		BAlert *alert = new BAlert(APP_NAME, tr("Couldn't open data file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Couldn't open data file.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
 	}
@@ -121,16 +122,16 @@ int EngineSAP::ReadDefinition(int index) {
 const char *EngineSAP::ColourFunctionName(int index) {
 	switch(index) {
 		case 0:
-			return tr("Translation colour");
+			return "Translation colour";
 			break;
 		case 1:
-			return tr("Keywords colour");
+			return "Keywords colour";
 			break;
 		case 2:
-			return tr("Qualifiers colour");
+			return "Qualifiers colour";
 			break;
 		case 3:
-			return tr("Additional text colour");
+			return "Additional text colour";
 			break;
 		default:
 			break;

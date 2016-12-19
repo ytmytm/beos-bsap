@@ -1,8 +1,9 @@
 
-#include <stdlib.h>
-#include <Path.h>
 #include <Alert.h>
-#include <SpLocaleApp.h>
+#include <Path.h>
+
+#include <stdlib.h>
+
 #include "globals.h"
 #include "bydpconfig.h"
 
@@ -125,8 +126,8 @@ void bydpConfig::load(void) {
 	readValue(buf,"colour2",&colour2);
 	readValue(buf,"currentFont",&currentFont);
 	readValue(buf,"position",&position);
-	readValue(buf,"sqlDictionary0=",&sqlDictionary[0]);
-	readValue(buf,"sqlDictionary1=",&sqlDictionary[1]);
+//	readValue(buf,"sqlDictionary0=",&sqlDictionary[0]);
+//	readValue(buf,"sqlDictionary1=",&sqlDictionary[1]);
 }
 
 void bydpConfig::writeValue(BString variable, rgb_color value) {
@@ -215,7 +216,7 @@ void bydpConfig::writeValue(BString variable, BRect value) {
 
 void bydpConfig::save(void) {
 	if (conf.SetTo(CONFIG_NAME,B_WRITE_ONLY|B_CREATE_FILE|B_ERASE_FILE) != B_OK) {
-		BAlert *alert = new BAlert(APP_NAME, tr("Error writing configuration file."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Error writing configuration file.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -232,8 +233,8 @@ void bydpConfig::save(void) {
 	writeValue("colour2",colour2);
 	writeValue("currentFont",currentFont);
 	writeValue("position",position);
-	writeValue("sqlDictionary0",sqlDictionary[0]);
-	writeValue("sqlDictionary1",sqlDictionary[1]);
+//	writeValue("sqlDictionary0",sqlDictionary[0]);
+//	writeValue("sqlDictionary1",sqlDictionary[1]);
 	conf.Unset();
 }
 
@@ -259,5 +260,5 @@ void bydpConfig::setDefaultConfiguration(void) {
 	position.left = 64; position.top = 64;
 	position.right = 585; position.bottom = 480;
 
-	sqlDictionary[0] = 0; sqlDictionary[1] = 0;
+//	sqlDictionary[0] = 0; sqlDictionary[1] = 0;
 }

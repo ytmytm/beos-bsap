@@ -1,10 +1,11 @@
 
-#include "bydpdictionary.h"
+#include <Alert.h>
+#include <ByteOrder.h>
 
 #include <stdio.h>
 #include <string.h>
-#include <Alert.h>
-#include <SpLocaleApp.h>
+
+#include "bydpdictionary.h"
 #include "globals.h"
 
 ydpDictionary::ydpDictionary(BTextView *output, bydpListView *dict, bydpConfig *config, bydpConverter *converter) {
@@ -32,14 +33,14 @@ void ydpDictionary::ReGetDefinition(void) {
 	if (ReadDefinition(lastIndex) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Data file read error.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
 
 void ydpDictionary::GetDefinition(int index) {
 	if (!dictionaryReady) {
-		BAlert *alert = new BAlert(APP_NAME, tr("Please setup path to dictionary files."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Please setup path to dictionary files.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return;
 	}
@@ -51,7 +52,7 @@ void ydpDictionary::GetDefinition(int index) {
 	if (ReadDefinition(index) == 0) {
 		ParseRTF();
 	} else {
-		BAlert *alert = new BAlert(APP_NAME, tr("Data file read error."), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, "Data file read error.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 	}
 }
@@ -126,14 +127,28 @@ int ydpDictionary::ReadDefinition(int index) {
 	return 0;
 }
 
-inline unsigned int ydpDictionary::fix32(unsigned int x) {
-	// write properly! what is defined for PPC?
+inline unsigned int ydpDictionary::fix32(unsigned int x)
+{
+#if (B_HOST_IS_LENDIAN == 1)
 	return x;
+#else
+	return (unsigned int)
+	     (((x & (unsigned int) 0x000000ffU) << 24) |
+          ((x & (unsigned int) 0x0000ff00U) << 8) |
+          ((x & (unsigned int) 0x00ff0000U) >> 8) |
+          ((x & (unsigned int) 0xff000000U) >> 24));
+#endif
 }
 
-inline unsigned short ydpDictionary::fix16(unsigned short x) {
-	// write poperly! what is defined for PPC?
+inline unsigned short ydpDictionary::fix16(unsigned short x)
+{
+#if (B_HOST_IS_LENDIAN == 1)
 	return x;
+#else
+	 return (unsigned short)
+		  (((x & (unsigned short) 0x00ffU) << 8) |
+           ((x & (unsigned short) 0xff00U) >> 8));
+#endif
 }
 
 void ydpDictionary::ParseRTF(void) {
@@ -184,7 +199,7 @@ int ydpDictionary::FindWord(const char *wordin) {
 	int result,i;
 
 	if (!dictionaryReady) {
-		outputView->SetText(tr("Please setup path to dictionary files."));
+		outputView->SetText("Please setup path to dictionary files.");
 		return -1;
 	}
 

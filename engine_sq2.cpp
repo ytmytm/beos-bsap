@@ -8,15 +8,15 @@
 //   put commands for sample sqldata, info about utf8 encoding, and weak parser
 //   info about docs
 
+#include <Alert.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <Alert.h>
-#include <SpLocaleApp.h>
 
-#include "globals.h"
 #include "engine_sq2.h"
+#include "globals.h"
 
 //
 // to prevent my confusion, everything from base class is prefixed with this: this-> (wow, that's recursive :)
@@ -75,9 +75,9 @@ int EngineSQ2::OpenDictionary(void) {
 		// clean up after sqlite_open - file didn't exist before it, but it exists now
 		unlink(dat.String());
 		BString message;
-		message = tr("Couldn't open data file.");
+		message = "Couldn't open data file.";
 		message << "\n" << dbErrMsg;
-		BAlert *alert = new BAlert(APP_NAME, message.String(), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		BAlert *alert = new BAlert(APP_NAME, message.String(), "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		return -1;
 	}
@@ -116,8 +116,8 @@ void EngineSQ2::FillWordList(void) {
 	this->ids = new int [this->wordCount];
 	if (nRows<2) {
 		BString message;
-		message = tr("Database query returned no results. Please read included documentation for what might be the cause. Program will end now.\n");
-		BAlert *alert = new BAlert(APP_NAME, message.String(), tr("OK"), NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
+		message = "Database query returned no results. Please read included documentation for what might be the cause. Program will end now.\n";
+		BAlert *alert = new BAlert(APP_NAME, message.String(), "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
 		exit(-1);
 	}
@@ -157,16 +157,16 @@ int EngineSQ2::ReadDefinition(int index) {
 const char *EngineSQ2::ColourFunctionName(int index) {
 	switch(index) {
 		case 0:
-			return tr("Translation colour");
+			return "Translation colour";
 			break;
 		case 1:
-			return tr("Keywords colour");
+			return "Keywords colour";
 			break;
 		case 2:
-			return tr("Qualifiers colour");
+			return "Qualifiers colour";
 			break;
 		case 3:
-			return tr("Additional text colour");
+			return "Additional text colour";
 			break;
 		default:
 			break;

@@ -1,8 +1,10 @@
 
 #include <stdio.h>
-#include <SpLocaleApp.h>
-#include "globals.h"
+
+#include <Application.h>
+
 #include "bydplistview.h"
+#include "globals.h"
 
 bydpListView::bydpListView(const char *name, BHandler *handler) : BListView(
 		BRect(10,60,200,400),
@@ -129,7 +131,7 @@ void bydpListView::NewSize(void) {
 	ListRefresh();
 }
 
-void bydpListView::ListRefresh(int start=-1, bool update=true) {
+void bydpListView::ListRefresh(int start, bool update) {
 	if (!valid)
 		return;
 //	printf("in refresh with %i\n",start);
