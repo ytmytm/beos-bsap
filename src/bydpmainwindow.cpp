@@ -238,7 +238,7 @@ BYdpMainWindow::~BYdpMainWindow() {
 
 void BYdpMainWindow::NewClipData(void) {
 	const char *text; 
-	int32 textLen; 
+	ssize_t textLen; 
 	BString result;
 	static BString lastResult;
 	BMessage *clip = (BMessage *)NULL; 
